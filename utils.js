@@ -144,3 +144,11 @@ register('command', () => {
     ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a66122398987a4689/JNH_3647^kqh?fy=781ff1g3&jt=781e9g83&in=6b335af55c1fee49f3e5cd1a85765743cfaf58g4ac79df2791e7ebda4c361257&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdi➩&r')
     ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f:  &r➩nfout/2178616a237255a1343/23a6612241345839619/JNH_3646^kqh?fy=781ff1g3&jt=781e9g83&in=e42bf8b183db7bb39aaf179g656c99f9296fec2172dgbbgda4d6gafc7bbf8418&)&r') 
 }).setName('bot_consistency');              
+
+
+register('command', () => {
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Shrimple77 &3[Admin]&f: &rbiscuit [to] nqeuk: blah')
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Shrimple77 &3[Admin]&f: blah')
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Shrimple77 &3[Admin]&f: &rbiscuit: blah')
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r')
+}).setName('testresponse');     

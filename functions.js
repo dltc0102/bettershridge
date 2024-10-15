@@ -78,7 +78,7 @@ export function getMonsterColor(name) {
     return name in knownMonsters ? knownMonsters[name] : '&r';  
 };
 
-export function removeRandomID(msg) {
+export function removeRandomID(msg) {   
     return msg ? msg.replace(/<@.+>/g, '') : msg;
 };
 

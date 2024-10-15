@@ -88,7 +88,8 @@ TEST: commented out patcher/discord images/websites related code (works without)
 + added /setbot, /botlist, and /rmbot commands to set bot names
 + changed taming color for _skill bridge command to 'pink'
 + _tfish command fixed for noobf and general
-            
++ changed gameload message
+
 WIP: big text 
 
 
