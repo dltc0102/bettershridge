@@ -1,0 +1,9 @@
+{
+    "name": "bettershridge",
+    "description": "sh/pridge formatter for guild Shrimple",
+    "version": "0.1.3",
+    "author": "oBiscuit",
+    "entry": "index.js",
+    "requires": ["STuFLib", "PogData"]
+}
+
