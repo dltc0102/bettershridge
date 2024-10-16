@@ -1,4 +1,4 @@
-import { createMessage, getInSkyblock, getLinkHoverable, replaceGuildMessage, shortenMsg, stripRank, removeRandomID } from './functions';
+import { createMessage, getInSkyblock, getLinkHoverable, shortenMsg, stripRank, removeRandomID } from './functions';
 import { data } from './bots';      
 import { getGuildResponse } from './formatFunctions';
 
@@ -16,8 +16,6 @@ function separatePlayerAndMessage(e) {
     const playerMessage = message.substring(message.indexOf("> ")+1).trim();
     let type = '';
     let resMessage = '';
-    // console.log(playerMessage);
-    
     let playerRegex = /(.+) (&[a-qs-z0-9])\[(.+)\]&f: (.+)/;
     let playerMatch = playerMessage.match(playerRegex);
     if (playerMatch) {
@@ -56,7 +54,7 @@ function separatePlayerAndMessage(e) {
         }
     }
     return [type, resMessage];  
-}   
+}               
 
 function highlightTags(message) {
     let tagRegex = /@\w+/g; 
@@ -64,6 +62,7 @@ function highlightTags(message) {
 };
 
 function handleLinkMessages(message) {
+    console.log(message);   
     let linkRegex = /\[LINK\]\((.+?)\)/g;
     let linkList = [];
     let foundLinks;
@@ -79,7 +78,6 @@ function handleLinkMessages(message) {
 }
 
 function botMessageHandler(message) {   
-    // &rAbyssal Miner data for obiscuit (Coconut) k/d (kdr): 221/0  <@g9vn6tkwhd9>&r&r
     let botMessage = message.removeFormatting().replace(idRegex, '').trim();
 
     //! _mayor
@@ -213,66 +211,76 @@ function botMessageHandler(message) {
 
 function discordPlayerMessageHandler(message) {
     // &rbiscuit: test &r
-    let dpMessage = message.removeFormatting();
+    let dpMessage = removeRandomID(message.removeFormatting());
     let [sender, response] = dpMessage.split(': ');
     if (response.includes('[LINK]')) {
         return handleLinkMessages(response);
     } else {    
-        return `${BOT_PREFIX}${sender}&r: ${highlightTags(message)}`;
+        return `${BOT_PREFIX}${sender}&r: ${highlightTags(response)}`;
     }
 };
 
 function guildPlayerMessageHandler(message) {
-    // guildPlayer &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r
-    let [sender, response] = message.split(': ');
+    // &b[MVP&c+&b] oBiscuit &3[Cray]&f: &rblooh blah&r    
+    let [sender, response] = removeRandomID(message).split(': '); 
     if (response.includes('[LINK]')) {
-        return handleLinkMessages(response.removeFormatting());
-    } else {    
-        return `${BOT_PREFIX}${sender}&r: ${highlightTags(message.removeFormatting())}`;
+        return handleLinkMessages(response);
+    } else {                    
+        return `${BOT_PREFIX}${sender}&r: ${highlightTags(response)}`;
     }
 };
 
 function replyMessageHandler(message) {
     // &rbiscuit [to] nquek: test &r
-    let replyMessage = message.removeFormatting();
+    let replyMessage = removeRandomID(message.removeFormatting());
     let [sender, response] = replyMessage.split(': ');
     let [name1, name2] = sender.split(' [to] ');
-    if (response.includes('[LINK]')) {
-        return handleLinkMessages(response);
-    } else {
-        return `${BOT_PREFIX}${name1} &2[to]&a ${name2}&r: ${highlightTags(message)}`;
-    }
+    return response.includes('[LINK]') 
+        ? handleLinkMessages(response)
+        : `${BOT_PREFIX}${name1} &2[to]&a ${name2}&r: ${highlightTags(response)}`;
 };
 
 function messageHandler(type, message) {
-    if (type === 'bot') botMessageHandler(message);
-    if (type === 'discordPlayer') discordPlayerMessageHandler(message);
-    if (type === 'guildPlayer') guildPlayerMessageHandler(message);
-    if (type === 'reply') replyMessageHandler(message);
-}
+    if (type === 'bot') return botMessageHandler(message);
+    if (type === 'discordPlayer') return discordPlayerMessageHandler(message);
+    if (type === 'guildPlayer') return guildPlayerMessageHandler(message);
+    if (type === 'reply') return replyMessageHandler(message);
+};
 
 register('chat', (playerInfo, playerRole, playerStuff, event) => {
     let [msgType, msg] = separatePlayerAndMessage(event); 
-    const player = stripRank(playerInfo);
     const starts = msg.startsWith(continueSymbol);
-    const ends = msg.startsWith(continueSymbol);
-    const isBot = data.bots.includes(player);
+    const ends = msg.endsWith(continueSymbol);
+    // const player = stripRank(playerInfo);            
+    // const isBot = data.bots.includes(player);
+        
+    // if !starts && ends, starting message of continued parts
+    // if starts && ends, middle message of continued parts
+    // if starts && !ends, ending message of continued parts
     if (!ends) {
         let finalMsg = msg;
-        if (starts && isBot) {
+        if (starts) { // ending message of continued parts
             finalMsg = multiMessages.pop() + msg.slice(continueSymbol.length);  
         }
         const newMsg = messageHandler(msgType, finalMsg);
-        if (finalMsg !== newMsg) {
-            // ui replacing logic               
+        if (newMsg && finalMsg !== newMsg) {
+            finalMsg = newMsg;
+            cancel(event);
+            if (Array.isArray(newMsg)) {
+                newMsg.forEach(msg => {
+                    ChatLib.chat(msg);
+                })
+            } else {
+                ChatLib.chat(newMsg);
+            }
         }       
-    } else if (starts && isBot) {
-        multiMessages[0] += msg.slice(continueSymbol.length); // noted
+    } else if (starts) {
+        multiMessages[0] += msg.slice(continueSymbol.length);
     } else {    
         multiMessages.push(rawMsg);
-    }       
+    }   
 }).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
 
 register('command', () => {
     console.log(multiMessages);
-}).setName('logstored');
+}).setName('logstored');    

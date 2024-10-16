@@ -1,35 +1,5 @@
 import STuFLib from "../STuFLib";
 
-export function replaceGuildMessage(event, newMsg, bypass=false) {
-    cancel(event);
-
-    if (bypass) {
-        if (Array.isArray(newMsg)) {
-            newMsg.forEach(message => {
-                message = message.includes('@') ? highlightTags(message) : message;
-                ChatLib.chat(message);
-            });
-        } else {
-            ChatLib.chat(newMsg);
-        };
-    };
-
-    if (!bypass) {
-        if (Array.isArray(newMsg)) {
-            newMsg.forEach(message => {
-                message = message.includes('@') ? highlightTags(message) : message;
-                ChatLib.chat(message.trim());
-            });
-        } else {
-            let message = '';
-            if (newMsg) {
-                message = newMsg.includes('@') ? highlightTags(newMsg) : newMsg;
-                ChatLib.chat(message.trim());
-            };
-        };  
-    };
-};
-
 export function stripRank(name) {
     const rankNameRegex = /\[(?:MVP\+\+|MVP\+|MVP|VIP\+|VIP)\] (\S+)/;
     return name.match(rankNameRegex)?.[1] || name.trim();

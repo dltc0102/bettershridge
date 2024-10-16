@@ -93,6 +93,10 @@ TEST: commented out patcher/discord images/websites related code (works without)
 WIP: big text 
 
 
+# v1.4
++ restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
++ changed formatting for _be command to include 'k/d'
+
 
 
 

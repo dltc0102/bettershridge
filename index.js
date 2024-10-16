@@ -1,7 +1,7 @@
-import { getInSkyblock, stripRank, shortenMsg, replaceGuildMessage, capitalise } from './functions.js';
-import { getGuildResponse} from './formatFunctions.js'  
+// import { getInSkyblock, stripRank, shortenMsg, capitalise } from './functions.js';
+// import { getGuildResponse} from './formatFunctions.js'  
 import { registerWhen, timeThis } from './utils.js'
-import { data } from './bots.js';
+// import { data } from './bots.js';    
 import './test.js';
 //! any misc problems (/ct dump and copy message here)
 //? ...
