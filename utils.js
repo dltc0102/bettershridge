@@ -151,3 +151,12 @@ register('command', () => {
     ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Shrimple77 &3[Admin]&f: &rbiscuit: blah')
     ChatLib.simulateChat('&r&2Guild > &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r')
 }).setName('testresponse');         
+
+register('command', () => {
+    ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rfishing completion for aidanqt (Lemon): Lily Pad 9/9 (7,593,848) Prismarine Shard 6/7 (2,750,120/800) Ink Sac 9/9 (461,505) Raw Fish 11/11 (36,266,834) Pufferfish 10/10 (8,203,961) Clownfish 7/9 (2,635,213/1,600) Raw Salmon 9/9 (16,297,443) Magmafish 12/&r')
+
+
+    ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rfishing completion for aidanqt (Lemon): Lily Pad 9/9 (7,593,848) Prismarine Shard 6/7 (2,750,120/800) Ink Sac 9/9 (461,505) Raw Fish 11/11 (36,266,834) Pufferfish 10/10 (8,203,961) Clownfish 7/9 (2,635,213/1,600) Raw Salmon 9/9 (16,297,443) Magmafish 12/➩&r')
+    ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &r➩12 (32,178,320) Prismarine Crystals 7/7 (2,635,963) Clay 5/6 (10,748,507/2,500) Sponge 9/9 (2,009,550)  <@rlm5ilv066o>&r')    
+}).setName('testcoll'); 
+

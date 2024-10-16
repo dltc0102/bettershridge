@@ -47,19 +47,19 @@ import './test.js';
 
 // const mayorNames = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 
-// function formatBotBooped(prefix, match, boopSender, boopReceiver) {
-//     let [_, name] = match;
-//     let booper = boopSender.trim();
-//     if (name.toLowerCase() === Player.getName().toLowerCase()) {
-//         return `&2${prefix} > &d&l${booper} Booped You!`
+function formatBotBooped(prefix, match, boopSender, boopReceiver) {
+    let [_, name] = match;
+    let booper = boopSender.trim();
+    if (name.toLowerCase() === Player.getName().toLowerCase()) {
+        return `&2${prefix} > &d&l${booper} Booped You!`
 
-//     } else if (name === boopReceiver) {
-//         return `&2${prefix} > &d&l${booper} Booped ${name}!`
+    } else if (name === boopReceiver) {
+        return `&2${prefix} > &d&l${booper} Booped ${name}!`
 
-//     } else {
-//         return `&2${prefix} > &d&lBooped ${name}!`
-//     }
-// }
+    } else {
+        return `&2${prefix} > &d&lBooped ${name}!`
+    }
+}
 
 // function resetLinks() {
 //     linkP1 = '';                            
@@ -101,12 +101,6 @@ import './test.js';
 //             if (guildDebug) ChatLib.chat('role is already up to date message');
 //             let updatedMessage = getGuildResponse(BOT_PREFIX, shortenedMessage, 'updatedMessage');
 //             replaceGuildMessage(event, updatedMessage);
-            
-//         //! _skill
-//         } else if (SKILL_NAMES.includes(shortenedMessage.split(' ')[0]) && shortenedMessage.includes('level for')) {
-//             //* skill maxed
-//             if (shortenedMessage.includes('Overflow XP')) {
-//                 if (guildDebug) ChatLib.chat('skill response -- maxed')
 //                 let skillMessages = getGuildResponse(BOT_PREFIX, shortenedMessage, 'skillMaxed')
 //                 replaceGuildMessage(event, skillMessages);
             

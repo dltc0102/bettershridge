@@ -77,6 +77,11 @@ function handleLinkMessages(message) {
     return createMessage(titleMessage, linkHoverables);
 }
 
+const tempBoop = {
+    'booper': '',
+    'booped': '',
+};
+
 function botMessageHandler(message) {   
     let botMessage = message.removeFormatting().replace(idRegex, '').trim();
 
@@ -172,12 +177,24 @@ function botMessageHandler(message) {
         return getGuildResponse(BOT_PREFIX, botMessage, 'nextContest');
         
     //! _boop player
-    // } else if (botMessage.includes('_boop')) {
-    //     return getGuildResponse(BOT_PREFIX, botMessage, 'bot_boop');
+    } else if (botMessage.includes('_boop')) {
+        [tempBoop.booper, tempBoop.booped] = getGuildResponse(BOT_PREFIX, botMessage, 'bot_boop');
+        return `${prefix}${tempBoop.booper}: &r_boop {tempBoop.booped}`;
         
     //! booped player
-    // } else if (botMessage.includes('Booped')) {
-    //     return formatBotBooped(BOT_PREFIX, boopedMatch, booper, boopTarget);         
+    } else if (botMessage.includes('Booped')) {
+        let match = botMessage.match(/Booped (.+)/);
+        if (match) {    
+            let [_, name] = match;
+            if (name.toLowerCase() === Player.getName().toLowerCase()) {
+                return `${BOT_PREFIX}&d&l${tempBoop.booper} Booped You!`;
+            } else if (name === tempBoop.booped) {
+                return `${BOT_PREFIX}&d&l${tempBoop.booper} Booped ${name}!`;
+            } else {
+                return `${BOT_PREFIX}&d&lBooped ${name}!`;
+            }
+        }
+        return formatBotBooped(BOT_PREFIX, boopedMatch, booper, boopTarget);         
         
     //! _fw farming weight
     } else if (botMessage.includes('Farming weight for')) {
@@ -247,13 +264,24 @@ function messageHandler(type, message) {
     if (type === 'reply') return replyMessageHandler(message);
 };
 
+function replaceMessage(event, message) {
+    cancel(event);
+    if (Array.isArray(message)) {
+        message.forEach(msg => {
+            ChatLib.chat(msg);
+        })
+    } else {
+        ChatLib.chat(message);
+    }
+};
+
 register('chat', (playerInfo, playerRole, playerStuff, event) => {
     let [msgType, msg] = separatePlayerAndMessage(event); 
     const starts = msg.startsWith(continueSymbol);
     const ends = msg.endsWith(continueSymbol);
     // const player = stripRank(playerInfo);            
     // const isBot = data.bots.includes(player);
-        
+
     // if !starts && ends, starting message of continued parts
     // if starts && ends, middle message of continued parts
     // if starts && !ends, ending message of continued parts
@@ -263,16 +291,9 @@ register('chat', (playerInfo, playerRole, playerStuff, event) => {
             finalMsg = multiMessages.pop() + msg.slice(continueSymbol.length);  
         }
         const newMsg = messageHandler(msgType, finalMsg);
-        if (newMsg && finalMsg !== newMsg) {
+        if (newMsg && newMsg !== finalMsg) {
             finalMsg = newMsg;
-            cancel(event);
-            if (Array.isArray(newMsg)) {
-                newMsg.forEach(msg => {
-                    ChatLib.chat(msg);
-                })
-            } else {
-                ChatLib.chat(newMsg);
-            }
+            replaceMessage(event, newMsg);  
         }       
     } else if (starts) {
         multiMessages[0] += msg.slice(continueSymbol.length);

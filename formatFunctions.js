@@ -605,20 +605,21 @@ function getBotBooper(prefix, match) {
 function formatCollections(prefix, match) {
     let [_, collName, playerName, playerProfile, items] = match;
     let collColor = collNameCodes[collName.toLowerCase()];
-    let itemList = items.match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g);
-    itemList = itemList.map(item => {       
-        let itemRegex = /(.+) (\d+)\/(\d+) \((.+)\)/;
-        let itemMatch = (item.trim()).match(itemRegex);
-        if (itemMatch) {
-            let [_, itemName, itemLvl, itemMaxLvl, itemAmount] = itemMatch;
-            let maxColor = itemLvl === itemMaxLvl ? '&6' : '';
-            return `${SPACING}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
-        }   
-    });
+    let itemList = items
+        .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
+        .map(item => {       
+            let itemRegex = /(.+) (\d+)\/(\d+) \((.+)\)/;
+            let itemMatch = (item.trim()).match(itemRegex);
+            if (itemMatch) {
+                let [_, itemName, itemLvl, itemMaxLvl, itemAmount] = itemMatch;
+                let maxColor = itemLvl === itemMaxLvl ? '&6' : '';
+                return `${SPACING}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
+            };
+        });
     const collectionMessages = [
-        `${prefix}${collColor}${capitalise(collName)} &afor $&2{playerName}&a (${playerProfile}): `,
-        ...itemList,
-    ]
+        `${prefix}${collColor}${capitalise(collName)} &afor &2${playerName}&a (${playerProfile}): `,
+        ...itemList,                
+    ];
     return collectionMessages;
 }
 
