@@ -21,7 +21,7 @@ function generateMessage(prefix, message, regex, formatHandler) {
         console.log(`message: ${message}`);
         console.log(`regex: ${regex}`);
         console.log(' ');
-        return 'not matched';
+        return;
     }
 }
 
@@ -38,6 +38,10 @@ export function getGuildResponse(prefix, message, type) {
         pickedMayor: {
             regex: /(.+) is in (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?)(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?/,       
             format: formatMayorPicked
+        },
+        noreqUpdate: {
+            regex: /Your role does not have requirements! But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
+            format: formatNoReqUpdateMessage
         },
         updatedMessage: {
             regex: /Role is already up to date! Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
@@ -214,34 +218,44 @@ export function getGuildResponse(prefix, message, type) {
 }   
 
 function formatUpdatedMessage(prefix, match) {  
-    let [_, fexp, sblevel, role] = match;   
+    let [_, fexp, sblevels, nextRole] = match;   
     return [    
-        `${prefix}Role is already up to date!`,
-        `${SPACING}Next Role: &6${role}`,       
+        `${prefix}Role is already up to date!`, 
+        `${SPACING}Next Role: &6${nextRole}`,
         `${SPACING}Missing Fishing XP: &r${fexp}`,
-        `${SPACING}Missing Skyblock Lvls: &r${sblevel}`,
+        `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,
     ];      
-}
+};
+
+function formatNoReqUpdateMessage(prefix, match) {
+    let [_, fexp, sblevels, nextRole] = match;
+    return [
+        `${prefix}&cYour role does not have requirements!`,
+        `${SPACING}Next Role: &6${nextRole}`,
+        `${SPACING}Missing Fishing XP: &r${fexp}`,
+        `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,
+    ];
+};
 
 function formatPromotion(prefix, match) {
     let [_, playerRank, playerName, from, to] = match;
     return `${prefix}${playerRank} ${playerName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;      
-}
+};
 
 function formatDemotion(prefix, match) {
     let [_, playerRank, playerName, from, to] = match;
     return `${prefix}${playerRank} ${playerName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
-}
+};
 
 function formatSpook1(prefix, match) {
     let [_, spooked] = match;       
-    return `&2${prefix} > &cAAH! &8You scared me, &6${spooked}!`; 
-}
+    return `${prefix}&cAAH! &8You scared me, &6${spooked}!`; 
+};
 
 function formatSpook2(prefix, match) {
     let [_, spooked] = match;
-    return `&2${prefix} > &8Spooked &6${spooked}! &c>:)`;   
-}       
+    return `${prefix}&8Spooked &6${spooked}! &c>:)`;   
+};
 
 function formatSyntaxError(prefix, match) {
     let [_, type, condition1, condition2=null] = match;
@@ -259,8 +273,8 @@ function formatSyntaxError(prefix, match) {
         let message = `${prefix}Usage: &c_${type.toLowerCase()} &e${part1}:${options}`; 
         return condition2 ? `${message} [${condition2.includes('|') ? condition2.replace(/\|/g, '/') : condition2}]` : message;                                                 
 
-    }
-}
+    };
+};
 
 function formatGeneralDecodedLink(prefix, match) {  
     let message = match[0].toString();
@@ -276,7 +290,7 @@ function formatGeneralDecodedLink(prefix, match) {
         return hoverable; 
     });
     return createMessage(titleMessage, linkHoverables);  
-}
+};  
 
 function formatReplyDecodedLink(prefix, match) {
     let message = match[0].toString();
@@ -604,6 +618,11 @@ function getBotBooper(prefix, match) {
 
 function formatCollections(prefix, match) {
     let [_, collName, playerName, playerProfile, items] = match;
+    // console.log(`collName: ${collName}`)
+    // console.log(`playerName: ${playerName}`)
+    // console.log(`playerProfile: ${playerProfile}`)
+    // console.log(`items: ${items}`)
+    // console.log(' ');
     let collColor = collNameCodes[collName.toLowerCase()];
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
@@ -616,6 +635,7 @@ function formatCollections(prefix, match) {
                 return `${SPACING}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
             };
         });
+
     const collectionMessages = [
         `${prefix}${collColor}${capitalise(collName)} &afor &2${playerName}&a (${playerProfile}): `,
         ...itemList,                
@@ -732,3 +752,4 @@ function formatPlayerPatcherImage(prefix, match) {
     let hoverable = getLinkHoverable(link);
     return createMessage(titleMessage, hoverable);
 }
+

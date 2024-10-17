@@ -166,7 +166,7 @@ export function getLinkHoverable(link) {
         let checkDecoded = isLinkExpired(decodedLink);
         let [linkName, hoverText] = getComponentParts(decodedLink);
         return checkDecoded     
-            ? '&b<link expired>'
+            ? '&b<link expired> '
             : new TextComponent(`${linkName} `)       
                 .setClick('open_url', decodedLink)
                 .setHover('show_text', hoverText);

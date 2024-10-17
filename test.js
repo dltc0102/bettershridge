@@ -8,7 +8,7 @@ const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
-const ERROR_MESSAGES = ["Wait a while before trying again.", "Can't message an offline player.", "Could not send a private message to that player.", "Spam protection moment", "No product found!", "Error: Failed to get UUID from API, and no cached UUID was found.", "No permission", "No username provided.", "You must be staff to update the role of another member!", "Invalid type or mob", "Too many arguments!"];   
+const ERROR_MESSAGES = ["Wait a while before trying again.", "Can't message an offline player.      ", "Could not send a private message to that player.", "Spam protection moment", "No product found!", "Error: Failed to get UUID from API, and no cached UUID was found.", "No permission", "No username provided.", "You must be staff to update the role of another member!", "Invalid type or mob", "Too many arguments!"];   
 
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -60,16 +60,17 @@ function highlightTags(message) {
     return message.replace(tagRegex, tag => `&b${tag}&r`);
 };
 
-function handleLinkMessages(message) {
-    console.log('handlelinkmessages');
-    console.log(message);   
+function handleLinkMessages(prefix, sender='', message) {
+    // AyaDaSheep: [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a74411894a3791569/jnbhf^qoh?fy=7822f5g8&jt=7821a488&in=944b4326373d213bad854fce5g475gcebf2d3gae99382317ge27eda5519e5ff4&) [LINK](deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7516887882a88361/jnbhf^qoh?fy=78233c88&jt=7821eag8&in=aeg5bf131f8e5c6af5727gabff6319367b81124f8f1315329b➩4bb59afd7d678d&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7517693894226456/jnbhf^qoh?fy=78233d48&jt=7821ebc8&in=78cb48dbcd55b423d9d629eb588bcaddg3b1g85c7be9f46c91➩➩593g66382gd67f&)
     let linkRegex = /\[LINK\]\((.+?)\)/g;
     let linkList = [];
     let foundLinks;
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }
-    let titleMessage = `${BOT_PREFIX}`;
+    let resultSender = sender ? `${sender}: ` : '';     
+    let otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
+    let titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
     let linkHoverables = linkList.map(link => {
         return getLinkHoverable(link);
     })
@@ -81,103 +82,107 @@ const tempBoop = {
     'booped': '',
 };
 
-function botMessageHandler(message) {   
+function botMessageHandler(prefix, message) {   
     let botMessage = message.removeFormatting().replace(idRegex, '').trim();
 
     //! _mayor
     if (botMessage.startsWith('Current mayor: ')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'mayor')
+        return getGuildResponse(prefix, botMessage, 'mayor')
 
     //! _mayor (certain mayor)
     } else if (MAYOR_NAMES.includes(botMessage.split(' ')[0])) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'pickedMayor');
+        return getGuildResponse(prefix, botMessage, 'pickedMayor');
     //! promoted from
     } else if (botMessage.includes('promoted from')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'promoted');
+        return getGuildResponse(prefix, botMessage, 'promoted');
 
     //! demoted from
     } else if (botMessage.includes('demoted from')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'promoted');
+        return getGuildResponse(prefix, botMessage, 'promoted');
 
     //! role up to date
     } else if (botMessage.includes('Role is already up to date!')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'updatedMessage');
+        return getGuildResponse(prefix, botMessage, 'updatedMessage');
+
+    //! role does not have the requirements
+    } else if (botMessage.includes('Your role does not have requirements!')) {
+        return getGuildResponse(prefix, botMessage, 'noreqUpdate');
 
     //! _skill
     } else if (SKILL_NAMES.includes(botMessage.split(' ')[0]) && botMessage.includes('level for')) {
         return botMessage.includes('Overflow XP') 
-            ? getGuildResponse(BOT_PREFIX, botMessage, 'skillMaxed')
-            : getGuildResponse(BOT_PREFIX, botMessage, 'skillProgress');
+            ? getGuildResponse(prefix, botMessage, 'skillMaxed')
+            : getGuildResponse(prefix, botMessage, 'skillProgress');
     
     //! _bz
     } else if (botMessage.startsWith('Bazaar data for ')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'bazaar');
+        return getGuildResponse(prefix, botMessage, 'bazaar');
 
     //! _be data
     } else if (botMessage.includes('k/d (kdr)')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'bestiary');
+        return getGuildResponse(prefix, botMessage, 'bestiary');
 
     //! _command
     } else if (botMessage.includes('Available commands (_command)')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'commandHelp');
+        return getGuildResponse(prefix, botMessage, 'commandHelp');
 
     //! syntax error
     } else if (botMessage.includes('Syntax')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'syntaxError');
+        return getGuildResponse(prefix, botMessage, 'syntaxError');
 
     //! sticker
     } else if (/\<.+\>/.test(botMessage)) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'sticker');
+        return getGuildResponse(prefix, botMessage, 'sticker');
         
     //! october specials
     } else if (botMessage.includes('AAH! You scared me,')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'spooky1');
+        return getGuildResponse(prefix, botMessage, 'spooky1');
         
     } else if (botMessage.includes('Spooked')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'spooky2');
+        return getGuildResponse(prefix, botMessage, 'spooky2');
         
     //! command not found
     } else if (botMessage.includes('try _help')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'cmdError');
+        return getGuildResponse(prefix, botMessage, 'cmdError');
         
     //! _lbin
     } else if (botMessage.includes('Lowest BIN for')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'lbin');
+        return getGuildResponse(prefix, botMessage, 'lbin');
         
     //! _cata
     } else if (botMessage.includes('Catacombs level for')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'cata');
+        return getGuildResponse(prefix, botMessage, 'cata');
         
     //! dungoen floor
     } else if (botMessage.includes('Completions') && botMessage.includes('Fastest time')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'dungeonRecord');
+        return getGuildResponse(prefix, botMessage, 'dungeonRecord');
 
     //! _slayer
     } else if (botMessage.includes('slayer data for')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'slayer');
+        return getGuildResponse(prefix, botMessage, 'slayer');
         
     //! _tfish
     } else if (['Bronze', 'Silver', 'Gold', 'Diamond'].every(item => botMessage.includes(item))) {
         const noobf = botMessage.includes('(w/o Obf 1)');
         if (botMessage.startsWith('Trophy') && !noobf) {
-            return getGuildResponse(BOT_PREFIX, botMessage, 'tfishGeneral');
+            return getGuildResponse(prefix, botMessage, 'tfishGeneral');
         } else if (noobf) {
-            return getGuildResponse(BOT_PREFIX, botMessage, 'tfishObf');
+            return getGuildResponse(prefix, botMessage, 'tfishObf');
         } else {
-            return getGuildResponse(BOT_PREFIX, botMessage, 'tfishSpecific');
+            return getGuildResponse(prefix, botMessage, 'tfishSpecific');
         }
         
     //! _contest specific
     } else if (botMessage.includes('contest in')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'contestSpecific');
+        return getGuildResponse(prefix, botMessage, 'contestSpecific');
 
     //! _contest next
     } else if (botMessage.includes('Next contest')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'nextContest');
+        return getGuildResponse(prefix, botMessage, 'nextContest');
         
     //! _boop player
     } else if (botMessage.includes('_boop')) {
-        [tempBoop.booper, tempBoop.booped] = getGuildResponse(BOT_PREFIX, botMessage, 'bot_boop');
+        [tempBoop.booper, tempBoop.booped] = getGuildResponse(prefix, botMessage, 'bot_boop');
         return `${prefix}${tempBoop.booper}: &r_boop {tempBoop.booped}`;
         
     //! booped player
@@ -186,104 +191,105 @@ function botMessageHandler(message) {
         if (match) {    
             let [_, name] = match;
             if (name.toLowerCase() === Player.getName().toLowerCase()) {
-                return `${BOT_PREFIX}&d&l${tempBoop.booper} Booped You!`;
+                return `${prefix}&d&l${tempBoop.booper} Booped You!`;
             } else if (name === tempBoop.booped) {
-                return `${BOT_PREFIX}&d&l${tempBoop.booper} Booped ${name}!`;
+                return `${prefix}&d&l${tempBoop.booper} Booped ${name}!`;
             } else {
-                return `${BOT_PREFIX}&d&lBooped ${name}!`;
+                return `${prefix}&d&lBooped ${name}!`;
             }
         }
-        return formatBotBooped(BOT_PREFIX, boopedMatch, booper, boopTarget);         
+        return formatBotBooped(prefix, boopedMatch, booper, boopTarget);         
         
     //! _fw farming weight
     } else if (botMessage.includes('Farming weight for')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'farmingWeight');
+        return getGuildResponse(prefix, botMessage, 'farmingWeight');
         
     //! _is insta sell price
     } else if (botMessage.includes('Total earned from selling')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'instasell');
+        return getGuildResponse(prefix, botMessage, 'instasell');
         
     //! _ib insta buy price
     } else if (botMessage.includes('Total cost to buy')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'instabuy');
+        return getGuildResponse(prefix, botMessage, 'instabuy');
         
     //! _collection
     } else if (botMessage.includes('completion for')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'collection');
+        return getGuildResponse(prefix, botMessage, 'collection');
         
     //! _pick
     } else if (botMessage.startsWith('I choose')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'pickCommand');
+        return getGuildResponse(prefix, botMessage, 'pickCommand');
         
     //! links
     } else if (botMessage.includes('l$')) {
-        return getGuildResponse(BOT_PREFIX, botMessage, 'generalDecoded');
+        return getGuildResponse(prefix, botMessage, 'generalDecoded');
         
     //! responses & 8ball
     } else {
         return ERROR_MESSAGES.includes(botMessage) 
-            ? `${BOT_PREFIX}&c${botMessage}` 
-            : `${BOT_PREFIX}${botMessage}`;
+            ? `${prefix}&c${botMessage}` 
+            : `${prefix}${botMessage}`;
     }
 };
 
-function discordPlayerMessageHandler(message) {
-    // &rAyaDaSheep:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a1637216851/JNH_31352125_344166^kqh?fy=781feg7c&jt=781e9efc&in=593dd25bbgd7b761625ba2ce6294ec3f33c18e436673672fd48e36e894b65b3a&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfo➩&r&r➩ut/2178616a237255a1343/23a65aa5a211942a63a/JNH_31352125_344227^kqh?fy=781feg7c&jt=781e9efc&in=4c3f723a6d948c22ge4ef8ggdc31effb6g727ggeef842b66dg996559a3fc61e4&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a2518151623/JNH_313521➩&r&r➩25_344323^kqh?fy=781feg7c&jt=781e9efc&in=99346118f34549a2158d67d8225g72ff88b6528a6a6ccee8f61a9cca6ad4ca15&)&r&r
-    let dpMessage = removeRandomID(message).removeFormatting().replace(continueSymbol, '').replace('  ', ' ')
-    let [sender, response] = dpMessage.split(': ');
-    return response.includes('[LINK]')      
-        ? handleLinkMessages(response)
-        : `${BOT_PREFIX}${sender}&r: ${highlightTags(response)}`;
+function discordPlayerMessageHandler(prefix, message) {
+    // &rAyaDaSheep:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a1637216851/JNH_31352125_344166^kqh?fy=781feg7c&jt=781e9efc&in=593dd25bbgd7b761625ba2ce6294ec3f33c18e436673672fd48e36e894b65b3a&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfo➩&r&r➩ut/2178616a237255a1343/23a65aa5a211942a63a/JNH_31352125_344227^kqh?fy=781feg7c&jt=781e9efc&in=4c3f723a6d948c22ge4ef8ggdc31effb6g727ggeef842b66dg996559a3fc61e4&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a2518151623/JNH_313521➩&r&r➩25_344323^kqh?fy=781feg7c&jt=781e9efc&in=99346118f34549a2158d67d8225g72ff88b6528a6a6ccee8f61a9cca6ad4ca15&)&r&r    
+    let dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
+    let [sender, response] = dpMessage.split(': ');     
+    return response.includes('[LINK]')       
+        ? handleLinkMessages(prefix, sender, dpMessage)
+        : `${prefix}${sender}&r: ${highlightTags(response)}`;
 };
 
-function guildPlayerMessageHandler(message) {
+function guildPlayerMessageHandler(prefix, message) {
     // &b[MVP&c+&b] oBiscuit &3[Cray]&f: &rblooh blah&r    
     let [sender, response] = removeRandomID(message).split(': '); 
     if (response.includes('[LINK]')) {
-        return handleLinkMessages(response);
+        return handleLinkMessages(prefix, sender, response);
     } else {                    
-        return `${BOT_PREFIX}${sender}&r: ${highlightTags(response)}`;
+        return `${prefix}${sender}&r: ${highlightTags(response)}`;
     }
 };
 
-function replyMessageHandler(message) {
+function replyMessageHandler(prefix, message) {
     // &rbiscuit [to] nquek: test &r
     let replyMessage = removeRandomID(message.removeFormatting());
     let [sender, response] = replyMessage.split(': ');
     let [name1, name2] = sender.split(' [to] ');
+    let formattedSender = `&a${name1} &2[to]&a${name2}`
     return response.includes('[LINK]') 
-        ? handleLinkMessages(response)
-        : `${BOT_PREFIX}${name1} &2[to]&a ${name2}&r: ${highlightTags(response)}`;
+        ? handleLinkMessages(prefix, formattedSender, response)
+        : `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(response)}`;
 };
 
-function messageHandler(message) {
+function messageHandler(prefix, message) {
     let type = '';
     let strippedMessage = message.removeFormatting();
 
     //* bot
     // &rBooped demonhunter990! <@vor9bagt13>&r
-    if (idRegex.test(message)) type = 'bot';
+    if (idRegex.test(message)) {
+        type = 'bot';
 
     //* guildPlayer
     // &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &ri wasn't even brainrot posting diana :sob:&r
-    if (/(&[a-qs-z0-9])(.+) &3(.+)&f: &r(.+)&r/.test(message) && !idRegex.test(message)) {
+    } else if (/(&[a-qs-z0-9])(.+) &3(.+)&f: &r(.+)&r/.test(message) && !idRegex.test(message)) {
         type = 'guildPlayer';
-    }
 
     //* discordPlayer
     // DamianKirishima: raw mute pebbles 120h brainrot 
     //* reply
     // pebbles [to] IGrindDiana77:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a7447717a63796699/jnbhf^qoh?fy=7822fc1c&jt=7821aa9c&in=3af8a989b4cee7d1a99d51b593f8166f5456a697b7453ad41a7d2gbb316e78f2&)
-    if (strippedMessage.includes(': ') && !idRegex.test(message)) {
+    } else if (strippedMessage.includes(': ') && !idRegex.test(message)) {
         let [sender, response] = strippedMessage.split(': ');
         type = sender.includes(' [to] ') ? 'reply' : 'discordPlayer';
     }   
 
     console.log(type, message);
-    if (type === 'bot') return botMessageHandler(message);
-    if (type === 'discordPlayer') return discordPlayerMessageHandler(message);
-    if (type === 'guildPlayer') return guildPlayerMessageHandler(message);
-    if (type === 'reply') return replyMessageHandler(message);
+    if (type === 'bot') return botMessageHandler(prefix, message);
+    if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, message);
+    if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, message);
+    if (type === 'reply') return replyMessageHandler(prefix, message);
 };
 
 function replaceMessage(event, message) {
@@ -316,7 +322,7 @@ register('chat', (playerInfo, playerRole, playerStuff, event) => {
         if (starts && isBot) { // ending message of continued parts
             finalMsg = multiMessages.pop() + msg.slice(continueSymbol.length);
         }   
-        const newMsg = messageHandler(finalMsg);        
+        const newMsg = messageHandler(BOT_PREFIX, finalMsg);          
         if (newMsg && newMsg !== finalMsg) {    
             finalMsg = newMsg;
             replaceMessage(event, newMsg);               

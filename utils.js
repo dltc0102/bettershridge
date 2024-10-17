@@ -56,9 +56,9 @@ register('command', () => {
 // 2+ links 
 //! only shows 1 link
 register('command', () => {
-    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rAyaDaSheep:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a1637216851/JNH_31352125_344166^kqh?fy=781feg7c&jt=781e9efc&in=593dd25bbgd7b761625ba2ce6294ec3f33c18e436673672fd48e36e894b65b3a&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfo➩&r');
-    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩ut/2178616a237255a1343/23a65aa5a211942a63a/JNH_31352125_344227^kqh?fy=781feg7c&jt=781e9efc&in=4c3f723a6d948c22ge4ef8ggdc31effb6g727ggeef842b66dg996559a3fc61e4&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a2518151623/JNH_313521➩&r')
-    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩25_344323^kqh?fy=781feg7c&jt=781e9efc&in=99346118f34549a2158d67d8225g72ff88b6528a6a6ccee8f61a9cca6ad4ca15&)&r')  
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rAyaDaSheep:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a74411894a3791569/jnbhf^qoh?fy=7822f5g8&jt=7821a488&in=944b4326373d213bad854fce5g475gcebf2d3gae99382317ge27eda5519e5ff4&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7516887882a88361/jnbhf^qoh?fy=78233c88&jt=7821eag8&in=aeg5bf131f8e5c6af5727gabff6319367b81124f8f1315329b➩&r');
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩4bb59afd7d678d&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7517693894226456/jnbhf^qoh?fy=78233d48&jt=7821ebc8&in=78cb48dbcd55b423d9d629eb588bcaddg3b1g85c7be9f46c91➩&r')
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩593g66382gd67f&)&r')                       
 }).setName('bs1');
 
 // 2 links 
@@ -94,7 +94,6 @@ register('command', () => {
     ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Baltics &3[Admin]&f: &rKraff Nof:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/23a2762a4a9285a3642/23a667a146a98235366/jnbhf^qoh?fy=781g3141&jt=781edfc1&in=667d47a15ff9fbc2g32ca6135c6b6ae6bgc34b6df914bddg7a➩&r')
     ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Baltics &3[Admin]&f: &rKraff Nof: &r➩fccg36fg1g823f&)&r')   
 }).setName('bs_consistency');       
-
 
 register('command', () => {
     //* no symbol
@@ -144,7 +143,6 @@ register('command', () => {
     ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f:  &r➩nfout/2178616a237255a1343/23a6612241345839619/JNH_3646^kqh?fy=781ff1g3&jt=781e9g83&in=e42bf8b183db7bb39aaf179g656c99f9296fec2172dgbbgda4d6gafc7bbf8418&)&r') 
 }).setName('bot_consistency');              
 
-
 register('command', () => {
     ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Shrimple77 &3[Admin]&f: &rbiscuit [to] nqeuk: blah')
     ChatLib.simulateChat('&r&2Guild > &b[MVP&c+&b] Shrimple77 &3[Admin]&f: blah')
@@ -153,10 +151,9 @@ register('command', () => {
 }).setName('testresponse');         
 
 register('command', () => {
-    ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rfishing completion for aidanqt (Lemon): Lily Pad 9/9 (7,593,848) Prismarine Shard 6/7 (2,750,120/800) Ink Sac 9/9 (461,505) Raw Fish 11/11 (36,266,834) Pufferfish 10/10 (8,203,961) Clownfish 7/9 (2,635,213/1,600) Raw Salmon 9/9 (16,297,443) Magmafish 12/&r')
+    ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rfishing completion for aidanqt (Lemon): Lily Pad 9/9 (7,593,848) Prismarine Shard 6/7 (2,750,120/800) Ink Sac 9/9 (461,505) Raw Fish 11/11 (36,266,834) Pufferfish 10/10 (8,203,961) Clownfish 7/9 (2,635,213/1,600) Raw Salmon 9/9 (16,297,443)')
 
 
     ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rfishing completion for aidanqt (Lemon): Lily Pad 9/9 (7,593,848) Prismarine Shard 6/7 (2,750,120/800) Ink Sac 9/9 (461,505) Raw Fish 11/11 (36,266,834) Pufferfish 10/10 (8,203,961) Clownfish 7/9 (2,635,213/1,600) Raw Salmon 9/9 (16,297,443) Magmafish 12/➩&r')
     ChatLib.simulateChat('&r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &r➩12 (32,178,320) Prismarine Crystals 7/7 (2,635,963) Clay 5/6 (10,748,507/2,500) Sponge 9/9 (2,009,550)  <@rlm5ilv066o>&r')    
-}).setName('testcoll'); 
-
+}).setName('testcoll');         
