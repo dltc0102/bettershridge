@@ -618,11 +618,11 @@ function getBotBooper(prefix, match) {
 
 function formatCollections(prefix, match) {
     let [_, collName, playerName, playerProfile, items] = match;
-    // console.log(`collName: ${collName}`)
-    // console.log(`playerName: ${playerName}`)
-    // console.log(`playerProfile: ${playerProfile}`)
-    // console.log(`items: ${items}`)
-    // console.log(' ');
+    console.log(`collName: ${collName}`)
+    console.log(`playerName: ${playerName}`)
+    console.log(`playerProfile: ${playerProfile}`)
+    console.log(`items: ${items}`)
+    console.log(' ');                           
     let collColor = collNameCodes[collName.toLowerCase()];
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)

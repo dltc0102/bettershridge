@@ -1,14 +1,20 @@
-import { createMessage, getInSkyblock, getLinkHoverable, shortenMsg, stripRank, removeRandomID } from './functions';
-import { data } from './bots';      
+import { createMessage, getInSkyblock, getLinkHoverable, stripRank, removeRandomID, highlightTags } from './functions';
+import { data } from './bots';
+import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
-const BOT_PREFIX = '&2B > &a';
+const BOT_PREFIX = '&2B > &a';  
 const continueSymbol = '➩';
 const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
-const ERROR_MESSAGES = ["Wait a while before trying again.", "Can't message an offline player.      ", "Could not send a private message to that player.", "Spam protection moment", "No product found!", "Error: Failed to get UUID from API, and no cached UUID was found.", "No permission", "No username provided.", "You must be staff to update the role of another member!", "Invalid type or mob", "Too many arguments!"];   
+const ERROR_MESSAGES = ["Wait a while before trying again.", "Can't message an offline player.", "Could not send a private message to that player.", "Spam protection moment", "No product found!", "Error: Failed to get UUID from API, and no cached UUID was found.", "No permission", "No username provided.", "You must be staff to update the role of another member!", "Invalid type or mob", "Too many arguments!"];        
+
+const tempBoop = {
+    'booper': '',
+    'booped': '',
+};
 
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -55,11 +61,6 @@ function separatePlayerAndMessage(e) {
     return [type, resMessage];  
 }               
 
-function highlightTags(message) {
-    let tagRegex = /@\w+/g; 
-    return message.replace(tagRegex, tag => `&b${tag}&r`);
-};
-
 function handleLinkMessages(prefix, sender='', message) {
     // AyaDaSheep: [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a74411894a3791569/jnbhf^qoh?fy=7822f5g8&jt=7821a488&in=944b4326373d213bad854fce5g475gcebf2d3gae99382317ge27eda5519e5ff4&) [LINK](deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7516887882a88361/jnbhf^qoh?fy=78233c88&jt=7821eag8&in=aeg5bf131f8e5c6af5727gabff6319367b81124f8f1315329b➩4bb59afd7d678d&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7517693894226456/jnbhf^qoh?fy=78233d48&jt=7821ebc8&in=78cb48dbcd55b423d9d629eb588bcaddg3b1g85c7be9f46c91➩➩593g66382gd67f&)
     let linkRegex = /\[LINK\]\((.+?)\)/g;
@@ -76,11 +77,6 @@ function handleLinkMessages(prefix, sender='', message) {
     })
     return createMessage(titleMessage, linkHoverables);
 }
-
-const tempBoop = {
-    'booper': '',
-    'booped': '',
-};
 
 function botMessageHandler(prefix, message) {   
     let botMessage = message.removeFormatting().replace(idRegex, '').trim();
@@ -213,7 +209,7 @@ function botMessageHandler(prefix, message) {
         return getGuildResponse(prefix, botMessage, 'instabuy');
         
     //! _collection
-    } else if (botMessage.includes('completion for')) {
+    } else if (botMessage.includes('completion for')) { 
         return getGuildResponse(prefix, botMessage, 'collection');
         
     //! _pick
@@ -226,9 +222,9 @@ function botMessageHandler(prefix, message) {
         
     //! responses & 8ball
     } else {
-        return ERROR_MESSAGES.includes(botMessage) 
-            ? `${prefix}&c${botMessage}` 
-            : `${prefix}${botMessage}`;
+        return ERROR_MESSAGES.some(errorMessage => botMessage.includes(errorMessage)) 
+        ? `${prefix}&c${botMessage}` 
+        : `${prefix}${botMessage}`; 
     }
 };
 
@@ -265,27 +261,20 @@ function replyMessageHandler(prefix, message) {
 function messageHandler(prefix, message) {
     let type = '';
     let strippedMessage = message.removeFormatting();
-
     //* bot
-    // &rBooped demonhunter990! <@vor9bagt13>&r
-    if (idRegex.test(message)) {
+    if (idRegex.test(message) || !message.includes(': ')) {
         type = 'bot';
 
     //* guildPlayer
-    // &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &ri wasn't even brainrot posting diana :sob:&r
     } else if (/(&[a-qs-z0-9])(.+) &3(.+)&f: &r(.+)&r/.test(message) && !idRegex.test(message)) {
         type = 'guildPlayer';
 
-    //* discordPlayer
-    // DamianKirishima: raw mute pebbles 120h brainrot 
-    //* reply
-    // pebbles [to] IGrindDiana77:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a7447717a63796699/jnbhf^qoh?fy=7822fc1c&jt=7821aa9c&in=3af8a989b4cee7d1a99d51b593f8166f5456a697b7453ad41a7d2gbb316e78f2&)
+    //* discordPlayer & reply
     } else if (strippedMessage.includes(': ') && !idRegex.test(message)) {
         let [sender, response] = strippedMessage.split(': ');
         type = sender.includes(' [to] ') ? 'reply' : 'discordPlayer';
     }   
 
-    console.log(type, message);
     if (type === 'bot') return botMessageHandler(prefix, message);
     if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, message);
     if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, message);
@@ -303,8 +292,8 @@ function replaceMessage(event, message) {
     }
 };
 
-let multiMessages = [];         
-register('chat', (playerInfo, playerRole, playerStuff, event) => {
+let multiMessages = [];             
+registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole, playerStuff, event) => {
     const rawMsg = ChatLib.getChatMessage(event, true);
     let [msgType, msg] = separatePlayerAndMessage(event); 
     let strippedMsg = msg.removeFormatting();
@@ -312,30 +301,27 @@ register('chat', (playerInfo, playerRole, playerStuff, event) => {
     const ends = strippedMsg.endsWith(continueSymbol);
     const player = stripRank(playerInfo);            
     const isBot = data.bots.includes(player);
-
-    // if !starts && ends, starting message of continued parts
-    // if starts && ends, middle message of continued parts
-    // if starts && !ends, ending message of continued parts
-
     if (!ends) { // finish (both multi and single message)
         let finalMsg = msg;
-        if (starts && isBot) { // ending message of continued parts
+        if (starts) { // ending message of continued parts
             finalMsg = multiMessages.pop() + msg.slice(continueSymbol.length);
-        }   
+        };
+
         const newMsg = messageHandler(BOT_PREFIX, finalMsg);          
         if (newMsg && newMsg !== finalMsg) {    
             finalMsg = newMsg;
             replaceMessage(event, newMsg);               
-        }           
-    } else if (starts && isBot) { // middle of multi-message -- bot
+        };
+
+    } else if (starts) { // middle of multi-message -- bot
         multiMessages[0] += msg.slice(continueSymbol.length, -continueSymbol.length);
         cancel(event);
     
     } else { // start of multi-message
         multiMessages.push(msg.slice(0, -continueSymbol.length));
         cancel(event);
-    }   
-}).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
+    };
+}), () => getInSkyblock()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
 
 register('command', () => {
     console.log(multiMessages);
