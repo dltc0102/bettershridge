@@ -85,7 +85,7 @@ Main Changes:
 + added /setbot, /botlist, and /rmbot commands to set bot names
 + restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
 + updated error messages with new check prefix '⚠'
-+ _tfish command fixed for noobf and general
++ changed getInSkyblock() to getInHypixel() 
 + reformatted a lot of code (most notably role updates, contest messages, collection messages)
 + stopped constant addons of a bot that is already in bot list
 
@@ -97,6 +97,7 @@ Minor Changes:
 + changed gameload message
 + changed formatting for _be command to include 'k/d'
 + added formatting to 'Your role does not have requirements!'
++ fixed _tfish command for noobf and general
 
 WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
 

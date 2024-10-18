@@ -9,6 +9,10 @@ export function getInSkyblock() {
     return (World.isLoaded() && ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK"));
 };
 
+export function getInHypixel() {
+    return (World.isLoaded() && Server.getIP().includes('hypixel'));
+}
+
 export function capitalise(word) {
     if (word.includes(' ')) {
         return word.split(' ').map(part => capitalise(part.toLowerCase())).join(' ');

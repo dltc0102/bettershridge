@@ -1,4 +1,4 @@
-import { createMessage, getInSkyblock, getLinkHoverable, stripRank, removeRandomID, highlightTags } from './functions';
+import { createMessage, getInHypixel, getLinkHoverable, stripRank, removeRandomID, highlightTags } from './functions';
 import { data } from './bots';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
@@ -12,7 +12,7 @@ const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Ench
 const tempBoop = {
     'booper': '',
     'booped': '',
-};
+};      
 
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -354,4 +354,4 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         multiMessages.push(msg.slice(0, -continueSymbol.length));
         cancel(event);
     };
-}), () => getInSkyblock()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');        
+}), () => getInHypixel()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
