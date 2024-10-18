@@ -79,7 +79,7 @@ function handleLinkMessages(prefix, sender='', message) {
 }
 
 function botMessageHandler(prefix, message) {   
-    let botMessage = message.removeFormatting().replace(idRegex, '').trim();
+    let botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
 
     //! _mayor
     if (botMessage.startsWith('Current mayor: ')) {
@@ -123,8 +123,21 @@ function botMessageHandler(prefix, message) {
         return getGuildResponse(prefix, botMessage, 'commandHelp');
 
     //! syntax error
-    } else if (botMessage.includes('Syntax')) {
-        return getGuildResponse(prefix, botMessage, 'syntaxError');
+    } else if (botMessage.includes('Syntax')) { 
+        let [title, message] = botMessage.split(': ');
+        let alias = removeRandomID(message).split(' ')[0].trim();
+        const list1 = ['skill', 'be', 'bestiary', 'col', 'coll', 'collection', 'fw', 'fweight', 'elite', 'slayer'];
+        const list2 = ['ib', 'bzib', 'instabuy', 'is', 'bzis', 'instasell'];
+        const list3 = ['cata', 'trophy', 'trophyfish', 'tfish'];
+        if (list1.some(name => alias === name)) {
+            return getGuildResponse(prefix, botMessage, 'syntaxError1')
+        }
+        if (alias === '<amount>[k|m|b|s]') {
+            return getGuildResponse(prefix, botMessage, 'syntaxError2')
+        }
+        if (list3.some(name => alias === name)) {
+            return getGuildResponse(prefix, botMessage, 'syntaxError3')
+        }
 
     //! sticker
     } else if (/\<.+\>/.test(botMessage)) {

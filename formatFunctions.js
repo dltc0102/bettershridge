@@ -64,9 +64,17 @@ export function getGuildResponse(prefix, message, type) {
             regex: /Spooked (.+)! \>:\)/,
             format: formatSpook2
         },
-        syntaxError: {
-            regex: /Syntax: (.+?) <(.+?)> (?:<(.+?)>)?/,
-            format: formatSyntaxError
+        syntaxError1: {
+            regex: /Syntax: (.+) \<player:\[(.+)\]\>( \<.+\>)?/,
+            format: formatSyntaxError1
+        },
+        syntaxError2: { 
+            regex: /Syntax: \<amount\>\[k\|m\|b\|s\] \<item name\>/,
+            format: formatSyntaxError2
+        },
+        syntaxError3: {
+            regex: /Syntax: (.+) \<player:\[(.+)\]\> \[(.+)\]/,
+            format: formatSyntaxError3
         },
         generalDecoded: {
             regex: /.+/, 
@@ -593,7 +601,25 @@ function formatAuctionLinks(prefix, match) {
     return createMessage(titleMessage, hoverable);
 }       
 
-function formatSyntaxError(prefix, match) {
-    let [_, type, condition1, condition2=null] = match;
-    
+function formatSyntaxError1(prefix, match) {
+    let [_, alias, playerOptions, condition2=null] = match;
+    let options2 = condition2 ? condition2 : '';
+    return `${prefix}Usage: &r_${alias} player:[${playerOptions}] ${options2}`;
 };
+
+function formatSyntaxError2(prefix, match) {
+    let [_] = match;    
+    return `${prefix}Usage: &r_[ib|is] amount:[k|m|b|s] <item name>`;
+};      
+
+function formatSyntaxError3(prefix, match) {
+    let [_, alias, playerOptions, options2] = match;
+    return `${prefix}Usage: &r_${alias} player:[${playerOptions} [${options2}]`;        
+};
+
+// 8 sb hours
+// 1176
+// 1346 (170)
+// 1547 (201)
+// 1733 (186)
+// 1922 (189)
