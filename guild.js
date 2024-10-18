@@ -3,7 +3,7 @@ import { data } from './bots';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
-const BOT_PREFIX = '&2B > &a';  
+const BOT_PREFIX = '&2B > &a';      
 const continueSymbol = '➩';
 const idRegex = /<@.+>/;
 
@@ -231,54 +231,65 @@ function botMessageHandler(prefix, message) {
 function discordPlayerMessageHandler(prefix, message) {
     // &rAyaDaSheep:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a1637216851/JNH_31352125_344166^kqh?fy=781feg7c&jt=781e9efc&in=593dd25bbgd7b761625ba2ce6294ec3f33c18e436673672fd48e36e894b65b3a&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfo➩&r&r➩ut/2178616a237255a1343/23a65aa5a211942a63a/JNH_31352125_344227^kqh?fy=781feg7c&jt=781e9efc&in=4c3f723a6d948c22ge4ef8ggdc31effb6g727ggeef842b66dg996559a3fc61e4&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a2518151623/JNH_313521➩&r&r➩25_344323^kqh?fy=781feg7c&jt=781e9efc&in=99346118f34549a2158d67d8225g72ff88b6528a6a6ccee8f61a9cca6ad4ca15&)&r&r    
     let dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
-    let [sender, response] = dpMessage.split(': ');     
-    return response.includes('[LINK]')       
+    let [sender, responses] = dpMessage.split(/: (.+)/);     
+    return responses.includes('[LINK]')       
         ? handleLinkMessages(prefix, sender, dpMessage)
-        : `${prefix}${sender}&r: ${highlightTags(response)}`;
+        : `${prefix}${sender}&r: ${highlightTags(responses)}`;
 };
 
 function guildPlayerMessageHandler(prefix, message) {
-    // &b[MVP&c+&b] oBiscuit &3[Cray]&f: &rblooh blah&r    
-    let [sender, response] = removeRandomID(message).split(': '); 
-    if (response.includes('[LINK]')) {
-        return handleLinkMessages(prefix, sender, response);
+    // &b[MVP&9+&b] Usamah &3[Krill]&f: &r[370] 〣 [MVP+] Usamah: join shrimple if u do main it frfr  [348] α [MVP+] IMainFishing: l guild&r&r
+    let [sender, responses] = removeRandomID(message).split(/: (.+)/); 
+    if (responses.includes('[LINK]')) {     
+        return handleLinkMessages(prefix, sender, responses);
     } else {                    
-        return `${prefix}${sender}&r: ${highlightTags(response)}`;
+        return `${prefix}${sender}&r: ${highlightTags(responses)}`;
     }
 };
 
 function replyMessageHandler(prefix, message) {
-    // &rbiscuit [to] nquek: test &r
+    // &r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rIGrindDiana [to] Citrus: &r[LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/23a2762a4a9285a3642/23a66795336aa766575/jnbhf^qoh?fy=781g2gaf&jt=781edf2f&in=cc65a397a3d7a693cec2b9f8b21f67ab44fc69gcc23958cg6eagcefc16ce943d&)&r
+    console.log('replymessagehandler');
+    console.log(message);
     let replyMessage = removeRandomID(message.removeFormatting());
-    let [sender, response] = replyMessage.split(': ');
-    let [name1, name2] = sender.split(' [to] ');
+    let [sender, responses] = replyMessage.split(/: (.+)/);
+    let [name1, name2] = sender.split(' [to] ');    
     let formattedSender = `&a${name1} &2[to]&a${name2}`
-    return response.includes('[LINK]') 
-        ? handleLinkMessages(prefix, formattedSender, response)
-        : `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(response)}`;
+    return responses.includes('[LINK]') 
+        ? handleLinkMessages(prefix, formattedSender, responses)        
+        : `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
 };
 
 function messageHandler(prefix, message) {
     let type = '';
+    let resMessage = '';
     let strippedMessage = message.removeFormatting();
     //* bot
     if (idRegex.test(message) || !message.includes(': ')) {
         type = 'bot';
+        resMessage = message;   
 
     //* guildPlayer
     } else if (/(&[a-qs-z0-9])(.+) &3(.+)&f: &r(.+)&r/.test(message) && !idRegex.test(message)) {
         type = 'guildPlayer';
+        resMessage = message;
 
-    //* discordPlayer & reply
+    //* discordPlayer & reply                               
     } else if (strippedMessage.includes(': ') && !idRegex.test(message)) {
-        let [sender, response] = strippedMessage.split(': ');
-        type = sender.includes(' [to] ') ? 'reply' : 'discordPlayer';
-    }   
+        let [sender, responses] = strippedMessage.split(/: (.+)/);  
+        if (sender.includes(' [to] ')) {
+            type = 'reply';
+            resMessage = strippedMessage;
 
-    if (type === 'bot') return botMessageHandler(prefix, message);
-    if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, message);
-    if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, message);
-    if (type === 'reply') return replyMessageHandler(prefix, message);
+        } else {
+            type = 'discordPlayer';
+            resMessage = strippedMessage;
+        }
+    }   
+    if (type === 'bot') return botMessageHandler(prefix, resMessage);
+    if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
+    if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);
+    if (type === 'reply') return replyMessageHandler(prefix, resMessage);
 };
 
 function replaceMessage(event, message) {
@@ -294,20 +305,20 @@ function replaceMessage(event, message) {
 
 let multiMessages = [];             
 registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole, playerStuff, event) => {
-    const rawMsg = ChatLib.getChatMessage(event, true);
     let [msgType, msg] = separatePlayerAndMessage(event); 
     let strippedMsg = msg.removeFormatting();
     const starts = strippedMsg.startsWith(continueSymbol);
     const ends = strippedMsg.endsWith(continueSymbol);
     const player = stripRank(playerInfo);            
-    const isBot = data.bots.includes(player);
+    // const isBot = data.bots.includes(player); // not sure if needed
+
     if (!ends) { // finish (both multi and single message)
         let finalMsg = msg;
         if (starts) { // ending message of continued parts
             finalMsg = multiMessages.pop() + msg.slice(continueSymbol.length);
         };
 
-        const newMsg = messageHandler(BOT_PREFIX, finalMsg);          
+        const newMsg = messageHandler(BOT_PREFIX, finalMsg);
         if (newMsg && newMsg !== finalMsg) {    
             finalMsg = newMsg;
             replaceMessage(event, newMsg);               

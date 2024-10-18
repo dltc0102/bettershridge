@@ -1,4 +1,4 @@
-import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, getLinkHoverable, createMessage } from './functions.js';
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, getLinkHoverable, createMessage, stripRank } from './functions.js';  
 
 const SPACING = `&2   |  &a`; 
 
@@ -16,6 +16,7 @@ function generateMessage(prefix, message, regex, formatHandler) {
     if (match) {
         return formatHandler(prefix, match);    
     } else {        
+        console.log('not matched -- bettershridge')
         console.log(`matched: false`);
         console.log(`formatHandler: ${formatHandler}`);
         console.log(`message: ${message}`);
@@ -143,8 +144,8 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+) fish for (.+) \((.+)\): Total: (\d+?) \(w\/o Obf 1\) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18.+/,
             format: formatTfishObf
         },
-        tfishSpecific: {
-            regex: /(.+) caught for (.+) \((.+)\): Total (.+): (\d+) \| Bronze: (\d+) \| Silver: (\d+) \| Gold: (\d+) \| Diamond: (\d+).+/,
+        tfishSpecific: {        
+            regex: /(.+) caught for (.+) \((.+)\): Total (.+): (\d+) \| Bronze: (\d+) \| Silver: (\d+) \| Gold: (\d+) \| Diamond: (\d+)/,
             format: formatTfishSpecific     
         },
         contestSpecific: {
@@ -178,43 +179,11 @@ export function getGuildResponse(prefix, message, type) {
         auction: {
             regex: /(.+) (&[a-z0-9]\[.+\]&[a-z0-9]): &r(\/viewauction .+)&.+/,
             format: formatAuctionLinks
-        },
-        talkingAuction: {
-            regex: /(.+): (\/viewauction .+).+/,
-            format: formatTalkingAuctionLinks
-        },
-        replyAuction: {
-            regex: /(.+) \[to\] (.+): (\/viewauction .+)/,
-            format: formatReplyAuctionLinks
-        },
-        replyPatcherImage: {
-            regex: /(.+) \[to\] (.+): \[Patcher\] .+ (https\:\/\/.+)\./,
-            format: formatReplyPatcherImage
-        },
-        talkingPatcherImage: {
-            regex: /(.+): \[Patcher\] .+ (https\:\/\/.+)\./,
-            format: formatTalkingPatcherImage
-        },
-        playerPatcherImage: {
-            regex: /(.+) (&[a-z0-9]\[.+\]&[a-z0-9]):\s.+(https\:\/\/.+)\..+/,
-            format: formatPlayerPatcherImage
-        },
-        replyWebsite: {
-            regex: /(.+) \[to\] (.+): (https\:\/\/.+)/,
-            format: formatReplyWebsite
-        },
-        talkingWebsite: {
-            regex: /(.+): (https\:\/\/.+)/,
-            format: formatTalkingWebsite
-        },
-        playerWebsite: {
-            regex: /(.+) (&[a-z0-9]\[.+\]&[a-z0-9]):(.+)(https\:\/\/.+)&.+/,    
-            format: formatPlayerWebsite
         }
-        };
+    };
 
-        const { regex, format } = patterns[type];
-        return generateMessage(prefix, message, regex, format);
+    const { regex, format } = patterns[type];
+    return generateMessage(prefix, message, regex, format);
 }   
 
 function formatUpdatedMessage(prefix, match) {  
@@ -255,25 +224,6 @@ function formatSpook1(prefix, match) {
 function formatSpook2(prefix, match) {
     let [_, spooked] = match;
     return `${prefix}&8Spooked &6${spooked}! &c>:)`;   
-};
-
-function formatSyntaxError(prefix, match) {
-    let [_, type, condition1, condition2=null] = match;
-    if (condition1 === 'item name') {
-        let newType = 'Insta-buy/sell';
-        let hoverableName = new TextComponent(`&c_${newType.toLowerCase()}`).setHover('show_text', '&e_command (aliases)\n---------------\n&eInsta Buy: instabuy / ib / bzib\n&eInsta Sell: instasell / is / bzis') 
-        let hoverableAmt = new TextComponent(`&e[amount](k|M|B|s)`).setHover('show_text', '&e(amount)\n---------------\n&ek: 1,000\n&eM: 1,000,000\n&eB: 1,000,000,000\n&es: stacks');
-        let message = new Message(
-            `${prefix}Usage: `, hoverableName, ' ', hoverableAmt, ' ', '<item name>', condition2 ? condition2 : ''          
-        );
-        return message;     
-
-    } else {
-        let [part1, options] = condition1.replace(/\|/g, '/').split(':');
-        let message = `${prefix}Usage: &c_${type.toLowerCase()} &e${part1}:${options}`; 
-        return condition2 ? `${message} [${condition2.includes('|') ? condition2.replace(/\|/g, '/') : condition2}]` : message;                                                 
-
-    };
 };
 
 function formatGeneralDecodedLink(prefix, match) {  
@@ -412,8 +362,6 @@ function formatBazaar(prefix, match) {
     let formattedName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
     let buyColor = buyPrice === 'Not available' ? '&c' : '&6';
     let sellColor = sellPrice === 'Not available' ? '&c' : '&6';
-    console.log(buyColor, buyPrice)
-    console.log(sellColor, sellPrice)
     return [
         `${prefix}Bazaar data for &r${itemColor}${formatEssence(formattedName)}&a:`,
         `${SPACING}Insta-buy: ${buyColor}${buyPrice}`,
@@ -553,7 +501,7 @@ function formatTfishSpecific(prefix, match) {
     let [_, fishName, playerName, playerProfile, fishName2, totalFish, bronzeFish, silverFish, goldFish, diamondFish] = match;
     let fishNameColor = fishName in fishColorsDict ? fishColorsDict[fishName] : ''; 
     return [
-        `${prefix}${fishNameColor}${fishName} &adata for ${playerName} (${playerProfile}):`,                         
+        `${prefix}${fishNameColor}${fishName} &adata for &2${playerName}&a (${playerProfile}):`,                         
         `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeFish} &a|&r &7${silverFish} &a|&r &6${goldFish} &a|&r &b${diamondFish} &a]&r`,        
     ];
 }
@@ -618,11 +566,6 @@ function getBotBooper(prefix, match) {
 
 function formatCollections(prefix, match) {
     let [_, collName, playerName, playerProfile, items] = match;
-    console.log(`collName: ${collName}`)
-    console.log(`playerName: ${playerName}`)
-    console.log(`playerProfile: ${playerProfile}`)
-    console.log(`items: ${items}`)
-    console.log(' ');                           
     let collColor = collNameCodes[collName.toLowerCase()];
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
@@ -643,113 +586,14 @@ function formatCollections(prefix, match) {
     return collectionMessages;
 }
 
-// guild prefix: talking -- viewauction links ##
 function formatAuctionLinks(prefix, match) {
     let [_, nameInfo, formattedRole, link] = match;
     let titleMessage = `${prefix}${nameInfo} ${formattedRole}: `;
     let hoverable = getLinkHoverable(link);
     return createMessage(titleMessage, hoverable);
-}
+}       
 
-// bot prefix: talking -- viewauction links ##
-function formatTalkingAuctionLinks(prefix, match) {
-    let [_, name, link] = match;
-    let titleMessage = `${prefix}${name}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
+function formatSyntaxError(prefix, match) {
+    let [_, type, condition1, condition2=null] = match;
+    
 };
-
-// bot prefix: [to] -- viewauction link ##
-function formatReplyAuctionLinks(prefix, match) {
-    let [_, name1, name2, link] = match;
-    let titleMessage = `${prefix}${name1.trim()} &2[to] &a${name2.trim()}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
-}
-
-// bot prefix: [to] -- wesbites and discord images ##
-function formatReplyWebsite(prefix, match) {
-    let [_, name1, name2, link] = match;        
-    let titleMessage = `${prefix}${name1.trim()} &2[to] &a${name2.trim()}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
-}   
-
-// bot prefix: talking -- wesbites and discord images ##
-function formatTalkingWebsite(prefix, match) {
-    let [_, name, link] = match;
-    let titleMessage = `${prefix}${name.trim()}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
-}
-
-// guild prefix: talking -- wesbites and discord images ##
-function wrapText(givText, everyNum, color) {
-    const words = givText.split(' ').map(word => word.trim());
-    let result = '';
-    words.forEach((word, idx) => {
-        if ((idx + 1) % everyNum === 0) {
-            result += `${word}\n`;
-        } else {
-            result += `${color}${word} `;
-        }
-    });
-    return result.trim();
-}
-
-function formatReason(comment, reason) {
-    let wrapComment = wrapText(comment, 4, '&f')
-    let wrapReason = wrapText(reason, 4, '&c');
-    return `&6Blocked Comment:\n&r${wrapComment}\n--------------------\n&aReason: \n&c${wrapReason}\n--------------------\n&eClick to View Rules`;            
-}
-
-function formatPlayerWebsite(prefix, match) {
-    let [_, formattedName, formattedRole, fullMessage, link] = match;
-    let blockReason = '';
-    let comment = '';
-    if (fullMessage.includes('We blocked your comment')) {  
-        const commentRegex = /"([^"]*)"/;
-        let commentMatch = fullMessage.match(commentRegex);
-        comment = commentMatch ? commentMatch[1] : null;
-
-        const blockRegex = /because it (.+)\./;
-        let blockMatch =  fullMessage.match(blockRegex);
-        if (blockMatch) blockReason = blockMatch[1]
-    }   
-    let newBlockReason = formatReason(comment, blockReason);
-    let reasonHoverable = new TextComponent('&c&l<BLOCKED>')
-        .setHover('show_text', newBlockReason)
-        .setClick('open_url', link);
-
-    let titleMessage = `${prefix}${formattedName} ${formattedRole}: `;
-
-    let hoverable = getLinkHoverable(link);
-    return blockReason === '' 
-        ? createMessage(titleMessage, hoverable) 
-        : createMessage(titleMessage, reasonHoverable);
-}
-
-// bot prefix: [to] -- patcher images ## 
-function formatReplyPatcherImage(prefix, match) {
-    let [_, name1, name2, link] = match;
-    let titleMessage = `${prefix}${name1.trim()} &2[to] &a${name2.trim()}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
-}
-
-// bot prefix: talking -- patcher images ## 
-function formatTalkingPatcherImage(prefix, match) {
-    let [_, name, link] = match;
-    let titleMessage = `${prefix}${name.trim()}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
-}
-
-// guild prefix: talking -- patcher images ## 
-function formatPlayerPatcherImage(prefix, match) {
-    let [_, formattedName, formattedRole, link] = match;
-    let titleMessage = `${prefix}${formattedName} ${formattedRole}: `;
-    let hoverable = getLinkHoverable(link);
-    return createMessage(titleMessage, hoverable);
-}
-

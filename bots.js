@@ -13,10 +13,10 @@ register('command', (args) => {
         ChatLib.chat('&cCorrect Usage: &b/setbot (botName) &7(botName is case sensitive)')
     } else {
         data.bots.push(args);
-        ChatLib.chat(`Bridge Bot set: ${args}`);
+        ChatLib.chat(`Bridge Bot added: ${args}`);
         data.bots = data.bots.filter(bot => bot !== null);
     }
-}).setName('setbot');
+}).setName('addbot');
 
 register('command', () => {
     if (!getInSkyblock()) return;
@@ -33,8 +33,9 @@ register('command', (args) => {
     if (!args) {
         ChatLib.chat('&cCorrect Usage: /rmbot (botName) &7(botName is case sensitive)')
     } else {
-        if (data.bots.includes(args)) data.bots = data.bots.filter(bot => bot !== args);        
+        data.bots = data.bots.filter(bot => bot !== args);        
         ChatLib.chat(`&a${args} &cremoved &afrom bot list.`);       
         ChatLib.chat(new TextComponent('&e&l[CLICK TO VIEW BOTLIST]').setClick('run_command', '/botlist').setHover('show_text', '/botlist'));
+        data.save();
     }
 }).setName('rmbot');
