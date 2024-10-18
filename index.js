@@ -6,7 +6,7 @@ import './guild.js';
 
 let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 register('gameLoad', () => {
-    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7@oBiscuit if any problems/questions`)   
+    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
     if (!data.firstInstall) {
         if (moduleVersion === '0.1.3') {
             ChatLib.chat(`&e&lNEW Features: (v${moduleVersion})`);

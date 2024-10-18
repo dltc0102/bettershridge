@@ -84,7 +84,7 @@ function handleLinkMessages(prefix, sender='', message) {
         return createMessage(titleMessage, [auctionClickable]);   
     }
 }
-
+                
 function botMessageHandler(prefix, message) {   
     let botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
 
@@ -144,15 +144,15 @@ function botMessageHandler(prefix, message) {
         if (list1.some(name => alias === name)) {
             return getGuildResponse(prefix, botMessage, 'syntaxError1')
         }
-        if (alias === '<amount>[k|m|b|s]') {
+        if (alias === '<amount>[k|m|b|s]') {    
             return getGuildResponse(prefix, botMessage, 'syntaxError2')
         }
         if (list3.some(name => alias === name)) {
             return getGuildResponse(prefix, botMessage, 'syntaxError3')
         }
 
-    //! sticker
-    } else if (/\<.+\>/.test(botMessage)) {
+    //! sticker     
+    } else if (/\<.+\>/.test(botMessage) && !botMessage.includes('⚠')) {   
         return getGuildResponse(prefix, botMessage, 'sticker');
         
     //! october specials
@@ -249,7 +249,7 @@ function botMessageHandler(prefix, message) {
         
     //! responses & 8ball
     } else {
-        return botMessage.startsWith('⚠')
+        return (botMessage.startsWith('⚠'))
         ? `${prefix}&c${botMessage}` 
         : `${prefix}${botMessage}`; 
     }
