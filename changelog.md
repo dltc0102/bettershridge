@@ -92,8 +92,9 @@ TEST: commented out patcher/discord images/websites related code (works without)
 + restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
 + changed formatting for _be command to include 'k/d'
 + added formatting to 'Your role does not have requirements!'
++ reformatted a lot of code (most notably role updates, contest messages, collection messages)
 
-
+WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
 
 
 
