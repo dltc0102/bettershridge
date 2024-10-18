@@ -161,8 +161,12 @@ export function getGuildResponse(prefix, message, type) {
             format: formatContestSpecific
         },
         nextContest: {
-            regex: /Next contest \((.+), (.+), (.+)\) in (.+)\..+/,
+            regex: /Next contest \((.+)\) in (.+)\./,
             format: formatNextContest
+        },
+        activeContest: {
+            regex: /Active contest \((.+)\) ending in (.+)! Next contest \((.+)\) in (.+)\./,
+            format: formatActiveContest
         },
         farmingWeight: {
             regex: /Farming weight for (.+) \((.+)\): (.+)\. Collections \((.+)\): (.+)\./,
@@ -522,12 +526,25 @@ function formatContestSpecific(prefix, match) {
 }
 
 function formatNextContest(prefix, match) {
-    let [_, crop1, crop2, crop3, dur] = match;
-    let [h, m, s] = dur.split(':');
-    let formatTime = `${Number(h)}h ${Number(m)}m ${Number(s)}s`;
-    return `${prefix}Next contest in &6${formatTime}&a.\n${SPACING}&aCrops: &6${capitalise(crop1)}, ${capitalise(crop2)}, ${capitalise(crop3)}`;
+    let [_, nextCrops, timeTillNext] = match;
+    let f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
+
+    return [
+        `${prefix}Next Contest in ${formatColonTime(timeTillNext)}!`,
+        `${SPACING}Crops: &6${f_nextCrops}`
+    ];  
 }   
 
+function formatActiveContest(prefix, match) {
+    [_, activeCrops, currContestTimeLeft, nextCrops, nextContestTime] = match;
+    let currCrops = activeCrops.split(', ').map(crop => capitalise(crop)).join(', ');       
+    let f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
+    return [        
+        `${prefix}Contest is Active! [&r${formatColonTime          (currContestTimeLeft)} left&a] &8|&r &7Next in ${formatColonTime(nextContestTime)}`,
+        `${SPACING}Current Contest: &6${currCrops}`,
+        `${SPACING}Next Contest: &6${f_nextCrops}`
+    ];
+}
 function formatFarmingWeight(prefix, match) {
     let [_, playerName, playerProfile, weight, collWeight, others] = match;
     let otherWeights = others.split(', ').map(weightLine => {
@@ -623,3 +640,4 @@ function formatSyntaxError3(prefix, match) {
 // 1547 (201)
 // 1733 (186)
 // 1922 (189)
+// 2125 (203)

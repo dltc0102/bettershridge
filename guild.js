@@ -187,7 +187,9 @@ function botMessageHandler(prefix, message) {
 
     //! _contest next
     } else if (botMessage.includes('Next contest')) {
-        return getGuildResponse(prefix, botMessage, 'nextContest');
+        return botMessage.includes('Active contest')    
+            ? getGuildResponse(prefix, botMessage, 'activeContest')
+            : getGuildResponse(prefix, botMessage, 'nextContest');
         
     //! _boop player
     } else if (botMessage.includes('_boop')) {
