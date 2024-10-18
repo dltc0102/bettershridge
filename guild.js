@@ -3,12 +3,12 @@ import { data } from './bots';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
-const BOT_PREFIX = '&2B > &a';      
+const BOT_PREFIX = '&2B > &a';              
 const continueSymbol = '➩';
-const idRegex = /<@.+>/;
+const idRegex = /<@.+>/;    
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
-const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
+const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];
 const ERROR_MESSAGES = ["Wait a while before trying again.", "Can't message an offline player.", "Could not send a private message to that player.", "Spam protection moment", "No product found!", "Error: Failed to get UUID from API, and no cached UUID was found.", "No permission", "No username provided.", "You must be staff to update the role of another member!", "Invalid type or mob", "Too many arguments!"];        
 
 const tempBoop = {
@@ -19,7 +19,7 @@ const tempBoop = {
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
     const playerMessage = message.substring(message.indexOf("> ")+1).trim();
-    let type = '';
+        let type = '';
     let resMessage = '';
     let playerRegex = /(.+) (&[a-qs-z0-9])\[(.+)\]&f: (.+)/;
     let playerMatch = playerMessage.match(playerRegex);
@@ -62,20 +62,29 @@ function separatePlayerAndMessage(e) {
 }               
 
 function handleLinkMessages(prefix, sender='', message) {
-    // AyaDaSheep: [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a74411894a3791569/jnbhf^qoh?fy=7822f5g8&jt=7821a488&in=944b4326373d213bad854fce5g475gcebf2d3gae99382317ge27eda5519e5ff4&) [LINK](deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7516887882a88361/jnbhf^qoh?fy=78233c88&jt=7821eag8&in=aeg5bf131f8e5c6af5727gabff6319367b81124f8f1315329b➩4bb59afd7d678d&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/215953a5457a1187784/23a7517693894226456/jnbhf^qoh?fy=78233d48&jt=7821ebc8&in=78cb48dbcd55b423d9d629eb588bcaddg3b1g85c7be9f46c91➩➩593g66382gd67f&)
-    let linkRegex = /\[LINK\]\((.+?)\)/g;
+    let linkRegex = /\[LINK\]\((.+?)\)/g;       
     let linkList = [];
     let foundLinks;
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }
-    let resultSender = sender ? `${sender}: ` : '';     
-    let otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
-    let titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
-    let linkHoverables = linkList.map(link => {
-        return getLinkHoverable(link);
-    })
-    return createMessage(titleMessage, linkHoverables);
+    if (linkList.length > 0) {
+        let resultSender = sender ? `${sender}: ` : '';     
+        let otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
+        let titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
+        let linkHoverables = linkList.map(link => {
+            return getLinkHoverable(link);
+        })  
+        return createMessage(titleMessage, linkHoverables);
+
+    } else { // view auction link
+        let titleMessage = `${prefix}${sender}: `;
+        let auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
+            .setClick('run_command', message)
+            .setHover('show_text', message);
+
+        return createMessage(titleMessage, [auctionClickable]);   
+    }
 }
 
 function botMessageHandler(prefix, message) {   
@@ -88,21 +97,26 @@ function botMessageHandler(prefix, message) {
     //! _mayor (certain mayor)
     } else if (MAYOR_NAMES.includes(botMessage.split(' ')[0])) {
         return getGuildResponse(prefix, botMessage, 'pickedMayor');
+
     //! promoted from
     } else if (botMessage.includes('promoted from')) {
-        return getGuildResponse(prefix, botMessage, 'promoted');
+        return getGuildResponse(prefix, message, 'promoted');
 
     //! demoted from
-    } else if (botMessage.includes('demoted from')) {
-        return getGuildResponse(prefix, botMessage, 'promoted');
+    } else if (botMessage.includes('demoted from')) {   
+        return getGuildResponse(prefix, message, 'demoted');
 
     //! role up to date
     } else if (botMessage.includes('Role is already up to date!')) {
         return getGuildResponse(prefix, botMessage, 'updatedMessage');
 
-    //! role does not have the requirements
+    //! your role does not have the requirements
     } else if (botMessage.includes('Your role does not have requirements!')) {
-        return getGuildResponse(prefix, botMessage, 'noreqUpdate');
+        return getGuildResponse(prefix, botMessage, 'yourNoReqUpdate');
+    
+    //! Role does not have requirements
+    } else if (botMessage.includes('Role does not have the requirements!')) {
+        return getGuildResponse(prefix, botMessage, 'noReqUpdate')
 
     //! _skill
     } else if (SKILL_NAMES.includes(botMessage.split(' ')[0]) && botMessage.includes('level for')) {
@@ -198,11 +212,11 @@ function botMessageHandler(prefix, message) {
         
     //! booped player
     } else if (botMessage.includes('Booped')) {
-        let match = botMessage.match(/Booped (.+)/);
+        let match = botMessage.match(/Booped (.+)!/);
         if (match) {    
             let [_, name] = match;
-            if (name.toLowerCase() === Player.getName().toLowerCase()) {
-                return `${prefix}&d&l${tempBoop.booper} Booped You!`;
+            if (name.toLowerCase() === Player.getName().toLowerCase()) {    
+                return `${prefix}&d&l${tempBoop.booper}Booped You!`;
             } else if (name === tempBoop.booped) {
                 return `${prefix}&d&l${tempBoop.booper} Booped ${name}!`;
             } else {
@@ -244,18 +258,16 @@ function botMessageHandler(prefix, message) {
 };
 
 function discordPlayerMessageHandler(prefix, message) {
-    // &rAyaDaSheep:  [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a1637216851/JNH_31352125_344166^kqh?fy=781feg7c&jt=781e9efc&in=593dd25bbgd7b761625ba2ce6294ec3f33c18e436673672fd48e36e894b65b3a&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfo➩&r&r➩ut/2178616a237255a1343/23a65aa5a211942a63a/JNH_31352125_344227^kqh?fy=781feg7c&jt=781e9efc&in=4c3f723a6d948c22ge4ef8ggdc31effb6g727ggeef842b66dg996559a3fc61e4&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/23a65aa5a2518151623/JNH_313521➩&r&r➩25_344323^kqh?fy=781feg7c&jt=781e9efc&in=99346118f34549a2158d67d8225g72ff88b6528a6a6ccee8f61a9cca6ad4ca15&)&r&r    
     let dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
     let [sender, responses] = dpMessage.split(/: (.+)/);     
-    return responses.includes('[LINK]')       
+    return responses.includes('[LINK]') || responses.includes('viewauction')      
         ? handleLinkMessages(prefix, sender, dpMessage)
         : `${prefix}${sender}&r: ${highlightTags(responses)}`;
 };
 
 function guildPlayerMessageHandler(prefix, message) {
-    // &b[MVP&9+&b] Usamah &3[Krill]&f: &r[370] 〣 [MVP+] Usamah: join shrimple if u do main it frfr  [348] α [MVP+] IMainFishing: l guild&r&r
     let [sender, responses] = removeRandomID(message).split(/: (.+)/); 
-    if (responses.includes('[LINK]')) {     
+    if (responses.includes('[LINK]') || responses.includes('viewauction')) {     
         return handleLinkMessages(prefix, sender, responses);
     } else {                    
         return `${prefix}${sender}&r: ${highlightTags(responses)}`;
@@ -263,24 +275,21 @@ function guildPlayerMessageHandler(prefix, message) {
 };
 
 function replyMessageHandler(prefix, message) {
-    // &r&2Guild > &6[MVP&c++&6] Baltics &3[Admin]&f: &rIGrindDiana [to] Citrus: &r[LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/23a2762a4a9285a3642/23a66795336aa766575/jnbhf^qoh?fy=781g2gaf&jt=781edf2f&in=cc65a397a3d7a693cec2b9f8b21f67ab44fc69gcc23958cg6eagcefc16ce943d&)&r
-    console.log('replymessagehandler');
-    console.log(message);
     let replyMessage = removeRandomID(message.removeFormatting());
     let [sender, responses] = replyMessage.split(/: (.+)/);
-    let [name1, name2] = sender.split(' [to] ');    
-    let formattedSender = `&a${name1} &2[to]&a${name2}`
-    return responses.includes('[LINK]') 
+    let [name1, name2] = sender.split(' [to] ');   
+    let formattedSender = `&a${name1} &2[to]&a ${name2}`    
+    return responses.includes('[LINK]') || responses.includes('viewauction')
         ? handleLinkMessages(prefix, formattedSender, responses)        
         : `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
-};
+};  
 
 function messageHandler(prefix, message) {
     let type = '';
     let resMessage = '';
     let strippedMessage = message.removeFormatting();
-    //* bot
-    if (idRegex.test(message) || !message.includes(': ')) {
+    //* bot     
+    if (idRegex.test(message) || !message.includes(': ') && !message.includes('l$')) {
         type = 'bot';
         resMessage = message;   
 
@@ -300,7 +309,7 @@ function messageHandler(prefix, message) {
             type = 'discordPlayer';
             resMessage = strippedMessage;
         }
-    }   
+    }
     if (type === 'bot') return botMessageHandler(prefix, resMessage);
     if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
     if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);
@@ -318,14 +327,14 @@ function replaceMessage(event, message) {
     }
 };
 
-let multiMessages = [];             
+let multiMessages = [];
 registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole, playerStuff, event) => {
     let [msgType, msg] = separatePlayerAndMessage(event); 
     let strippedMsg = msg.removeFormatting();
     const starts = strippedMsg.startsWith(continueSymbol);
     const ends = strippedMsg.endsWith(continueSymbol);
     const player = stripRank(playerInfo);            
-    // const isBot = data.bots.includes(player); // not sure if needed
+    const isBot = data.bots.includes(player);
 
     if (!ends) { // finish (both multi and single message)
         let finalMsg = msg;
@@ -347,8 +356,4 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         multiMessages.push(msg.slice(0, -continueSymbol.length));
         cancel(event);
     };
-}), () => getInSkyblock()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
-
-register('command', () => {
-    console.log(multiMessages);
-}).setName('logstored');     
+}), () => getInSkyblock()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');        

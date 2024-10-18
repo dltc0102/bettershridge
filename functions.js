@@ -157,26 +157,16 @@ function getComponentParts(link) {
     }
     return [linkName, hoverText]
 }
-
+   
 export function getLinkHoverable(link) {
-    let linkExpired = '';
-    if (!link.includes('l$')) linkExpired = isLinkExpired(link);
-    if (link.startsWith('l$')) { // stuf link
-        let decodedLink = STuFLib.decode(link);
-        let checkDecoded = isLinkExpired(decodedLink);
-        let [linkName, hoverText] = getComponentParts(decodedLink);
-        return checkDecoded     
-            ? '&b<link expired> '
-            : new TextComponent(`${linkName} `)       
-                .setClick('open_url', decodedLink)
-                .setHover('show_text', hoverText);
-    
-    // view auction links
-    } else if (linkExpired === 'auction link') {
-        return new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
-            .setClick('run_command', link)
-            .setHover('show_text', link)
-    }
+    let decodedLink = STuFLib.decode(link);
+    let checkDecoded = isLinkExpired(decodedLink);
+    let [linkName, hoverText] = getComponentParts(decodedLink);
+    return checkDecoded     
+        ? '&b<link expired> '
+        : new TextComponent(`${linkName} `)       
+            .setClick('open_url', decodedLink)
+            .setHover('show_text', hoverText);
 }
 
 export function createMessage(title, components, recursive = false) {

@@ -40,8 +40,12 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+) is in (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?)(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?/,       
             format: formatMayorPicked
         },
-        noreqUpdate: {
+        yourNoReqUpdate: {
             regex: /Your role does not have requirements! But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
+            format: formatNoReqUpdateMessage
+        },
+        noReqUpdate: {
+            regex: /Role does not have the requirements! Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
             format: formatNoReqUpdateMessage
         },
         updatedMessage: {
@@ -49,11 +53,11 @@ export function getGuildResponse(prefix, message, type) {
             format: formatUpdatedMessage,
         },
         promoted: {
-            regex: /.+ Baltics .+?: (.+) (.+) &.+was promoted from (.+) to (.+)&.+/,
+            regex: /&r(&[a-qs-z0-9])(.+) &r&awas promoted from (.+) to (.+)&r.+/,
             format: formatPromotion,
         },
         demoted: {
-            regex: /.+ Baltics .+?: (.+) (.+) &.+was demoted from (.+) to (.+)&.+/, 
+            regex: /&r(&[a-qs-z0-9])(.+) &r&awas demoted from (.+) to (.+)&r.+/, 
             format: formatDemotion,
         },
         spooky1: {
@@ -148,8 +152,8 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+) fish for (.+) \((.+)\): Total: (\d+?) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18/,  
             format: formatTfishGeneral
         },
-        tfishObf: {
-            regex: /(.+) fish for (.+) \((.+)\): Total: (\d+?) \(w\/o Obf 1\) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18.+/,
+        tfishObf: {     
+            regex: /(.+) for (.+) \((.+)\): Total: (\d+) \(w\/o Obf 1\) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18/,
             format: formatTfishObf
         },
         tfishSpecific: {        
@@ -181,7 +185,7 @@ export function getGuildResponse(prefix, message, type) {
             format: formatInstaBuy
         },
         bot_boop: {
-            regex: /(.+): _boop (.+)?/,
+            regex: /(.+): _boop (.+)? (.+?)/,
             format: getBotBooper
         },
         collection: {
@@ -203,7 +207,7 @@ function formatUpdatedMessage(prefix, match) {
     return [    
         `${prefix}Role is already up to date!`, 
         `${SPACING}Next Role: &6${nextRole}`,
-        `${SPACING}Missing Fishing XP: &r${fexp}`,
+        `${SPACING}Missing &3Fishing XP&a: &r${fexp}`,
         `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,
     ];      
 };
@@ -211,21 +215,23 @@ function formatUpdatedMessage(prefix, match) {
 function formatNoReqUpdateMessage(prefix, match) {
     let [_, fexp, sblevels, nextRole] = match;
     return [
-        `${prefix}&cYour role does not have requirements!`,
+        `${prefix}&cRole does not have requirements!`,
         `${SPACING}Next Role: &6${nextRole}`,
-        `${SPACING}Missing Fishing XP: &r${fexp}`,
+        `${SPACING}Missing &3Fishing XP&a: &r${fexp}`,
         `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,
     ];
 };
 
 function formatPromotion(prefix, match) {
-    let [_, playerRank, playerName, from, to] = match;
-    return `${prefix}${playerRank} ${playerName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;      
+    let [_, playerColor, playerName, from, to] = match;
+    let playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`       
+    return `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;          
 };
 
 function formatDemotion(prefix, match) {
-    let [_, playerRank, playerName, from, to] = match;
-    return `${prefix}${playerRank} ${playerName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
+    let [_, playerColor, playerName, from, to] = match;
+    let playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`
+    return `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
 };
 
 function formatSpook1(prefix, match) {
@@ -443,7 +449,7 @@ function formatDungeonRecords(prefix, match) {
     let [fTime, fTimeS, fTimeSPlus] = [fastestTime, fastestTimeS, fastestTimeSPlus].map(formatColonTime);
     let floorColor = floor.startsWith('M') ? '&c' : '&e';
     return [
-        `${prefix}${floorColor}${floor}&r&a data for ${playerName} (${playerProfile}):`,
+        `${prefix}${floorColor}${floor}&r&a data for &2${playerName}&a (${playerProfile}):`,
         `${SPACING}Completions: &r${comps}`,
         `${SPACING}Fastest Time: &r${fTime}`,
         `${SPACING}Fastest Time (&6S&a): &r${fTimeS}`,
@@ -545,6 +551,7 @@ function formatActiveContest(prefix, match) {
         `${SPACING}Next Contest: &6${f_nextCrops}`
     ];
 }
+
 function formatFarmingWeight(prefix, match) {
     let [_, playerName, playerProfile, weight, collWeight, others] = match;
     let otherWeights = others.split(', ').map(weightLine => {
@@ -556,7 +563,7 @@ function formatFarmingWeight(prefix, match) {
         };
     });
     return [
-        `${prefix}&eFarming &aweight for ${playerName} (${playerProfile}): &6${weight}`,
+        `${prefix}&eFarming &aweight for &2${playerName}&a (${playerProfile}): &6${weight}`,
         `${SPACING}Collections: &r${collWeight}`,
         ...otherWeights, 
     ];
@@ -585,7 +592,7 @@ function formatInstaBuy(prefix, match) {
 } 
 
 function getBotBooper(prefix, match) {
-    let [_, booper, booped=''] = match;
+    let [_, booper, booped='', otherText=null] = match;
     return booped === '' ? [booper, ''] : [booper, booped];
 }
 
@@ -633,11 +640,3 @@ function formatSyntaxError3(prefix, match) {
     let [_, alias, playerOptions, options2] = match;
     return `${prefix}Usage: &r_${alias} player:[${playerOptions} [${options2}]`;        
 };
-
-// 8 sb hours
-// 1176
-// 1346 (170)
-// 1547 (201)
-// 1733 (186)
-// 1922 (189)
-// 2125 (203)
