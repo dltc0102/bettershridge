@@ -8,9 +8,7 @@ const continueSymbol = '➩';
 const idRegex = /<@.+>/;    
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
-const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];
-const ERROR_MESSAGES = ["Wait a while before trying again.", "Can't message an offline player.", "Could not send a private message to that player.", "Spam protection moment", "No product found!", "Error: Failed to get UUID from API, and no cached UUID was found.", "No permission", "No username provided.", "You must be staff to update the role of another member!", "Invalid type or mob", "Too many arguments!"];        
-
+const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];          
 const tempBoop = {
     'booper': '',
     'booped': '',
@@ -251,7 +249,7 @@ function botMessageHandler(prefix, message) {
         
     //! responses & 8ball
     } else {
-        return ERROR_MESSAGES.some(errorMessage => botMessage.includes(errorMessage)) 
+        return botMessage.startsWith('⚠')
         ? `${prefix}&c${botMessage}` 
         : `${prefix}${botMessage}`; 
     }

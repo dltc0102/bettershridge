@@ -11,10 +11,15 @@ register('command', (args) => {
     if (!getInSkyblock()) return;
     if (!args) {
         ChatLib.chat('&cCorrect Usage: &b/setbot (botName) &7(botName is case sensitive)')
-    } else {
-        data.bots.push(args);
-        ChatLib.chat(`Bridge Bot added: ${args}`);
-        data.bots = data.bots.filter(bot => bot !== null);
+    } else if (args) {
+        if (data.bots.includes(args)) {
+            ChatLib.chat(`&c${args} is already in Bot list!`);
+
+        } else {
+            data.bots.push(args);
+            ChatLib.chat(`&aBridge Bot added: &r${args}`);
+            data.bots = data.bots.filter(bot => bot !== null);
+        }
     }
 }).setName('addbot');
 

@@ -81,18 +81,22 @@ TEST: commented out patcher/discord images/websites related code (works without)
 + removed all traces of 'stripColors' function xd
 
 # v1.3
-+ updated error messages
+Main Changes:
++ added /setbot, /botlist, and /rmbot commands to set bot names
++ restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
++ updated error messages with new check prefix '⚠'
++ _tfish command fixed for noobf and general
++ reformatted a lot of code (most notably role updates, contest messages, collection messages)
++ stopped constant addons of a bot that is already in bot list
+
+Minor Changes:
 + updated formatTime() func to have flexibility for mayor picked cmd
 + updated link names for discord gifs to work like previews
 + changed bestiary color for Abyssal Miner to dark green
-+ added /setbot, /botlist, and /rmbot commands to set bot names
 + changed taming color for _skill bridge command to 'pink'
-+ _tfish command fixed for noobf and general
 + changed gameload message
-+ restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
 + changed formatting for _be command to include 'k/d'
 + added formatting to 'Your role does not have requirements!'
-+ reformatted a lot of code (most notably role updates, contest messages, collection messages)
 
 WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
 
