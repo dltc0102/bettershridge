@@ -82,10 +82,10 @@ TEST: commented out patcher/discord images/websites related code (works without)
 
 # v1.3
 Main Changes:
-+ added /setbot, /botlist, and /rmbot commands to set bot names
++ added bot commands for if theres a new name for the bot
 + restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
-+ updated error messages with new check prefix '⚠'
-+ changed getInSkyblock() to getInHypixel() 
++ updated error messages with new warning prefix
++ changed regchats to work outside of skyblock as long as you're on hypixel
 + reformatted a lot of code (most notably role updates, contest messages, collection messages)
 + stopped constant addons of a bot that is already in bot list
 
@@ -100,6 +100,9 @@ Minor Changes:
 + fixed _tfish command for noobf and general
 
 WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
+
+# v1.4
++ dynamic botName recognition
 
 
 

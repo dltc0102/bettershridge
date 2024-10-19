@@ -17,13 +17,13 @@ const tempBoop = {
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
     const playerMessage = message.substring(message.indexOf("> ")+1).trim();
-        let type = '';
+    let type = '';
     let resMessage = '';
-    let playerRegex = /(.+) (&[a-qs-z0-9])\[(.+)\]&f: (.+)/;
-    let playerMatch = playerMessage.match(playerRegex);
+    const playerRegex = /(.+) (&[a-qs-z0-9])\[(.+)\]&f: (.+)/;
+    const playerMatch = playerMessage.match(playerRegex);
     if (playerMatch) {
-        let [_, formattedName, roleColor, roleName, message] = playerMatch;
-        let sender = stripRank(formattedName.removeFormatting());
+        const [_, formattedName, roleColor, roleName, message] = playerMatch;
+        const sender = stripRank(formattedName.removeFormatting());
         
         // &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r&r
         if (!data.bots.includes(sender)) {
@@ -32,7 +32,7 @@ function separatePlayerAndMessage(e) {
         }
         
         if (data.bots.includes(sender)) {
-            let newMessage = message;
+            const newMessage = message;
             
             // &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rAbyssal Miner data for obiscuit (Coconut) k/d (kdr): 221/0  <@928ykrs8ocd>&r
             if (idRegex.test(newMessage)) {
@@ -60,24 +60,24 @@ function separatePlayerAndMessage(e) {
 }               
 
 function handleLinkMessages(prefix, sender='', message) {
-    let linkRegex = /\[LINK\]\((.+?)\)/g;       
+    const linkRegex = /\[LINK\]\((.+?)\)/g;       
     let linkList = [];
     let foundLinks;
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }
     if (linkList.length > 0) {
-        let resultSender = sender ? `${sender}: ` : '';     
-        let otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
-        let titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
+        const resultSender = sender ? `${sender}: ` : '';     
+        const otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
+        const titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
         let linkHoverables = linkList.map(link => {
             return getLinkHoverable(link);
         })  
         return createMessage(titleMessage, linkHoverables);
 
     } else { // view auction link
-        let titleMessage = `${prefix}${sender}: `;
-        let auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
+        const titleMessage = `${prefix}${sender}: `;
+        const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
             .setClick('run_command', message)
             .setHover('show_text', message);
 
@@ -86,7 +86,7 @@ function handleLinkMessages(prefix, sender='', message) {
 }
                 
 function botMessageHandler(prefix, message) {   
-    let botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
+    const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
 
     //! _mayor
     if (botMessage.startsWith('Current mayor: ')) {
@@ -136,10 +136,10 @@ function botMessageHandler(prefix, message) {
 
     //! syntax error
     } else if (botMessage.includes('Syntax')) { 
-        let [title, message] = botMessage.split(': ');
-        let alias = removeRandomID(message).split(' ')[0].trim();
+        const [title, message] = botMessage.split(': ');
+        const alias = removeRandomID(message).split(' ')[0].trim();
         const list1 = ['skill', 'be', 'bestiary', 'col', 'coll', 'collection', 'fw', 'fweight', 'elite', 'slayer'];
-        const list2 = ['ib', 'bzib', 'instabuy', 'is', 'bzis', 'instasell'];
+        // const list2 = ['ib', 'bzib', 'instabuy', 'is', 'bzis', 'instasell'];
         const list3 = ['cata', 'trophy', 'trophyfish', 'tfish'];
         if (list1.some(name => alias === name)) {
             return getGuildResponse(prefix, botMessage, 'syntaxError1')
@@ -210,9 +210,9 @@ function botMessageHandler(prefix, message) {
         
     //! booped player
     } else if (botMessage.includes('Booped')) {
-        let match = botMessage.match(/Booped (.+)!/);
+        const match = botMessage.match(/Booped (.+)!/);
         if (match) {    
-            let [_, name] = match;
+            const [_, name] = match;
             if (name.toLowerCase() === Player.getName().toLowerCase()) {    
                 return `${prefix}&d&l${tempBoop.booper}Booped You!`;
             } else if (name === tempBoop.booped) {
@@ -256,15 +256,15 @@ function botMessageHandler(prefix, message) {
 };
 
 function discordPlayerMessageHandler(prefix, message) {
-    let dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
-    let [sender, responses] = dpMessage.split(/: (.+)/);     
+    const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
+    const [sender, responses] = dpMessage.split(/: (.+)/);     
     return responses.includes('[LINK]') || responses.includes('viewauction')      
         ? handleLinkMessages(prefix, sender, dpMessage)
         : `${prefix}${sender}&r: ${highlightTags(responses)}`;
 };
 
 function guildPlayerMessageHandler(prefix, message) {
-    let [sender, responses] = removeRandomID(message).split(/: (.+)/); 
+    const [sender, responses] = removeRandomID(message).split(/: (.+)/); 
     if (responses.includes('[LINK]') || responses.includes('viewauction')) {     
         return handleLinkMessages(prefix, sender, responses);
     } else {                    
@@ -273,10 +273,10 @@ function guildPlayerMessageHandler(prefix, message) {
 };
 
 function replyMessageHandler(prefix, message) {
-    let replyMessage = removeRandomID(message.removeFormatting());
-    let [sender, responses] = replyMessage.split(/: (.+)/);
-    let [name1, name2] = sender.split(' [to] ');   
-    let formattedSender = `&a${name1} &2[to]&a ${name2}`    
+    const replyMessage = removeRandomID(message.removeFormatting());
+    const [sender, responses] = replyMessage.split(/: (.+)/);
+    const [name1, name2] = sender.split(' [to] ');   
+    const formattedSender = `&a${name1} &2[to]&a ${name2}`    
     return responses.includes('[LINK]') || responses.includes('viewauction')
         ? handleLinkMessages(prefix, formattedSender, responses)        
         : `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
@@ -285,7 +285,7 @@ function replyMessageHandler(prefix, message) {
 function messageHandler(prefix, message) {
     let type = '';
     let resMessage = '';
-    let strippedMessage = message.removeFormatting();
+    const strippedMessage = message.removeFormatting();
     //* bot     
     if (idRegex.test(message) || !message.includes(': ') && !message.includes('l$')) {
         type = 'bot';
@@ -298,7 +298,7 @@ function messageHandler(prefix, message) {
 
     //* discordPlayer & reply                               
     } else if (strippedMessage.includes(': ') && !idRegex.test(message)) {
-        let [sender, responses] = strippedMessage.split(/: (.+)/);  
+        const [sender, responses] = strippedMessage.split(/: (.+)/);  
         if (sender.includes(' [to] ')) {
             type = 'reply';
             resMessage = strippedMessage;
@@ -327,8 +327,8 @@ function replaceMessage(event, message) {
 
 let multiMessages = [];
 registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole, playerStuff, event) => {
-    let [msgType, msg] = separatePlayerAndMessage(event); 
-    let strippedMsg = msg.removeFormatting();
+    const [msgType, msg] = separatePlayerAndMessage(event); 
+    const strippedMsg = msg.removeFormatting();
     const starts = strippedMsg.startsWith(continueSymbol);
     const ends = strippedMsg.endsWith(continueSymbol);
     const player = stripRank(playerInfo);            

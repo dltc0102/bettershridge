@@ -203,7 +203,7 @@ export function getGuildResponse(prefix, message, type) {
 }   
 
 function formatUpdatedMessage(prefix, match) {  
-    let [_, fexp, sblevels, nextRole] = match;   
+    const [_, fexp, sblevels, nextRole] = match;   
     return [    
         `${prefix}Role is already up to date!`, 
         `${SPACING}Next Role: &6${nextRole}`,
@@ -213,7 +213,7 @@ function formatUpdatedMessage(prefix, match) {
 };
 
 function formatNoReqUpdateMessage(prefix, match) {
-    let [_, fexp, sblevels, nextRole] = match;
+    const [_, fexp, sblevels, nextRole] = match;
     return [
         `${prefix}&cRole does not have requirements!`,
         `${SPACING}Next Role: &6${nextRole}`,
@@ -223,85 +223,85 @@ function formatNoReqUpdateMessage(prefix, match) {
 };
 
 function formatPromotion(prefix, match) {
-    let [_, playerColor, playerName, from, to] = match;
-    let playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`       
+    const [_, playerColor, playerName, from, to] = match;
+    const playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`       
     return `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;          
 };
 
 function formatDemotion(prefix, match) {
-    let [_, playerColor, playerName, from, to] = match;
-    let playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`
+    const [_, playerColor, playerName, from, to] = match;
+    const playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`
     return `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
 };
 
 function formatSpook1(prefix, match) {
-    let [_, spooked] = match;       
+    const [_, spooked] = match;       
     return `${prefix}&cAAH! &8You scared me, &6${spooked}!`; 
 };
 
 function formatSpook2(prefix, match) {
-    let [_, spooked] = match;
+    const [_, spooked] = match;
     return `${prefix}&8Spooked &6${spooked}! &c>:)`;   
 };
 
 function formatGeneralDecodedLink(prefix, match) {  
-    let message = match[0].toString();
-    let linkRegex = /\[LINK\]\((.+?)\)/g;
+    const message = match[0].toString();
+    const linkRegex = /\[LINK\]\((.+?)\)/g;
     let linkList = [];
     let foundLinks;
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }
-    let titleMessage = `${prefix}`;     
+    const titleMessage = `${prefix}`;     
     let linkHoverables = linkList.map(link => {
-        let hoverable = getLinkHoverable(link);
+        const hoverable = getLinkHoverable(link);
         return hoverable; 
     });
     return createMessage(titleMessage, linkHoverables);  
 };  
 
 function formatReplyDecodedLink(prefix, match) {
-    let message = match[0].toString();
-    let [sender, response] = message.split(': ');
-    let [name1, name2] = sender.split(' [to] ');
-    let linkRegex = /\[LINK\]\((.+?)\)/g;
+    const message = match[0].toString();
+    const [sender, response] = message.split(': ');
+    const [name1, name2] = sender.split(' [to] ');
+    const linkRegex = /\[LINK\]\((.+?)\)/g;
     let linkList = [];
     let foundLinks;
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }
-    let titleMessage = `${prefix}${name1} &2[to] &a${name2}: &r`; 
+    const titleMessage = `${prefix}${name1} &2[to] &a${name2}: &r`; 
     let linkHoverables = linkList.map(link => {
-        let hoverable = getLinkHoverable(link);
+        const hoverable = getLinkHoverable(link);
         return hoverable; 
     });
     return createMessage(titleMessage, linkHoverables); 
 }
 
 function formatPlayerDecodedLink(prefix, match) {   
-    let message = match[0].toString();
-    let [sender, response] = message.split(': ');
-    let linkRegex = /\[LINK\]\((.+?)\)/g; 
+    const message = match[0].toString();
+    const [sender, response] = message.split(': ');
+    const linkRegex = /\[LINK\]\((.+?)\)/g; 
     let linkList = [];
     let foundLinks;
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }     
-    let titleMessage = `${prefix}${sender}: &r`;
+    const titleMessage = `${prefix}${sender}: &r`;
     let linkHoverables = linkList.map(link => {
-        let hoverable = getLinkHoverable(link);
+        const hoverable = getLinkHoverable(link);
         return hoverable;       
     });
     return createMessage(titleMessage, linkHoverables); 
 }
 
 function formatPickMesage(prefix, match) {
-    let [_, option] = match;
+    const [_, option] = match;
     return `${prefix}I choose &e${capitalise(option).trim()}`;
 }
 
 function formatPlayerTalkingResponse(prefix, match) {
-    let [_, player, message] = match;
+    const [_, player, message] = match;
     return `${prefix}${player}&r: ${message}`;
 }
 
@@ -324,7 +324,7 @@ function getMayorColor(mayor) {
 }
 
 function formatMayor(prefix, match) {
-    let [_, currMayor, nextMayor, nextTime, specialMayor, specialTime] = match;
+    const [_, currMayor, nextMayor, nextTime, specialMayor, specialTime] = match;
     return [
         `${prefix}Current mayor: ${getMayorColor(currMayor)}`,
         `${SPACING}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
@@ -333,16 +333,16 @@ function formatMayor(prefix, match) {
 }
 
 function formatMayorPicked(prefix, match) {
-    let [_, mayorName, firstVal, firstUnit, secondVal=null, secondUnit=null, thirdVal=null, thirdUnit=null] = match;
-    let firstPart = firstVal ? `${firstVal}${formatTime(firstUnit)}` : '';
-    let secondPart = secondVal ? `${secondVal}${formatTime(secondUnit)}` : '';
-    let thirdPart = thirdVal ? `${thirdVal}${formatTime(thirdUnit)}` : '';      
+    const [_, mayorName, firstVal, firstUnit, secondVal=null, secondUnit=null, thirdVal=null, thirdUnit=null] = match;
+    const firstPart = firstVal ? `${firstVal}${formatTime(firstUnit)}` : '';
+    const secondPart = secondVal ? `${secondVal}${formatTime(secondUnit)}` : '';
+    const thirdPart = thirdVal ? `${thirdVal}${formatTime(thirdUnit)}` : '';      
     return `${prefix}${mayorColors[mayorName]}Mayor ${mayorName} &acomes in: &f${firstPart} ${secondPart} ${thirdPart}&a.`;    
 }
 
 function formatSkillMaxed(prefix, match) {
-    let [_, skillName, playerName, playerProfile, skillLevel, totalXP, overflowXP] = match;
-    let skillColor = collNameCodes[skillName.toLowerCase()];
+    const [_, skillName, playerName, playerProfile, skillLevel, totalXP, overflowXP] = match;
+    const skillColor = collNameCodes[skillName.toLowerCase()];
     return [
         `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,    
         `${SPACING}Total XP: &r${totalXP}`, 
@@ -351,8 +351,8 @@ function formatSkillMaxed(prefix, match) {
 }
 
 function formatSkillProgress(prefix, match) {
-    let [_, skillName, playerName, playerProfile, skillLevel, totalXP, nextLevel, xpLeft] = match;
-    let skillColor = collNameCodes[skillName.toLowerCase()];
+    const [_, skillName, playerName, playerProfile, skillLevel, totalXP, nextLevel, xpLeft] = match;
+    const skillColor = collNameCodes[skillName.toLowerCase()];
     return [
         `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,    
         `${SPACING}Total XP: &r${totalXP}`, 
@@ -375,11 +375,11 @@ function formatItemColorBZ(str) {
 };
 
 function formatBazaar(prefix, match) {   
-    let [_, itemName, buyPrice, sellPrice] = match;
-    let itemColor = formatItemColorBZ(itemName);
-    let formattedName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
-    let buyColor = buyPrice === 'Not available' ? '&c' : '&6';
-    let sellColor = sellPrice === 'Not available' ? '&c' : '&6';
+    const [_, itemName, buyPrice, sellPrice] = match;
+    const itemColor = formatItemColorBZ(itemName);
+    const formattedName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
+    const buyColor = buyPrice === 'Not available' ? '&c' : '&6';
+    const sellColor = sellPrice === 'Not available' ? '&c' : '&6';
     return [
         `${prefix}Bazaar data for &r${itemColor}${formatEssence(formattedName)}&a:`,
         `${SPACING}Insta-buy: ${buyColor}${buyPrice}`,
@@ -388,16 +388,16 @@ function formatBazaar(prefix, match) {
 }
 
 function formatBestiary(prefix, match) {
-    let [_, monster, playerName, playerProfile, kills, deaths, ratio] = match;  
-    let stripMonster = monster.replace(/The/g, '').trim();
-    let monsterColor = getMonsterColor(stripMonster);                  
-    let beMessage = `${prefix}${monsterColor}${stripMonster}&a k/d for &2${playerName}&a (${playerProfile}): &r${kills}/${deaths}`;
+    const [_, monster, playerName, playerProfile, kills, deaths, ratio] = match;  
+    const stripMonster = monster.replace(/The/g, '').trim();
+    const monsterColor = getMonsterColor(stripMonster);                  
+    const beMessage = `${prefix}${monsterColor}${stripMonster}&a k/d for &2${playerName}&a (${playerProfile}): &r${kills}/${deaths}`;
     return ratio ? beMessage + ` &6(${ratio})` : beMessage;        
 }
 
 function formatCommandHelp(prefix, match) {
-    let [_, commands] = match;
-    let splittedCommands = commands.trim().split(', ')
+    const [_, commands] = match;
+    const splittedCommands = commands.trim().split(', ')
     const formattedCmdLst = formatItemsToTable(splittedCommands);   
     return [
         `${prefix}Available commands (_command):`,
@@ -406,37 +406,37 @@ function formatCommandHelp(prefix, match) {
 }
 
 function formatSticker(prefix, match) {
-    let [_, name, sticker] = match;
+    const [_, name, sticker] = match;
     if (name.includes(' [to] ')) {
-        let [name1, name2] = name.split(' [to] ');
+        const [name1, name2] = name.split(' [to] ');
         return `${prefix}${name1} &2[to]&a ${name2}: &r${sticker}`;
     }   
     return `${prefix}${name}: &r${sticker}`;
 }   
 
 function formatReplies(prefix, match) {
-    let [_, name1, name2, response] = match;
-    let colon = response ? ': ' : '';   
-    if (response) {
-        return `${prefix}${name1} &2[to] &a${name2}&r${colon}${response}`;
-    } else {
-        return `&2${prefix} > &f${name1} &apinned a message from &f${name2}`
-    }
+    const [_, name1, name2, response] = match;
+    const colon = response ? ': ' : '';   
+    return response 
+        ? `${prefix}${name1} &2[to] &a${name2}&r${colon}${response}`
+        : `&2${prefix} > &f${name1} &apinned a message from &f${name2}`;
 }
 
 function formatCmdError(prefix, match) {
-    let [_, cmdName] = match;
+    const [_, cmdName] = match;
     return `${prefix}&cCommand ${cmdName} &cnot found, try _help.`;
 }
 
 function formatLbin(prefix, match) {
-    let [_, itemName, itemLbin] = match;
-    let f_itemName = itemName.includes(' ') ? itemName.split(' ').map(thing => capitalise(thing.toLowerCase())).join(' ') : capitalise(itemName.toLowerCase()); 
+    const [_, itemName, itemLbin] = match;
+    const f_itemName = itemName.includes(' ') 
+        ? itemName.split(' ').map(thing => capitalise(thing.toLowerCase())).join(' ') 
+        : capitalise(itemName.toLowerCase()); 
     return `${prefix}&6[LBIN]&a ${f_itemName}: &6${itemLbin.trim()}`;
 }
 
 function formatCata(prefix, match) {
-    let [_, playerName, playerProfile, cataLvl, totalXP, currLvl, currXPProgress] = match;
+    const [_, playerName, playerProfile, cataLvl, totalXP, currLvl, currXPProgress] = match;
     return [
         `${prefix}Catacombs level for &2${playerName}&a (${playerProfile}): &6${cataLvl}`,
         `${SPACING}Total XP: &r${totalXP}`,
@@ -445,9 +445,9 @@ function formatCata(prefix, match) {
 }
 
 function formatDungeonRecords(prefix, match) {
-    let [_, floor, playerName, playerProfile, comps, fastestTime, fastestTimeS, fastestTimeSPlus] = match;
-    let [fTime, fTimeS, fTimeSPlus] = [fastestTime, fastestTimeS, fastestTimeSPlus].map(formatColonTime);
-    let floorColor = floor.startsWith('M') ? '&c' : '&e';
+    const [_, floor, playerName, playerProfile, comps, fastestTime, fastestTimeS, fastestTimeSPlus] = match;
+    const [fTime, fTimeS, fTimeSPlus] = [fastestTime, fastestTimeS, fastestTimeSPlus].map(formatColonTime);
+    const floorColor = floor.startsWith('M') ? '&c' : '&e';
     return [
         `${prefix}${floorColor}${floor}&r&a data for &2${playerName}&a (${playerProfile}):`,
         `${SPACING}Completions: &r${comps}`,
@@ -458,7 +458,7 @@ function formatDungeonRecords(prefix, match) {
 }
 
 function formatSlayer(prefix, match) {
-    let [_, slayerName, playerName, playerProfile, totalXP, t1, t2, t3, t4, t5] = match;
+    const [_, slayerName, playerName, playerProfile, totalXP, t1, t2, t3, t4, t5] = match;
 
     const slayerColors = {
         "Zombie": "&2",
@@ -468,7 +468,7 @@ function formatSlayer(prefix, match) {
         "Tarantula": "&c",
         "Vampire": "&4",
     };      
-    let slayerColor = slayerColors[slayerName];
+    const slayerColor = slayerColors[slayerName];
     return [   
         `${prefix}${slayerColor}${slayerName}&r&a Slayer Data for &2${playerName}&a (${playerProfile}):`,
         `${SPACING}Total XP: &r${totalXP}`,
@@ -498,8 +498,8 @@ const fishColorsDict = {
 };
 
 function formatTfishGeneral(prefix, match) {
-    let [_, fishName, playerName, playerProfile, totalFish, bronzeProg, silverProg, goldProg, diamondProg] = match;
-    let title = `${prefix}Trophy Fish for &2${playerName}&a (${playerProfile}):`;  
+    const [_, fishName, playerName, playerProfile, totalFish, bronzeProg, silverProg, goldProg, diamondProg] = match;
+    const title = `${prefix}Trophy Fish for &2${playerName}&a (${playerProfile}):`;  
     return [    
         title,
         `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
@@ -507,8 +507,8 @@ function formatTfishGeneral(prefix, match) {
 }
 
 function formatTfishObf(prefix, match) {                
-    let [_, fishName, playerName, playerProfile, totalFish, bronzeProg, silverProg, goldProg, diamondProg] = match;
-    let title = `${prefix}Trophy fish for &2${playerName}&a (${playerProfile}) &cwithout Obf 1&a: `; 
+    const [_, fishName, playerName, playerProfile, totalFish, bronzeProg, silverProg, goldProg, diamondProg] = match;
+    const title = `${prefix}Trophy fish for &2${playerName}&a (${playerProfile}) &cwithout Obf 1&a: `; 
     return [
         title,
         `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
@@ -516,8 +516,8 @@ function formatTfishObf(prefix, match) {
 }
 
 function formatTfishSpecific(prefix, match) {
-    let [_, fishName, playerName, playerProfile, fishName2, totalFish, bronzeFish, silverFish, goldFish, diamondFish] = match;
-    let fishNameColor = fishName in fishColorsDict ? fishColorsDict[fishName] : ''; 
+    const [_, fishName, playerName, playerProfile, fishName2, totalFish, bronzeFish, silverFish, goldFish, diamondFish] = match;
+    const fishNameColor = fishName in fishColorsDict ? fishColorsDict[fishName] : ''; 
     return [
         `${prefix}${fishNameColor}${fishName} &adata for &2${playerName}&a (${playerProfile}):`,                         
         `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeFish} &a|&r &7${silverFish} &a|&r &6${goldFish} &a|&r &b${diamondFish} &a]&r`,        
@@ -525,16 +525,15 @@ function formatTfishSpecific(prefix, match) {
 }
 
 function formatContestSpecific(prefix, match) {
-    let [_, crop, time] = match;
-    let [hrs, mins, secs] = time.split(':');
-    let formatTime = `${Number(hrs)}h ${Number(mins)}m ${Number(secs)}s`;
+    const [_, crop, time] = match;
+    const [hrs, mins, secs] = time.split(':');
+    const formatTime = `${Number(hrs)}h ${Number(mins)}m ${Number(secs)}s`;
     return `${prefix}Next &6${capitalise(crop)} &acontest in &6${formatTime}&a.`;
 }
 
 function formatNextContest(prefix, match) {
-    let [_, nextCrops, timeTillNext] = match;
-    let f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
-
+    const [_, nextCrops, timeTillNext] = match;
+    const f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
     return [
         `${prefix}Next Contest in ${formatColonTime(timeTillNext)}!`,
         `${SPACING}Crops: &6${f_nextCrops}`
@@ -543,8 +542,8 @@ function formatNextContest(prefix, match) {
 
 function formatActiveContest(prefix, match) {
     [_, activeCrops, currContestTimeLeft, nextCrops, nextContestTime] = match;
-    let currCrops = activeCrops.split(', ').map(crop => capitalise(crop)).join(', ');       
-    let f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
+    const currCrops = activeCrops.split(', ').map(crop => capitalise(crop)).join(', ');       
+    const f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
     return [        
         `${prefix}Contest is Active! [&r${formatColonTime          (currContestTimeLeft)} left&a] &8|&r &7Next in ${formatColonTime(nextContestTime)}`,
         `${SPACING}Current Contest: &6${currCrops}`,
@@ -553,12 +552,12 @@ function formatActiveContest(prefix, match) {
 }
 
 function formatFarmingWeight(prefix, match) {
-    let [_, playerName, playerProfile, weight, collWeight, others] = match;
-    let otherWeights = others.split(', ').map(weightLine => {
-        let fwFormatRegex = /(.+) \((.+)\)/;
-        let fwFormatMatch = weightLine.match(fwFormatRegex);
+    const [_, playerName, playerProfile, weight, collWeight, others] = match;
+    const otherWeights = others.split(', ').map(weightLine => {
+        const fwFormatRegex = /(.+) \((.+)\)/;
+        const fwFormatMatch = weightLine.match(fwFormatRegex);
         if (fwFormatMatch) {
-            let [_, name, weight] = fwFormatMatch;
+            const [_, name, weight] = fwFormatMatch;
             return `${SPACING}${name}: &r${weight}`;
         };
     });
@@ -570,9 +569,9 @@ function formatFarmingWeight(prefix, match) {
 };
 
 function formatInstaSell(prefix, match) {
-    let [_, itemAmt, itemName, sellCost, aveCost] = match;
-    let itemColor = itemName.includes('Ultimate') ? '&d&l' : '&r';
-    let formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim(); 
+    const [_, itemAmt, itemName, sellCost, aveCost] = match;
+    const itemColor = itemName.includes('Ultimate') ? '&d&l' : '&r';
+    const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim(); 
     return [
         `${prefix}Insta-sell: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,        
         `${SPACING}Sell Cost: &6${sellCost}`,
@@ -581,9 +580,9 @@ function formatInstaSell(prefix, match) {
 }
 
 function formatInstaBuy(prefix, match) {
-    let [_, itemAmt, itemName, sellCost, aveCost] = match;
-    let itemColor = itemName.includes('Ultimate') ? '&d&l' : '&r';
-    let formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
+    const [_, itemAmt, itemName, sellCost, aveCost] = match;
+    const itemColor = itemName.includes('Ultimate') ? '&d&l' : '&r';
+    const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
     return [
         `${prefix}Insta-buy: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,
         `${SPACING}Sell Cost: &6${sellCost}`,
@@ -592,21 +591,21 @@ function formatInstaBuy(prefix, match) {
 } 
 
 function getBotBooper(prefix, match) {
-    let [_, booper, booped='', otherText=null] = match;
+    const [_, booper, booped='', otherText=null] = match;
     return booped === '' ? [booper, ''] : [booper, booped];
 }
 
 function formatCollections(prefix, match) {
-    let [_, collName, playerName, playerProfile, items] = match;
-    let collColor = collNameCodes[collName.toLowerCase()];
+    const [_, collName, playerName, playerProfile, items] = match;
+    const collColor = collNameCodes[collName.toLowerCase()];
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
         .map(item => {       
-            let itemRegex = /(.+) (\d+)\/(\d+) \((.+)\)/;
-            let itemMatch = (item.trim()).match(itemRegex);
+            const itemRegex = /(.+) (\d+)\/(\d+) \((.+)\)/;
+            const itemMatch = (item.trim()).match(itemRegex);
             if (itemMatch) {
-                let [_, itemName, itemLvl, itemMaxLvl, itemAmount] = itemMatch;
-                let maxColor = itemLvl === itemMaxLvl ? '&6' : '';
+                const [_, itemName, itemLvl, itemMaxLvl, itemAmount] = itemMatch;
+                const maxColor = itemLvl === itemMaxLvl ? '&6' : '';
                 return `${SPACING}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
             };
         });
@@ -619,24 +618,24 @@ function formatCollections(prefix, match) {
 }
 
 function formatAuctionLinks(prefix, match) {
-    let [_, nameInfo, formattedRole, link] = match;
-    let titleMessage = `${prefix}${nameInfo} ${formattedRole}: `;
-    let hoverable = getLinkHoverable(link);
+    const [_, nameInfo, formattedRole, link] = match;
+    const titleMessage = `${prefix}${nameInfo} ${formattedRole}: `;
+    const hoverable = getLinkHoverable(link);
     return createMessage(titleMessage, hoverable);
 }       
 
 function formatSyntaxError1(prefix, match) {
-    let [_, alias, playerOptions, condition2=null] = match;
-    let options2 = condition2 ? condition2 : '';
+    const [_, alias, playerOptions, condition2=null] = match;
+    const options2 = condition2 ? condition2 : '';
     return `${prefix}Usage: &r_${alias} player:[${playerOptions}] ${options2}`;
 };
 
 function formatSyntaxError2(prefix, match) {
-    let [_] = match;    
+    const [_] = match;    
     return `${prefix}Usage: &r_[ib|is] amount:[k|m|b|s] <item name>`;
 };      
 
 function formatSyntaxError3(prefix, match) {
-    let [_, alias, playerOptions, options2] = match;
+    const [_, alias, playerOptions, options2] = match;
     return `${prefix}Usage: &r_${alias} player:[${playerOptions} [${options2}]`;        
 };

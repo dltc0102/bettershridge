@@ -34,7 +34,7 @@ export function formatTime(timeStr) {
 
 export function formatColonTime(timeStr) {
     const [h, m, s] = timeStr.split(':').map(Number);
-    let formatTime = h * 60 + m ? `${h * 60 + m}m ` : '';
+    const formatTime = h * 60 + m ? `${h * 60 + m}m ` : '';
     return `${formatTime}${s}s`.trim();
 };        
 
@@ -57,13 +57,13 @@ export function removeRandomID(msg) {
 };
 
 export function shortenMsg(str) {
-    let tempParts = (str.trim()).split(': ');
-    let shortenedMessage = tempParts.length > 1 ? tempParts.slice(1).join(': ').trim() : '';
+    const tempParts = (str.trim()).split(': ');
+    const shortenedMessage = tempParts.length > 1 ? tempParts.slice(1).join(': ').trim() : '';
     return removeRandomID(shortenedMessage.removeFormatting());
 };
 
 export function highlightTags(message) {
-    let tagRegex = /@\w+/g; 
+    const tagRegex = /@\w+/g; 
     return message.replace(tagRegex, tag => `&b${tag}&r`);
 };
 
@@ -71,7 +71,7 @@ export function isLinkExpired(link) {
     const regex = /ex=([0-9a-fA-F]+)/;
     const match = link.match(regex);
     if (match) {
-        let [_, expiryHex] = match;
+        const [_, expiryHex] = match;
         const expiryTime = parseInt(expiryHex, 16);
         const currentTime = Math.floor(Date.now() / 1000);
         return currentTime > expiryTime;
@@ -104,16 +104,18 @@ function getShortenedLink(link) {
 
 function getAttachmentName(link) {      
     if (link.includes('tenor')) {
-        let regex = /https?:\/\/tenor.com\/view\/(.+)-gif.+/;
-        let match = link.match(regex);
+        const regex = /https?:\/\/tenor.com\/view\/(.+)-gif.+/;
+        const match = link.match(regex);
         return match ? match[1]+'.gif' : '';
+
     } else if (link.includes('gif') && !link.includes('tenor')) {
-        let regex = /https?:\/\/.+\/(.+\.gif)/;
-        let match = link.match(regex);
+        const regex = /https?:\/\/.+\/(.+\.gif)/;
+        const match = link.match(regex);
         return match ? match[1] : '';
+
     } else {
-        let regex = /https?:\/\/.+\/(.+\.(png|jpeg|jpg|mp4|mov|avi))/;
-        let match = link.match(regex);
+        const regex = /https?:\/\/.+\/(.+\.(png|jpeg|jpg|mp4|mov|avi))/;
+        const match = link.match(regex);
         return match ? match[1] : '';
     }
 }
@@ -134,9 +136,9 @@ function getComponentParts(link) {
     let linkName, hoverText;
     const imageSuffixes = ['jpeg', 'jpg', 'png'];
     const videoSuffixes = ['mp4', 'mov', 'avi'];
-    let shortenedLink = getShortenedLink(link);
-    let attachmentName = getAttachmentName(link);
-    let linkSource = getLinkSource(link);
+    const shortenedLink = getShortenedLink(link);
+    const attachmentName = getAttachmentName(link);
+    const linkSource = getLinkSource(link);
 
     if (imageSuffixes.some(suffix => link.includes(suffix))) {
         linkName = `&b&l[${linkSource} Image]`;
@@ -163,9 +165,9 @@ function getComponentParts(link) {
 }
    
 export function getLinkHoverable(link) {
-    let decodedLink = STuFLib.decode(link);
-    let checkDecoded = isLinkExpired(decodedLink);
-    let [linkName, hoverText] = getComponentParts(decodedLink);
+    const decodedLink = STuFLib.decode(link);
+    const checkDecoded = isLinkExpired(decodedLink);
+    const [linkName, hoverText] = getComponentParts(decodedLink);
     return checkDecoded     
         ? '&b<link expired> '
         : new TextComponent(`${linkName} `)       
