@@ -47,6 +47,7 @@ const knownMonsters = {
     "Abyssal Miner": '&2',
     "Grim Reaper": '&5',
     "Yeti": '&f',
+    "Vanquisher": '&5',
 };
 export function getMonsterColor(name) {
     return name in knownMonsters ? knownMonsters[name] : '&r';  
@@ -165,13 +166,21 @@ function getComponentParts(link) {
 }
    
 export function getLinkHoverable(link) {
-    const decodedLink = STuFLib.decode(link);
-    const checkDecoded = isLinkExpired(decodedLink);
+    let decodedLink;
+    if (link.includes('l$')) {
+        decodedLink = STuFLib.decode(link);
+    } else {
+        const urlPattern = /(https?:\/\/[^\s]+)/;
+        decodedLink = link.match(urlPattern)?.[0];  
+    }
+
+    const checkLinkExpired = isLinkExpired(decodedLink);
     const [linkName, hoverText] = getComponentParts(decodedLink);
-    return checkDecoded     
+
+    return checkLinkExpired
         ? '&b<link expired> '
         : new TextComponent(`${linkName} `)       
-            .setClick('open_url', decodedLink)
+            .setClick('open_url', decodedLink)      
             .setHover('show_text', hoverText);
 }
 
@@ -182,4 +191,30 @@ export function createMessage(title, components, recursive = false) {
         return new Message(title, ...components).setRecursive(recursive);
     }   
 }
-        
+
+export function truncateNumbers(amt, isCoins=false) { 
+    const cost = Number(amt.toString().replace(/,/g, ''));
+    const formatNumber = (num) => {
+        const fixedNum = num.toFixed(2);
+        return fixedNum.endsWith('.00') ? num.toFixed(0) : fixedNum;
+    };
+
+    switch (true) {
+        case cost >= 1_000_000_000_000:
+            return formatNumber(cost / 1_000_000_000_000) + 'T';
+        case cost >= 1_000_000_000:
+            return formatNumber(cost / 1_000_000_000) + 'B';
+        case cost >= 1_000_000:
+            return formatNumber(cost / 1_000_000) + 'M';
+        case cost >= 1_000:
+            return formatNumber(cost / 1_000) + 'K';
+        case cost !== 1 && cost < 1_000:
+            return isCoins 
+                ? `${cost.toString()} coins` 
+                : cost.toString();
+        default:
+            return isCoins 
+                ? `${cost.toString()} coin` 
+                : cost.toString();
+    }
+};

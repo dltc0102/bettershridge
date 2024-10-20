@@ -102,7 +102,16 @@ Minor Changes:
 WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
 
 # v1.4
-+ dynamic botName recognition
++ added format for miscellaneous data for responses
++ added color for 'Vanquisher' in _be command responses
++ reformatted functions to be even more flexible for edge cases
++ readded formatting for normal non-stuf links
+
+
+
+
+
+<!-- + dynamic botName recognition -->
 
 
 

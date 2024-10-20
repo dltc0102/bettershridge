@@ -66,8 +66,9 @@ function handleLinkMessages(prefix, sender='', message) {
     while ((foundLinks = linkRegex.exec(message)) !== null) {
         linkList.push(foundLinks[1]);
     }
-    if (linkList.length > 0) {
-        const resultSender = sender ? `${sender}: ` : '';     
+    const resultSender = sender ? `${sender}: ` : ''; 
+
+    if (linkList.length > 0) {  
         const otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
         const titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
         let linkHoverables = linkList.map(link => {
@@ -76,19 +77,28 @@ function handleLinkMessages(prefix, sender='', message) {
         return createMessage(titleMessage, linkHoverables);
 
     } else { // view auction link
-        const titleMessage = `${prefix}${sender}: `;
-        const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
-            .setClick('run_command', message)
-            .setHover('show_text', message);
+        if (message.includes('viewauction')) {
+            const titleMessage = `${prefix}${sender}: `;
+            const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
+                .setClick('run_command', message)
+                .setHover('show_text', message);
+            return createMessage(titleMessage, [auctionClickable]); 
 
-        return createMessage(titleMessage, [auctionClickable]);   
-    }
+        } else if (message.includes('http')) {
+            const normalLinkRegex = /(https?:\/\/.+?) /;
+            const linkHoverable = getLinkHoverable(message);        
+            const frontText = message.slice(0, message.indexOf('http')).trim();
+            const backText = message.replace(normalLinkRegex, '').replace(frontText, '').trim();    
+            return createMessage(`${prefix}${resultSender}`, [frontText, linkHoverable, backText]);         
+        }       
+
+    }   
 }
                 
 function botMessageHandler(prefix, message) {   
     const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
 
-    //! _mayor
+    //! _mayor  
     if (botMessage.startsWith('Current mayor: ')) {
         return getGuildResponse(prefix, botMessage, 'mayor')
 
@@ -246,9 +256,12 @@ function botMessageHandler(prefix, message) {
     //! links
     } else if (botMessage.includes('l$')) {
         return getGuildResponse(prefix, botMessage, 'generalDecoded');
-        
+    
+    //! misc data for
+    } else if (botMessage.includes('data for') && !botMessage.includes('slayer') && !botMessage.includes('Bazaar')) {
+        return getGuildResponse(prefix, botMessage, 'miscDataFor');
     //! responses & 8ball
-    } else {
+    } else {        
         return (botMessage.startsWith('⚠'))
         ? `${prefix}&c${botMessage}` 
         : `${prefix}${botMessage}`; 
@@ -276,10 +289,15 @@ function replyMessageHandler(prefix, message) {
     const replyMessage = removeRandomID(message.removeFormatting());
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');   
-    const formattedSender = `&a${name1} &2[to]&a ${name2}`    
-    return responses.includes('[LINK]') || responses.includes('viewauction')
-        ? handleLinkMessages(prefix, formattedSender, responses)        
-        : `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
+    const formattedSender = `&a${name1} &2[to]&a ${name2}`  
+    
+    if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
+        return handleLinkMessages(prefix, formattedSender, responses);      
+
+    } else {    
+        return `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
+    }
+
 };  
 
 function messageHandler(prefix, message) {
@@ -333,11 +351,13 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
     const ends = strippedMsg.endsWith(continueSymbol);
     const player = stripRank(playerInfo);            
     const isBot = data.bots.includes(player);
+    const middleMessageRegex = /&r➩(.+)➩&r/;
 
     if (!ends) { // finish (both multi and single message)
         let finalMsg = msg;
         if (starts) { // ending message of continued parts
-            finalMsg = multiMessages.pop() + msg.slice(continueSymbol.length);
+            const endingMsg = msg.slice(msg.indexOf(continueSymbol)+1);
+            finalMsg = multiMessages.pop() + endingMsg;
         };
 
         const newMsg = messageHandler(BOT_PREFIX, finalMsg);
@@ -347,11 +367,14 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         };
 
     } else if (starts) { // middle of multi-message -- bot
-        multiMessages[0] += msg.slice(continueSymbol.length, -continueSymbol.length);
+        const submsg = msg.substring(msg.indexOf(continueSymbol) + 1);
+        const middlemsg = submsg.slice(0, submsg.indexOf(continueSymbol));
+        multiMessages[0] += middlemsg;
         cancel(event);
-    
-    } else { // start of multi-message
-        multiMessages.push(msg.slice(0, -continueSymbol.length));
-        cancel(event);
+        
+    } else { // start of multi-message !starts && !ends
+        const startMsg = msg.slice(0, msg.indexOf(continueSymbol));
+        multiMessages.push(startMsg);
+        cancel(event);      
     };
 }), () => getInHypixel()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');

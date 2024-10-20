@@ -1,4 +1,4 @@
-import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, getLinkHoverable, createMessage, stripRank } from './functions.js';  
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, getLinkHoverable, createMessage, stripRank, getInHypixel, truncateNumbers } from './functions.js';  
 
 const SPACING = `&2   |  &a`; 
 
@@ -195,7 +195,11 @@ export function getGuildResponse(prefix, message, type) {
         auction: {
             regex: /(.+) (&[a-z0-9]\[.+\]&[a-z0-9]): &r(\/viewauction .+)&.+/,
             format: formatAuctionLinks
-        }
+        },
+        miscDataFor: {
+            regex: /(.+) data for (.+) \((.+)\): (.+)\/(.+) \((.+)\)/,
+            format: formatMiscDataFor
+        },
     };
 
     const { regex, format } = patterns[type];
@@ -639,3 +643,11 @@ function formatSyntaxError3(prefix, match) {
     const [_, alias, playerOptions, options2] = match;
     return `${prefix}Usage: &r_${alias} player:[${playerOptions} [${options2}]`;        
 };
+
+function formatMiscDataFor(prefix, match) {
+    const [_, itemName, playerName, playerProfile, collLevel, collMax, collItems] = match;
+    const collectionColor = collLevel === collMax ? '&6' : '&a';
+    return `${prefix}${itemName} data for &2${playerName}&a (${playerProfile}): &r${collectionColor}${collLevel}/${collMax} &r(${truncateNumbers(collItems)})`;
+};      
+    
+    
