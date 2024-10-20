@@ -7,13 +7,26 @@ import './guild.js';
 let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 register('gameLoad', () => {
     ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
-    if (!data.firstInstall) {
-        if (moduleVersion === '0.1.3') {
-            ChatLib.chat(`&e&lNEW Features: (v${moduleVersion})`);
-            ChatLib.chat(`o  &rDo &b/addtbot (botName) &rto add a new bot to the list of bots!`);
-            ChatLib.chat(`o  &rDo &b/botlist &rto show bot list!`);
-            ChatLib.chat(`o  &rDo &b/rmbot (botName) &rto remove a bot from the bot list!`);
-        }   ;
-        data.firstInstall = true;
+    if (moduleVersion === '0.1.4') {
+        const featureMessage = new Message(
+            `&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+        )
+        ChatLib.chat(featureMessage);   
     };
+    if (!data.firstInstall) {
+        data.firstInstall = true;
+    };      
 });
+
+function makeChangelogHoverable(moduleVersion) {
+    const version = `&aVersion: &r${moduleVersion}`;
+    const changelog = [
+        `&a+ added format for miscellaneous data for responses`,
+        `&a+ added color for 'Vanquisher' in _be command responses`,
+        `&a+ reformatted functions to be even more flexible for edge cases`,
+        `&a+ re-added formatting for normal non-stuf links`
+    ];
+    const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
+    return new TextComponent('&3&l[&r&aHover for Changelog&3&l]')
+        .setHover(`show_text`, formattedChangelog);
+};

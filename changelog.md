@@ -111,10 +111,6 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 
 
 
-<!-- + dynamic botName recognition -->
-
-
-
 
     
 
