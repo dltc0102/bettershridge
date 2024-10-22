@@ -270,7 +270,8 @@ function botMessageHandler(prefix, message) {
 
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
-    const [sender, responses] = dpMessage.split(/: (.+)/);     
+    const [sender, responses] = dpMessage.split(/: (.+)/);  
+    if (!responses) return null;   
     return responses.includes('[LINK]') || responses.includes('viewauction')      
         ? handleLinkMessages(prefix, sender, dpMessage)
         : `${prefix}${sender}&r: ${highlightTags(responses)}`;
@@ -289,15 +290,14 @@ function replyMessageHandler(prefix, message) {
     const replyMessage = removeRandomID(message.removeFormatting());
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');   
-    const formattedSender = `&a${name1} &2[to]&a ${name2}`  
-    
+    const formattedSender = `&a${name1} &2[to]&a ${name2}`; 
+    if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
         return handleLinkMessages(prefix, formattedSender, responses);      
 
     } else {    
         return `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
     }
-
 };  
 
 function messageHandler(prefix, message) {
@@ -363,8 +363,11 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         const newMsg = messageHandler(BOT_PREFIX, finalMsg);
         if (newMsg && newMsg !== finalMsg) {    
             finalMsg = newMsg;
-            replaceMessage(event, newMsg);               
-        };
+            replaceMessage(event, newMsg);    
+
+        } else if (!newMsg) {
+            cancel(event);
+        }
 
     } else if (starts) { // middle of multi-message -- bot
         const submsg = msg.substring(msg.indexOf(continueSymbol) + 1);

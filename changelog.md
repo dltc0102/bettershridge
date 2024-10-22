@@ -107,6 +107,8 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + reformatted functions to be even more flexible for edge cases
 + readded formatting for normal non-stuf links
 
+# v1.5
++ hides messages if they are forwarded (where the message is blank)
 
 
 
