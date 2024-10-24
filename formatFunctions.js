@@ -40,8 +40,8 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+) is in (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?)(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?/,       
             format: formatMayorPicked
         },
-        noReqUpdate: {
-            regex: /But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
+        noReqUpdate: {  
+            regex: /(.+) does not have requirements! But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
             format: formatNoReqUpdateMessage
         },
         updatedMessage: {
@@ -209,9 +209,12 @@ function formatUpdatedMessage(prefix, match) {
 };
 
 function formatNoReqUpdateMessage(prefix, match) {
-    const [_, fexp, sblevels, nextRole] = match;
+    console.log('matched found')
+    const [_, your, fexp, sblevels, nextRole] = match;
+    console.log(your);  
+    const hasYour = _.includes('Your role') ? 'Your role' : 'Role';
     return [
-        `${prefix}&cRole does not have requirements!`,
+        `${prefix}&c${hasYour} does not have requirements!`,
         `${SPACING}Next Role: &6${nextRole}`,
         `${SPACING}Missing &3Fishing XP&a: &r${fexp}`,
         `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,

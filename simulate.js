@@ -24,7 +24,7 @@ register('command', () => {
     simulate(`Role is already up to date! Missing 49.3M Fishing XP and 4 Skyblock Levels for Lobter. <@ldbqwlt0b6>`)
 
     //* role does not have the requirements (your)
-    simulate(`Your role does not have requirements! But you are Missing 61.3M Fishing XP and 2 Skyblock Levels for Shrimp. <@ldbqwlt0b6>`)
+    simulate(`Your role does not have requirements! But you are Missing 61.3M Fishing XP and 2 Skyblock Levels for Shrimp. <@ldbqwlt0b6>`)  
 
     //* role does not have the requirements
     simulate(`Role does not have requirements! But you are Missing 61.3M Fishing XP and 2 Skyblock Levels for Shrimp. <@ldbqwlt0b6>`)

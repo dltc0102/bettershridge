@@ -126,7 +126,8 @@ function botMessageHandler(prefix, message) {
 
     //! your role does not have the requirements
     //! Role does not have requirements
-    } else if (botMessage.includes('Your role does not have requirements!') || botMessage.includes('Role does not have the requirements!')) {
+    } else if (botMessage.includes('Your role does not have requirements!') || botMessage.includes('Role does not have requirements!')) {
+        console.log('role does not have reqs mesasge found')        
         return getGuildResponse(prefix, botMessage, 'noReqUpdate');
     
         //! _skill
