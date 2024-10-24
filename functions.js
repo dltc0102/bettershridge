@@ -5,6 +5,10 @@ export function stripRank(name) {
     return name.match(rankNameRegex)?.[1] || name.trim();
 };
 
+export function stripFormattedName(name) {
+    return stripRank(name.removeFormatting());
+}
+
 export function getInSkyblock() {
     return (World.isLoaded() && ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK"));
 };

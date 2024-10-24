@@ -1,7 +1,9 @@
-import { createMessage, getInHypixel, getLinkHoverable, stripRank, removeRandomID, highlightTags } from './functions';
+import { createMessage, getInHypixel, getLinkHoverable, stripRank, removeRandomID, highlightTags, stripFormattedName } from './functions';
 import { data } from './bots';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
+
+// import './simulate'
 
 const BOT_PREFIX = '&2B > &a';              
 const continueSymbol = '➩';
@@ -23,7 +25,7 @@ function separatePlayerAndMessage(e) {
     const playerMatch = playerMessage.match(playerRegex);
     if (playerMatch) {
         const [_, formattedName, roleColor, roleName, message] = playerMatch;
-        const sender = stripRank(formattedName.removeFormatting());
+        const sender = stripFormattedName(formattedName);
         
         // &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r&r
         if (!data.bots.includes(sender)) {
@@ -75,25 +77,29 @@ function handleLinkMessages(prefix, sender='', message) {
             return getLinkHoverable(link);
         })  
         return createMessage(titleMessage, linkHoverables);
+    }
 
-    } else { // view auction link
-        if (message.includes('viewauction')) {
-            const titleMessage = `${prefix}${sender}: `;
-            const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
-                .setClick('run_command', message)
-                .setHover('show_text', message);
-            return createMessage(titleMessage, [auctionClickable]); 
+    //* viewauction links       
+    if (message.includes('viewauction')) {
+        const titleMessage = `${prefix}${sender}: `;
+        const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
+            .setClick('run_command', message)
+            .setHover('show_text', message);
+        return createMessage(titleMessage, [auctionClickable]); 
 
-        } else if (message.includes('http')) {
-            const normalLinkRegex = /(https?:\/\/.+?) /;
-            const linkHoverable = getLinkHoverable(message);        
-            const frontText = message.slice(0, message.indexOf('http')).trim();
-            const backText = message.replace(normalLinkRegex, '').replace(frontText, '').trim();    
-            return createMessage(`${prefix}${resultSender}`, [frontText, linkHoverable, backText]);         
-        }       
-
-    }   
-}
+    //* normal links that hypixel allows    
+    } else if (message.includes('http')) {
+        const normalLinkRegex = /(.+?):(\s.*)?\s(https?:\/\/\S+)(.*)?/;
+        const match = message.match(normalLinkRegex);
+        if (match) {
+            const [_, sender, front='', link, back=''] = match;
+            const linkHoverable = getLinkHoverable(link);
+            return new Message (    
+                `${prefix}${sender.trim()}: `, `${highlightTags(front).trim()} `, linkHoverable, ` ${highlightTags(back).trim()}`
+            );      
+        };
+    };
+};
                 
 function botMessageHandler(prefix, message) {   
     const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
@@ -114,19 +120,16 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.includes('demoted from')) {   
         return getGuildResponse(prefix, message, 'demoted');
 
-    //! role up to date
+    //! role up to date 
     } else if (botMessage.includes('Role is already up to date!')) {
         return getGuildResponse(prefix, botMessage, 'updatedMessage');
 
     //! your role does not have the requirements
-    } else if (botMessage.includes('Your role does not have requirements!')) {
-        return getGuildResponse(prefix, botMessage, 'yourNoReqUpdate');
-    
     //! Role does not have requirements
-    } else if (botMessage.includes('Role does not have the requirements!')) {
-        return getGuildResponse(prefix, botMessage, 'noReqUpdate')
-
-    //! _skill
+    } else if (botMessage.includes('Your role does not have requirements!') || botMessage.includes('Role does not have the requirements!')) {
+        return getGuildResponse(prefix, botMessage, 'noReqUpdate');
+    
+        //! _skill
     } else if (SKILL_NAMES.includes(botMessage.split(' ')[0]) && botMessage.includes('level for')) {
         return botMessage.includes('Overflow XP') 
             ? getGuildResponse(prefix, botMessage, 'skillMaxed')
@@ -161,10 +164,6 @@ function botMessageHandler(prefix, message) {
             return getGuildResponse(prefix, botMessage, 'syntaxError3')
         }
 
-    //! sticker     
-    } else if (/\<.+\>/.test(botMessage) && !botMessage.includes('⚠')) {   
-        return getGuildResponse(prefix, botMessage, 'sticker');
-        
     //! october specials
     } else if (botMessage.includes('AAH! You scared me,')) {
         return getGuildResponse(prefix, botMessage, 'spooky1');
@@ -269,17 +268,17 @@ function botMessageHandler(prefix, message) {
 };
 
 function discordPlayerMessageHandler(prefix, message) {
-    const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace('  ', ' ')
+    const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);  
     if (!responses) return null;   
-    return responses.includes('[LINK]') || responses.includes('viewauction')      
+    return responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')    
         ? handleLinkMessages(prefix, sender, dpMessage)
         : `${prefix}${sender}&r: ${highlightTags(responses)}`;
-};
+};  
 
 function guildPlayerMessageHandler(prefix, message) {
-    const [sender, responses] = removeRandomID(message).split(/: (.+)/); 
-    if (responses.includes('[LINK]') || responses.includes('viewauction')) {     
+    const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/); 
+    if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {     
         return handleLinkMessages(prefix, sender, responses);
     } else {                    
         return `${prefix}${sender}&r: ${highlightTags(responses)}`;
@@ -287,7 +286,7 @@ function guildPlayerMessageHandler(prefix, message) {
 };
 
 function replyMessageHandler(prefix, message) {
-    const replyMessage = removeRandomID(message.removeFormatting());
+    const replyMessage = removeRandomID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');   
     const formattedSender = `&a${name1} &2[to]&a ${name2}`; 
@@ -326,6 +325,8 @@ function messageHandler(prefix, message) {
             resMessage = strippedMessage;
         }
     }
+
+    // console.log(type, resMessage);      
     if (type === 'bot') return botMessageHandler(prefix, resMessage);
     if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
     if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);
@@ -351,7 +352,6 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
     const ends = strippedMsg.endsWith(continueSymbol);
     const player = stripRank(playerInfo);            
     const isBot = data.bots.includes(player);
-    const middleMessageRegex = /&r➩(.+)➩&r/;
 
     if (!ends) { // finish (both multi and single message)
         let finalMsg = msg;

@@ -1,4 +1,4 @@
-import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, getLinkHoverable, createMessage, stripRank, getInHypixel, truncateNumbers } from './functions.js';  
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, getLinkHoverable, createMessage, stripRank, getInHypixel, truncateNumbers, stripFormattedName } from './functions.js';  
 
 const SPACING = `&2   |  &a`; 
 
@@ -40,12 +40,8 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+) is in (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?)(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?/,       
             format: formatMayorPicked
         },
-        yourNoReqUpdate: {
-            regex: /Your role does not have requirements! But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
-            format: formatNoReqUpdateMessage
-        },
         noReqUpdate: {
-            regex: /Role does not have the requirements! Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
+            regex: /But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
             format: formatNoReqUpdateMessage
         },
         updatedMessage: {
@@ -119,10 +115,6 @@ export function getGuildResponse(prefix, message, type) {
         commandHelp: {
             regex: /Available commands \(_command\): (.+)/,
             format: formatCommandHelp
-        },
-        sticker: {
-            regex: /(.+):\s+(\<.+\>)/,
-            format: formatSticker
         },
         replies: {  
             regex: /(.+)\s\[to\]\s(.+?): (.+)/,
@@ -228,13 +220,13 @@ function formatNoReqUpdateMessage(prefix, match) {
 
 function formatPromotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
-    const playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`       
+    const playerFName = `${playerColor}${stripFormattedName(playerName)}`       
     return `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;          
 };
 
 function formatDemotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
-    const playerFName = `${playerColor}${stripRank(playerName.removeFormatting())}`
+    const playerFName = `${playerColor}${stripFormattedName(playerName)}`
     return `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
 };
 
@@ -408,15 +400,6 @@ function formatCommandHelp(prefix, match) {
         ...formattedCmdLst
     ];
 }
-
-function formatSticker(prefix, match) {
-    const [_, name, sticker] = match;
-    if (name.includes(' [to] ')) {
-        const [name1, name2] = name.split(' [to] ');
-        return `${prefix}${name1} &2[to]&a ${name2}: &r${sticker}`;
-    }   
-    return `${prefix}${name}: &r${sticker}`;
-}   
 
 function formatReplies(prefix, match) {
     const [_, name1, name2, response] = match;
