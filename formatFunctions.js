@@ -328,12 +328,15 @@ function formatMayor(prefix, match) {
     ];
 }
 
-function formatMayorPicked(prefix, match) {
+function formatMayorPicked(prefix, match) { 
     const [_, mayorName, firstVal, firstUnit, secondVal=null, secondUnit=null, thirdVal=null, thirdUnit=null] = match;
-    const firstPart = firstVal ? `${firstVal}${formatTime(firstUnit)}` : '';
-    const secondPart = secondVal ? `${secondVal}${formatTime(secondUnit)}` : '';
-    const thirdPart = thirdVal ? `${thirdVal}${formatTime(thirdUnit)}` : '';      
-    return `${prefix}${mayorColors[mayorName]}Mayor ${mayorName} &acomes in: &f${firstPart} ${secondPart} ${thirdPart}&a.`;    
+    const [unit1, unit2, unit3] = [firstUnit, secondUnit, thirdUnit].map(formatTime);
+    const parts = [
+        firstVal && `${firstVal}${unit1}`,
+        secondVal && `${secondVal}${unit2}`,
+        thirdVal && `${thirdVal}${unit3}`
+    ].filter(Boolean).join(' ');
+    return `${prefix}${mayorColors[mayorName]}Mayor ${mayorName} &acomes in: &f${parts}&a.`;
 }
 
 function formatSkillMaxed(prefix, match) {
