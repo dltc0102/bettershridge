@@ -209,12 +209,9 @@ function formatUpdatedMessage(prefix, match) {
 };
 
 function formatNoReqUpdateMessage(prefix, match) {
-    console.log('matched found')
-    const [_, your, fexp, sblevels, nextRole] = match;
-    console.log(your);  
-    const hasYour = _.includes('Your role') ? 'Your role' : 'Role';
+    const [_, your, fexp, sblevels, nextRole] = match;  
     return [
-        `${prefix}&c${hasYour} does not have requirements!`,
+        `${prefix}&c${your} does not have requirements!`,
         `${SPACING}Next Role: &6${nextRole}`,
         `${SPACING}Missing &3Fishing XP&a: &r${fexp}`,
         `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,

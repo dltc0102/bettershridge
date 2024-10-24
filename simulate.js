@@ -89,7 +89,7 @@ register('command', () => {
     //* contest specific
     simulate(`Next wheat contest in 01:35:56. <@govhcsa00ae>`)
 
-    //* boop    
+    //* boop            
     simulate(`altF5qt: _boop citwus <:(`)
     simulate(`altF5qt: _boop oBiscuit <:(`)
 
