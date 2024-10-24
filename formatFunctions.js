@@ -108,9 +108,13 @@ export function getGuildResponse(prefix, message, type) {
             regex: /Bazaar data for (.+): insta-buy: (.+), insta-sell: (.+) ?/,
             format: formatBazaar
         },   
-        bestiary: {
+        bestiarySpecific: {
             regex: /(.+) data for (.+) \((.+)\) k\/d \(kdr\): (\d+)\/(\d+)(?: \((.+)\))?/,
-            format: formatBestiary
+            format: formatBestiarySpecific
+        },
+        bestiaryAll: {
+            regex: /(.+) bestiary for (.+) \((.+)\) k\/d \(kdr\): (.+)/,
+            format: formatBestiaryAll
         },
         commandHelp: {
             regex: /Available commands \(_command\): (.+)/,
@@ -386,7 +390,7 @@ function formatBazaar(prefix, match) {
     ];
 }
 
-function formatBestiary(prefix, match) {
+function formatBestiarySpecific(prefix, match) {
     const [_, monster, playerName, playerProfile, kills, deaths, ratio] = match;  
     const stripMonster = monster.replace(/The/g, '').trim();
     const monsterColor = getMonsterColor(stripMonster);                  
@@ -636,4 +640,7 @@ function formatMiscDataFor(prefix, match) {
     return `${prefix}${itemName} data for &2${playerName}&a (${playerProfile}): &r${collectionColor}${collLevel}/${collMax} &r(${truncateNumbers(collItems)})`;
 };      
     
-    
+function formatBestiaryAll(prefix, match) {
+    const [_, bestiaryType, playerName, playerProfile, bestiaryData] = match;
+    // bestiaryData = 'Agarimoo 4418/0 Carrot King 1464/0 Catfish 4062/4 (1015.50) Deep Sea Protector 1505/2 (752.50) Guardian Defender 2109/1 (2109.00) Night Squid 3351/0 Oasis Rabbit 335/0 Oasis Sheep 748/0 Poisoned Water Worm 1012/0 Rider of the Deep 6131/1 (6131.00) Sea Archer 8185/0 Sea Guardian 8849/0 Sea Leech 2566/1 (2566.00) Sea Walker 11731/0 Sea Witch 10507/2 (5253.50) Squid 25743/0 The Sea Emperor 216/1 (216.00) Water Hydra 667/0 Water Worm 1065/0 Abyssal Miner 250/0'
+}

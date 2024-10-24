@@ -3,8 +3,6 @@ import { data } from './bots';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
-// import './simulate'
-
 const BOT_PREFIX = '&2B > &a';              
 const continueSymbol = '➩';
 const idRegex = /<@.+>/;    
@@ -139,9 +137,13 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.startsWith('Bazaar data for ')) {
         return getGuildResponse(prefix, botMessage, 'bazaar');
 
-    //! _be data
+    //! _be data (specific)
     } else if (botMessage.includes('k/d (kdr)')) {
-        return getGuildResponse(prefix, botMessage, 'bestiary');
+        return getGuildResponse(prefix, botMessage, 'bestiarySpecific');
+    
+    //! _be data (whole)
+    } else if (botMessage.includes('bestiary data for')) {
+        return getGuildResponse(prefix, botMessage, 'bestiaryAll');
 
     //! _command
     } else if (botMessage.includes('Available commands (_command)')) {
@@ -212,10 +214,10 @@ function botMessageHandler(prefix, message) {
             ? getGuildResponse(prefix, botMessage, 'activeContest')
             : getGuildResponse(prefix, botMessage, 'nextContest');
         
-    // //! _boop player
-    // } else if (botMessage.includes('_boop')) {
-    //     [tempBoop.booper, tempBoop.booped] = getGuildResponse(prefix, botMessage, 'bot_boop');
-    //     return `${prefix}${tempBoop.booper}: &r_boop {tempBoop.booped}`;
+    //! _boop player     
+    } else if (botMessage.includes('_boop')) {
+        [tempBoop.booper, tempBoop.booped] = getGuildResponse(prefix, botMessage, 'bot_boop');
+        return `${prefix}${tempBoop.booper}: &r_boop ${tempBoop.booped}`;       
         
     //! booped player
     } else if (botMessage.includes('Booped')) {
@@ -326,7 +328,7 @@ function messageHandler(prefix, message) {
         }
     }
 
-    // console.log(type, resMessage);      
+    console.log(type, resMessage);          
     if (type === 'bot') return botMessageHandler(prefix, resMessage);
     if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
     if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);
@@ -337,10 +339,12 @@ function replaceMessage(event, message) {
     cancel(event);
     if (Array.isArray(message)) {
         message.forEach(msg => {
-            ChatLib.chat(msg);
+            const editedMsg = msg.replace(/  /g, ' ');
+            ChatLib.chat(editedMsg);
         })
     } else {
-        ChatLib.chat(message);
+        const editedMsg = message.replace(/  /g, ' ');
+        ChatLib.chat(editedMsg);                     
     }
 };
 

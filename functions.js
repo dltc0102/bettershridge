@@ -128,6 +128,7 @@ function getAttachmentName(link) {
 function getLinkSource(link) {
     let source;
     if (link.includes('youtube') || link.includes('youtu.be')) source = 'Youtube';
+    if (link.includes('twitch')) source = 'Twitch';
     if (link.includes('discord')) source = 'Discord';
     if (link.includes('twitter')) source = 'Twitter';
     if (link.includes('hypixel')) source = 'Hypixel';

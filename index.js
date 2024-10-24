@@ -1,6 +1,7 @@
 import { data } from './bots.js';    
 import './guild.js';
 
+import './simulate.js';
 //! any misc problems (/ct dump and copy message here)
 //? ...
 
