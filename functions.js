@@ -178,10 +178,15 @@ export function getLinkHoverable(link) {
         const urlPattern = /(https?:\/\/[^\s]+)/;
         decodedLink = link.match(urlPattern)?.[0];  
     }
-
+                
+    console.log('getlinkhoverable func');
+    console.log(`decodedLink: ${decodedLink}`)
     const checkLinkExpired = isLinkExpired(decodedLink);
     const [linkName, hoverText] = getComponentParts(decodedLink);
 
+    console.log(`checkLinkExpired: ${checkLinkExpired}`)
+    console.log(`linkName: ${linkName}`)
+    console.log(`hoverText: ${hoverText}`)          
     return checkLinkExpired
         ? '&b<link expired> '
         : new TextComponent(`${linkName} `)       

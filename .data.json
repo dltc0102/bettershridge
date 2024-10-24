@@ -4,5 +4,7 @@
         "NqekMyBeloved",
         "Shrimple77"
     ],
-    "firstInstall": true
+    "firstInstall": true,
+    "guildPrefix": "G",
+    "botPrefix": "B"
 }

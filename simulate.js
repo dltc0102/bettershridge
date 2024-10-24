@@ -141,10 +141,10 @@ register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩62314551886352/jnbhf^qoh?fy=782aad7b&jt=78295bfb&in=376f855ae35f6c96fb7dfa49aaacc25117689a6ca91242875e5d157b1b3e1g74&) hahaha`)
 
     //* viewauction links
-    simulate(`/viewauction 34ae8d0fb04947568220d9109da00d23`)
+    simulate(`/viewauction 225a8ee261824051afc49402c3ef3ba8`)
 
     //* viewauction links with variety
-    simulate(`@watas haha /viewauction 34ae8d0fb04947568220d9109da00d23 adfasdf`)
+    simulate(`@watas haha /viewauction 225a8ee261824051afc49402c3ef3ba8 adfasdf`)
 
     //* http links
     simulate(`https://www.youtube.com/watch?v=ZxdVty0lXFk&list=RDZxdVty0lXFk&start_radio=1`)
@@ -169,10 +169,10 @@ register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩62314551886352/jnbhf^qoh?fy=782aad7b&jt=78295bfb&in=376f855ae35f6c96fb7dfa49aaacc25117689a6ca91242875e5d157b1b3e1g74&) hahaha`)
 
     //* viewauction links
-    simulate(`/viewauction 34ae8d0fb04947568220d9109da00d23`)
+    simulate(`/viewauction 225a8ee261824051afc49402c3ef3ba8`)
 
     //* viewauction links with variety
-    simulate(`@watas haha /viewauction 34ae8d0fb04947568220d9109da00d23 adfasdf`)
+    simulate(`@watas haha /viewauction 225a8ee261824051afc49402c3ef3ba8 adfasdf`)
 
     //* http links
     simulate(`https://www.youtube.com/watch?v=ZxdVty0lXFk&list=RDZxdVty0lXFk&start_radio=1`)
@@ -197,10 +197,10 @@ register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩62314551886352/jnbhf^qoh?fy=782aad7b&jt=78295bfb&in=376f855ae35f6c96fb7dfa49aaacc25117689a6ca91242875e5d157b1b3e1g74&) hahaha`)
 
     //* viewauction links
-    simulate(`/viewauction 34ae8d0fb04947568220d9109da00d23`)
+    simulate(`/viewauction 225a8ee261824051afc49402c3ef3ba8`)
 
     //* viewauction links with variety
-    simulate(`@watas haha /viewauction 34ae8d0fb04947568220d9109da00d23 adfasdf`)
+    simulate(`@watas haha /viewauction 225a8ee261824051afc49402c3ef3ba8 adfasdf`)
 
     //* http links
     simulate(`https://www.youtube.com/watch?v=ZxdVty0lXFk&list=RDZxdVty0lXFk&start_radio=1`)

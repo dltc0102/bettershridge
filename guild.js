@@ -3,9 +3,10 @@ import { data } from './bots';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
-const BOT_PREFIX = '&2B > &a';              
+const BOT_PREFIX = `&2${data.botPrefix} > &a`;
+const GUILD_PREFIX = `&2${data.guildPrefix} > &a`;
 const continueSymbol = '➩';
-const idRegex = /<@.+>/;    
+const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];          
@@ -60,6 +61,11 @@ function separatePlayerAndMessage(e) {
 }               
 
 function handleLinkMessages(prefix, sender='', message) {
+    console.log(' ')
+    console.log('handlelinkmessages func');
+    console.log(`prefix: ${prefix}`)
+    console.log(`sender: ${sender}`)
+    console.log(`message: ${message}`)
     const linkRegex = /\[LINK\]\((.+?)\)/g;       
     let linkList = [];
     let foundLinks;
@@ -68,9 +74,13 @@ function handleLinkMessages(prefix, sender='', message) {
     }
     const resultSender = sender ? `${sender}: ` : ''; 
 
+    console.log(`resultSender: ${resultSender}`)
     if (linkList.length > 0) {  
+        console.log('linklist.length > 0')
         const otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
         const titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
+
+        console.log(`titleMessage: ${titleMessage}`)
         let linkHoverables = linkList.map(link => {
             return getLinkHoverable(link);
         })  
@@ -79,7 +89,11 @@ function handleLinkMessages(prefix, sender='', message) {
 
     //* viewauction links       
     if (message.includes('viewauction')) {
+        console.log(' ');   
+        console.log('message includes viewauction')
+        console.log(`message: ${message}`)
         const titleMessage = `${prefix}${sender}: `;
+        console.log(`title message: ${titleMessage}`);   
         const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
             .setClick('run_command', message)
             .setHover('show_text', message);
@@ -87,6 +101,7 @@ function handleLinkMessages(prefix, sender='', message) {
 
     //* normal links that hypixel allows    
     } else if (message.includes('http')) {
+        console.log('message includes http')    
         const normalLinkRegex = /(.+?):(\s.*)?\s(https?:\/\/\S+)(.*)?/;
         const match = message.match(normalLinkRegex);
         if (match) {
@@ -137,14 +152,12 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.startsWith('Bazaar data for ')) {
         return getGuildResponse(prefix, botMessage, 'bazaar');
 
-    //! _be data (specific)
+    //! _be data
     } else if (botMessage.includes('k/d (kdr)')) {
-        return getGuildResponse(prefix, botMessage, 'bestiarySpecific');
+        return botMessage.includes('bestiary for') 
+            ? getGuildResponse(prefix, botMessage, 'bestiaryAll')
+            : getGuildResponse(prefix, botMessage, 'bestiarySpecific');
     
-    //! _be data (whole)
-    } else if (botMessage.includes('bestiary data for')) {
-        return getGuildResponse(prefix, botMessage, 'bestiaryAll');
-
     //! _command
     } else if (botMessage.includes('Available commands (_command)')) {
         return getGuildResponse(prefix, botMessage, 'commandHelp');
@@ -293,6 +306,8 @@ function replyMessageHandler(prefix, message) {
     const [name1, name2] = sender.split(' [to] ');   
     const formattedSender = `&a${name1} &2[to]&a ${name2}`; 
     if (!responses) return null;
+    console.log('specific message handler')
+    console.log(`responses: ${responses}`)          
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
         return handleLinkMessages(prefix, formattedSender, responses);      
 
@@ -301,7 +316,7 @@ function replyMessageHandler(prefix, message) {
     }
 };  
 
-function messageHandler(prefix, message) {
+function messageHandler(message) {
     let type = '';
     let resMessage = '';
     const strippedMessage = message.removeFormatting();
@@ -328,7 +343,9 @@ function messageHandler(prefix, message) {
         }
     }
 
-    console.log(type, resMessage);          
+    console.log(' ');
+    console.log(type, resMessage);   
+    const prefix = type === 'bot' ? BOT_PREFIX : GUILD_PREFIX;       
     if (type === 'bot') return botMessageHandler(prefix, resMessage);
     if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
     if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);
@@ -339,11 +356,11 @@ function replaceMessage(event, message) {
     cancel(event);
     if (Array.isArray(message)) {
         message.forEach(msg => {
-            const editedMsg = msg.replace(/  /g, ' ');
+            const editedMsg = msg;
             ChatLib.chat(editedMsg);
         })
     } else {
-        const editedMsg = message.replace(/  /g, ' ');
+        const editedMsg = message;
         ChatLib.chat(editedMsg);                     
     }
 };
@@ -364,7 +381,10 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             finalMsg = multiMessages.pop() + endingMsg;
         };
 
-        const newMsg = messageHandler(BOT_PREFIX, finalMsg);
+        const newMsg = messageHandler(finalMsg);
+        console.log(newMsg);
+        console.log(' ')
+        console.log('----------------------------------')           
         if (newMsg && newMsg !== finalMsg) {    
             finalMsg = newMsg;
             replaceMessage(event, newMsg);    

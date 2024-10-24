@@ -9,6 +9,24 @@ const collNameCodes = {
     "farming": "&6",
     "mining": "&b",
     "taming": "&d",
+
+    // bestiary
+    "private island": "&f",
+    "hub": "&f",
+    "the farming islands": "&f",
+    "the garden": "&2",
+    "spider's den": "&c",
+    "the end": "&d",    
+    "crimson isle": "&c",   
+    "deep caverns": "&b",
+    "dwarven mines": "&2",
+    "crystal hollows": "&5",
+    "the park": "&3",
+    "spooky festival": "&6",
+    "the catacombs": "&c",
+    "mythological creatures": "&2", 
+    "jerry": "&6",
+    "kuudra": "&c",
 };
 
 function generateMessage(prefix, message, regex, formatHandler) {
@@ -642,5 +660,28 @@ function formatMiscDataFor(prefix, match) {
     
 function formatBestiaryAll(prefix, match) {
     const [_, bestiaryType, playerName, playerProfile, bestiaryData] = match;
-    // bestiaryData = 'Agarimoo 4418/0 Carrot King 1464/0 Catfish 4062/4 (1015.50) Deep Sea Protector 1505/2 (752.50) Guardian Defender 2109/1 (2109.00) Night Squid 3351/0 Oasis Rabbit 335/0 Oasis Sheep 748/0 Poisoned Water Worm 1012/0 Rider of the Deep 6131/1 (6131.00) Sea Archer 8185/0 Sea Guardian 8849/0 Sea Leech 2566/1 (2566.00) Sea Walker 11731/0 Sea Witch 10507/2 (5253.50) Squid 25743/0 The Sea Emperor 216/1 (216.00) Water Hydra 667/0 Water Worm 1065/0 Abyssal Miner 250/0'
+    let bestiaryList = bestiaryData
+        .match(/([A-Za-z\s]+ \d+\/\d+(?: \(\d+\.\d+\))?)/g)
+        .map(data => data.trim());
+    
+    const formatBestiaryDataByLine = (lst) => {
+        let resLst = [];
+        lst.forEach(line => {
+            const lineRegex = /(.+?)\s(\d+\/\d+)\s?(\(\d+\.\d+\))?/;
+            const lineMatch = line.match(lineRegex);
+            if (lineMatch) {
+                const [_, name, kd, ratio = null] = lineMatch;
+                let showRatio = ratio ? ` &7${ratio}` : '';
+                resLst.push(`${SPACING}${name}: &r${kd}${showRatio}`);
+            }
+        });
+        return resLst;
+    };
+
+    const formattedBestiaryList = formatBestiaryDataByLine(bestiaryList);
+    const formattedBeType = collNameCodes[bestiaryType.toLowerCase()] + capitalise(bestiaryType);
+    const titleMessage = `${prefix}${formattedBeType} bestiary data for &2${playerName}&a (${playerProfile}): `
+    return [
+        titleMessage, ...formattedBestiaryList   
+    ];          
 }
