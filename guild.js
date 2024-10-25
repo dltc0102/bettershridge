@@ -1,10 +1,9 @@
 import { createMessage, getInHypixel, getLinkHoverable, stripRank, removeRandomID, highlightTags, stripFormattedName } from './functions';
 import { data } from './bots';
+import { prefixData } from './prefix';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
-const BOT_PREFIX = `&2${data.botPrefix} > &a`;
-const GUILD_PREFIX = `&2${data.guildPrefix} > &a`;
 const continueSymbol = '➩';
 const idRegex = /<@.+>/;
 
@@ -114,7 +113,8 @@ function handleLinkMessages(prefix, sender='', message) {
     };
 };
                 
-function botMessageHandler(prefix, message) {   
+function botMessageHandler(prefix, message) {
+    console.log(`guildPlayerMessageHandler func: ${prefix} | ${message}`)
     const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
 
     //! _mayor  
@@ -283,6 +283,7 @@ function botMessageHandler(prefix, message) {
 };
 
 function discordPlayerMessageHandler(prefix, message) {
+    console.log(`guildPlayerMessageHandler func: ${prefix} | ${message}`)
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);  
     if (!responses) return null;   
@@ -292,6 +293,7 @@ function discordPlayerMessageHandler(prefix, message) {
 };  
 
 function guildPlayerMessageHandler(prefix, message) {
+    console.log(`guildPlayerMessageHandler func: ${prefix} | ${message}`)
     const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/); 
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {     
         return handleLinkMessages(prefix, sender, responses);
@@ -301,6 +303,7 @@ function guildPlayerMessageHandler(prefix, message) {
 };
 
 function replyMessageHandler(prefix, message) {
+    console.log(`replyMessageHandler func: ${prefix} | ${message}`)
     const replyMessage = removeRandomID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');   
@@ -345,7 +348,7 @@ function messageHandler(message) {
 
     console.log(' ');
     console.log(type, resMessage);   
-    const prefix = type === 'bot' ? BOT_PREFIX : GUILD_PREFIX;       
+    const prefix = type === 'bot' ? `&2${prefixData.bot}&2 > &a` : `&2${prefixData.guild}&2 > &a`;
     if (type === 'bot') return botMessageHandler(prefix, resMessage);
     if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
     if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);

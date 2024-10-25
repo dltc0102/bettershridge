@@ -4,9 +4,7 @@ import { getInHypixel } from './functions';
 export const data = new PogObject("bettershridge", {
     bots: ['Baltics', 'NqekMyBeloved', 'Shrimple77'],
     firstInstall: false,
-    guildPrefix: 'G',
-    botPrefix: 'B',
-});
+}, './data/data.json');
 data.autosave(5);
 
 register('command', (args) => {
@@ -46,25 +44,3 @@ register('command', (args) => {
         data.save();
     }
 }).setName('rmbot');
-
-register('command', (args) => {
-    if (!getInHypixel()) return;
-    if (!args) {
-        ChatLib.chat('&cCorrect Usage: &b/setguildprefix (prefix name)')
-    } else if (args) {
-        ChatLib.chat(`&aGuild prefix set: &r${args}`);
-        data.guildPrefix = args;
-        data.save();
-    }
-}).setName('setguildprefix');
-
-register('command', (args) => {
-    if (!getInHypixel()) return;
-    if (!args) {
-        ChatLib.chat('&cCorrect Usage: &b/setbotprefix (prefix name)')
-    } else if (args) {
-        ChatLib.chat(`&aBot prefix set: &r${args}`);
-        data.botPrefix = args;
-        data.save();    
-    }
-}).setName('setbotprefix').setAliases('setbridgeprefix');

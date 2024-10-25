@@ -27,7 +27,7 @@ function makeChangelogHoverable(moduleVersion) {
         `&a+ reformatted functions to be even more flexible for edge cases`,
         `&a+ re-added formatting for normal non-stuf links`
     ];
-    const formattedChangelog = [version, '&     r------------------------', ...changelog].join('\n');
+    const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
     return new TextComponent('&3&l[&r&aHover for Changelog&3&l]')
         .setHover(`show_text`, formattedChangelog);
 };
