@@ -82,17 +82,9 @@ export function getGuildResponse(prefix, message, type) {
             regex: /Spooked (.+)! \>:\)/,
             format: formatSpook2
         },
-        syntaxError1: {
-            regex: /Syntax: (.+) \<player:\[(.+)\]\>( \<.+\>)?/,
-            format: formatSyntaxError1
-        },
-        syntaxError2: { 
-            regex: /Syntax: \<amount\>\[k\|m\|b\|s\] \<item name\>/,
-            format: formatSyntaxError2
-        },
-        syntaxError3: {
-            regex: /Syntax: (.+) \<player:\[(.+)\]\> \[(.+)\]/,
-            format: formatSyntaxError3
+        syntaxError: {
+            regex: /⚠ Usage: _(.+?) (.+)/,
+            format: formatSyntaxErrors
         },
         generalDecoded: {
             regex: /.+/, 
@@ -636,22 +628,6 @@ function formatAuctionLinks(prefix, match) {
     return createMessage(titleMessage, hoverable);
 }       
 
-function formatSyntaxError1(prefix, match) {
-    const [_, alias, playerOptions, condition2=null] = match;
-    const options2 = condition2 ? condition2 : '';
-    return `${prefix}Usage: &r_${alias} player:[${playerOptions}] ${options2}`;
-};
-
-function formatSyntaxError2(prefix, match) {
-    const [_] = match;    
-    return `${prefix}Usage: &r_[ib|is] amount:[k|m|b|s] <item name>`;
-};      
-
-function formatSyntaxError3(prefix, match) {
-    const [_, alias, playerOptions, options2] = match;
-    return `${prefix}Usage: &r_${alias} player:[${playerOptions} [${options2}]`;        
-};
-
 function formatMiscDataFor(prefix, match) {
     const [_, itemName, playerName, playerProfile, collLevel, collMax, collItems] = match;
     const collectionColor = collLevel === collMax ? '&6' : '&a';
@@ -684,4 +660,12 @@ function formatBestiaryAll(prefix, match) {
     return [
         titleMessage, ...formattedBestiaryList   
     ];          
+}
+
+function formatSyntaxErrors(prefix, match) {
+    const [_, cmdName, optionsStr] = match;
+    const con1 = optionsStr.split(' ')[0].trim();
+    const con2 = optionsStr.substring(optionsStr.indexOf(' ')).trim();
+    const fcon2 = cmdName === 'cata' ? con2.replace(/\[0-7\]/g, '0-7') : con2;
+    return `${prefix}&c⚠ Usage: _${cmdName} ${con1} ${fcon2}`;                     
 }

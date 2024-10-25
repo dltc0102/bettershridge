@@ -189,7 +189,7 @@ export function getLinkHoverable(link) {
     console.log(`hoverText: ${hoverText}`)          
     return checkLinkExpired
         ? '&b<link expired> '
-        : new TextComponent(`${linkName} `)       
+        : new TextComponent(`${linkName}`)       
             .setClick('open_url', decodedLink)      
             .setHover('show_text', hoverText);
 }

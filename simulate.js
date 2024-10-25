@@ -1,5 +1,5 @@
-function simulate(msg) { return ChatLib.simulateChat(`${RP_MSG_PREFIX}  ${msg}&r`); };   
-function commentate(msg) { return ChatLib.simulateChat(`//? &7${msg}`); };
+function simulate(msg) { return ChatLib.simulateChat(`${DP_MSG_PREFIX}  ${msg}&r`); };   
+function commentate(msg) { return ChatLib.simulateChat(`//? &7${msg}`); };      
 
 const BOT_MSG_PREFIX = `&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r`;
 const DP_MSG_PREFIX = `&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &roBiscuit: &r`;
@@ -110,7 +110,7 @@ register('command', () => {
     //* not continued
     simulate(`foraging completion for obiscuit (Coconut): Acacia Wood 9/9 (51,840) Spruce Wood 9/9 (461,058) Jungle Wood 9/9 (157,866) Birch Wood 10/10 (74,146) Oak Wood 9/9 (117,242) Dark Oak Wood 9/9 (909,637)  <@7i0fngd7xpu>`)
 
-    //* continued
+    //* continued           
     simulate('fishing completion for obiscuit (Coconut): Lily Pad 9/9 (1,276,799) Prismarine Shard 5/7 (374,612/400) Ink Sac 9/9 (109,135) Raw Fish 11/11 (4,016,996) Pufferfish 10/10 (828,853) Clownfish 7/9 (271,824/1,600) Raw Salmon 9/9 (1,640,614) Magmafish 12/12 (5➩')
     simulate('➩,916,806) Prismarine Crystals 7/7 (353,133) Clay 5/6 (20,645/2,500) Sponge 9/9 (215,528)  <@6q6lm3d4zkd>')    
 
@@ -154,7 +154,7 @@ register('command', () => {
 
     //* normal message
     simulate(` a normal dp message`)        
-}).setName('check_bettershridge_dp_messages');
+}).setName('check_bettershridge_dp_messages');  
 
 // guild player messages
 register('command', () => {
@@ -221,3 +221,14 @@ register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩250/0  <@qaul4vs0he>&r`)
         
 }).setName('test_continuing_bestiary_message');
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r⚠ Usage: _be <player:[profile|bingo|main]> <type|mob> <@7buscmlfhjk>&r`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r⚠ Usage: _ib <amount>[k|m|b|s] <item name> <@0fvpzhzh5fsh>&r`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r⚠ Usage: _cata <player:[profile|bingo|main]> [class|f[0-7]|m[1-7]] <@pkkz7esxe2d>&r`)
+}).setName('test_syntax_errors');
+
+register('command', () => {     
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rfishing completion for obiscuit (Coconut): Lily Pad 9/9 (1,294,522) Prismarine Shard 5/7 (375,433/400) Ink Sac 9/9 (109,331) Raw Fish 11/11 (4,019,164) Pufferfish 10/10 (829,070) Clownfish 7/9 (271,924/1,600) Raw Salmon 9/9 (1,641,426) Magmafish 12/12 (5➩&r`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩,916,928) Prismarine Crystals 7/7 (353,881) Clay 5/6 (20,645/2,500) Sponge 9/9 (215,757)  <@h8ilv7kawa5>&r`) 
+}).setName('test_collections');                 

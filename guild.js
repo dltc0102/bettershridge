@@ -60,61 +60,56 @@ function separatePlayerAndMessage(e) {
 }               
 
 function handleLinkMessages(prefix, sender='', message) {
-    console.log(' ')
-    console.log('handlelinkmessages func');
-    console.log(`prefix: ${prefix}`)
-    console.log(`sender: ${sender}`)
-    console.log(`message: ${message}`)
-    const linkRegex = /\[LINK\]\((.+?)\)/g;       
-    let linkList = [];
-    let foundLinks;
-    while ((foundLinks = linkRegex.exec(message)) !== null) {
-        linkList.push(foundLinks[1]);
-    }
-    const resultSender = sender ? `${sender}: ` : ''; 
+    console.log(' ');
+    console.log(`prefix: ${prefix}`);
+    console.log(`sender: ${sender}`);
+    console.log(`message: ${message}`);
+    
+    // const linkRegex = /\[LINK\]\((.+?)\)/g;       
+    // let linkList = [];
+    // let foundLinks;
+    // while ((foundLinks = linkRegex.exec(message)) !== null) {
+    //     linkList.push(foundLinks[1]);
+    // }
 
-    console.log(`resultSender: ${resultSender}`)
-    if (linkList.length > 0) {  
-        console.log('linklist.length > 0')
-        const otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
-        const titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
+    // console.log(`linkList: ${JSON.stringify(linkList)}`)
+    // const resultSender = sender ? `${sender}: ` : ''; 
+    // if (linkList.length > 0) { 
+    //     console.log(`case: linkList contains links`) 
+    //     const otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
+    //     const titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
 
-        console.log(`titleMessage: ${titleMessage}`)
-        let linkHoverables = linkList.map(link => {
-            return getLinkHoverable(link);
-        })  
-        return createMessage(titleMessage, linkHoverables);
-    }
+    //     let linkHoverables = linkList.map(link => {
+    //         return getLinkHoverable(link);
+    //     })  
+    //     return createMessage(titleMessage, linkHoverables);
+    // }
 
-    //* viewauction links       
-    if (message.includes('viewauction')) {
-        console.log(' ');   
-        console.log('message includes viewauction')
-        console.log(`message: ${message}`)
-        const titleMessage = `${prefix}${sender}: `;
-        console.log(`title message: ${titleMessage}`);   
-        const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
-            .setClick('run_command', message)
-            .setHover('show_text', message);
-        return createMessage(titleMessage, [auctionClickable]); 
+    // //* viewauction links       
+    // if (message.includes('viewauction')) {
+    //     console.log(`case: message contains a viewauction link`) 
+    //     const titleMessage = `${prefix}${sender}: `;
+    //     const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
+    //         .setClick('run_command', message)
+    //         .setHover('show_text', message);
+    //     return createMessage(titleMessage, [auctionClickable]); 
 
-    //* normal links that hypixel allows    
-    } else if (message.includes('http')) {
-        console.log('message includes http')    
-        const normalLinkRegex = /(.+?):(\s.*)?\s(https?:\/\/\S+)(.*)?/;
-        const match = message.match(normalLinkRegex);
-        if (match) {
-            const [_, sender, front='', link, back=''] = match;
-            const linkHoverable = getLinkHoverable(link);
-            return new Message (    
-                `${prefix}${sender.trim()}: `, `${highlightTags(front).trim()} `, linkHoverable, ` ${highlightTags(back).trim()}`
-            );      
-        };
-    };
+    // //* normal links that hypixel allows    
+    // } else if (message.includes('http')) {
+    //     console.log(`case: message contains http links`);
+    //     const normalLinkRegex = /(.+?):(\s.*)?\s(https?:\/\/\S+)(.*)?/;
+    //     const match = message.match(normalLinkRegex);
+    //     if (match) {
+    //         const [_, sender, front='', link, back=''] = match;
+    //         const linkHoverable = getLinkHoverable(link);
+    //         return new Message (    
+    //             `${prefix}${sender.trim()}: `, `${highlightTags(front).trim()} `, linkHoverable, ` ${highlightTags(back).trim()}`
+    //         );      
+    //     };
+    // };
 };
                 
 function botMessageHandler(prefix, message) {
-    console.log(`guildPlayerMessageHandler func: ${prefix} | ${message}`)
     const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
 
     //! _mayor  
@@ -163,21 +158,9 @@ function botMessageHandler(prefix, message) {
         return getGuildResponse(prefix, botMessage, 'commandHelp');
 
     //! syntax error
-    } else if (botMessage.includes('Syntax')) { 
-        const [title, message] = botMessage.split(': ');
-        const alias = removeRandomID(message).split(' ')[0].trim();
-        const list1 = ['skill', 'be', 'bestiary', 'col', 'coll', 'collection', 'fw', 'fweight', 'elite', 'slayer'];
-        // const list2 = ['ib', 'bzib', 'instabuy', 'is', 'bzis', 'instasell'];
-        const list3 = ['cata', 'trophy', 'trophyfish', 'tfish'];
-        if (list1.some(name => alias === name)) {
-            return getGuildResponse(prefix, botMessage, 'syntaxError1')
-        }
-        if (alias === '<amount>[k|m|b|s]') {    
-            return getGuildResponse(prefix, botMessage, 'syntaxError2')
-        }
-        if (list3.some(name => alias === name)) {
-            return getGuildResponse(prefix, botMessage, 'syntaxError3')
-        }
+    } else if (botMessage.includes('⚠ Usage:')) { 
+        console.log(botMessage);
+        return getGuildResponse(prefix, botMessage, 'syntaxError');
 
     //! october specials
     } else if (botMessage.includes('AAH! You scared me,')) {
@@ -275,15 +258,14 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.includes('data for') && !botMessage.includes('slayer') && !botMessage.includes('Bazaar')) {
         return getGuildResponse(prefix, botMessage, 'miscDataFor');
     //! responses & 8ball
-    } else {        
-        return (botMessage.startsWith('⚠'))
+    } else {
+        return (botMessage.startsWith('⚠') && !botMessage.includes('Usage'))  
         ? `${prefix}&c${botMessage}` 
-        : `${prefix}${botMessage}`; 
+        : `${prefix}${botMessage}`;     
     }
 };
 
 function discordPlayerMessageHandler(prefix, message) {
-    console.log(`guildPlayerMessageHandler func: ${prefix} | ${message}`)
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);  
     if (!responses) return null;   
@@ -293,7 +275,6 @@ function discordPlayerMessageHandler(prefix, message) {
 };  
 
 function guildPlayerMessageHandler(prefix, message) {
-    console.log(`guildPlayerMessageHandler func: ${prefix} | ${message}`)
     const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/); 
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {     
         return handleLinkMessages(prefix, sender, responses);
@@ -303,14 +284,11 @@ function guildPlayerMessageHandler(prefix, message) {
 };
 
 function replyMessageHandler(prefix, message) {
-    console.log(`replyMessageHandler func: ${prefix} | ${message}`)
     const replyMessage = removeRandomID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');   
     const formattedSender = `&a${name1} &2[to]&a ${name2}`; 
     if (!responses) return null;
-    console.log('specific message handler')
-    console.log(`responses: ${responses}`)          
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
         return handleLinkMessages(prefix, formattedSender, responses);      
 
@@ -347,12 +325,14 @@ function messageHandler(message) {
     }
 
     console.log(' ');
-    console.log(type, resMessage);   
+    console.log(type, resMessage);
+
     const prefix = type === 'bot' ? `&2${prefixData.bot}&2 > &a` : `&2${prefixData.guild}&2 > &a`;
-    if (type === 'bot') return botMessageHandler(prefix, resMessage);
-    if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, resMessage);
-    if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, resMessage);
-    if (type === 'reply') return replyMessageHandler(prefix, resMessage);
+    const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
+    if (type === 'bot') return botMessageHandler(prefix, trimmedMessage);
+    if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, trimmedMessage);
+    if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, trimmedMessage);
+    if (type === 'reply') return replyMessageHandler(prefix, trimmedMessage);
 };
 
 function replaceMessage(event, message) {
@@ -378,14 +358,15 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
     const isBot = data.bots.includes(player);
 
     if (!ends) { // finish (both multi and single message)
-        let finalMsg = msg;
+        let finalMsg = msg; 
         if (starts) { // ending message of continued parts
             const endingMsg = msg.slice(msg.indexOf(continueSymbol)+1);
+            console.log(`endingMsg: ${endingMsg}`)
             finalMsg = multiMessages.pop() + endingMsg;
         };
 
         const newMsg = messageHandler(finalMsg);
-        console.log(newMsg);
+        console.log(`newMsg: ${newMsg}`);
         console.log(' ')
         console.log('----------------------------------')           
         if (newMsg && newMsg !== finalMsg) {    
@@ -399,11 +380,14 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
     } else if (starts) { // middle of multi-message -- bot
         const submsg = msg.substring(msg.indexOf(continueSymbol) + 1);
         const middlemsg = submsg.slice(0, submsg.indexOf(continueSymbol));
+
+        console.log(`middlemsg: ${middlemsg}`)
         multiMessages[0] += middlemsg;
         cancel(event);
         
     } else { // start of multi-message !starts && !ends
         const startMsg = msg.slice(0, msg.indexOf(continueSymbol));
+        console.log(`startMsg: ${startMsg}`)        
         multiMessages.push(startMsg);
         cancel(event);      
     };
