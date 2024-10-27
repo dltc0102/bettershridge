@@ -111,8 +111,8 @@ register('command', () => {
     simulate(`foraging completion for obiscuit (Coconut): Acacia Wood 9/9 (51,840) Spruce Wood 9/9 (461,058) Jungle Wood 9/9 (157,866) Birch Wood 10/10 (74,146) Oak Wood 9/9 (117,242) Dark Oak Wood 9/9 (909,637)  <@7i0fngd7xpu>`)
 
     //* continued           
-    simulate('fishing completion for obiscuit (Coconut): Lily Pad 9/9 (1,276,799) Prismarine Shard 5/7 (374,612/400) Ink Sac 9/9 (109,135) Raw Fish 11/11 (4,016,996) Pufferfish 10/10 (828,853) Clownfish 7/9 (271,824/1,600) Raw Salmon 9/9 (1,640,614) Magmafish 12/12 (5➩')
-    simulate('➩,916,806) Prismarine Crystals 7/7 (353,133) Clay 5/6 (20,645/2,500) Sponge 9/9 (215,528)  <@6q6lm3d4zkd>')    
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rfishing completion for obiscuit (Coconut): Lily Pad 9/9 (1,294,522) Prismarine Shard 5/7 (375,433/400) Ink Sac 9/9 (109,331) Raw Fish 11/11 (4,019,164) Pufferfish 10/10 (829,070) Clownfish 7/9 (271,924/1,600) Raw Salmon 9/9 (1,641,426) Magmafish 12/12 (5➩&r')
+    ChatLib.simulateChat('&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩,916,928) Prismarine Crystals 7/7 (353,881) Clay 5/6 (20,645/2,500) Sponge 9/9 (215,757)  <@qn6h6c6l6go>&r')    
 
     //* pick
     simulate('I choose ink <@5s5sfzu5gp3>')
@@ -211,7 +211,7 @@ register('command', () => {
     //* normal message
     simulate(` a normal reply message`)            
 }).setName('check_bettershridge_reply_messages');
-
+        
 // test 
 register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rFishing bestiary for rocket71 (Pineapple) k/d (kdr): Agarimoo 4418/0 Carrot King 1464/0 Catfish 4062/4 (1015.50) Deep Sea Protector 1505/2 (752.50) Guardian Defender 2109/1 (2109.00) Night Squid 3351/0 Oasis Rabbit 335/0 Oasis Sheep 748/0 Poisoned Water ➩&r`)

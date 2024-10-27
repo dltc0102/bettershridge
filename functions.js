@@ -199,7 +199,7 @@ export function hoverableAhLink(msg) {
 
 export function hoverableWebLink(link) {
     return new TextComponent(`&e&l[&r&cYouTube Link&r&e&l]`)
-        .setClick('run_command', link)
+        .setClick('open_url', link)
         .setHover('show_text', link.slice(0, 45) + '...')
 };
 
