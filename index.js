@@ -7,13 +7,13 @@ import './guild.js';
 let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 register('gameLoad', () => {
     ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
+    if (moduleVersion === '0.1.5') {
+        const featureMessage = new Message(
+            `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+        )
+        ChatLib.chat(featureMessage);   
+    };
     if (!data.firstInstall) {
-        if (moduleVersion === '0.1.4') {
-            const featureMessage = new Message(
-                `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
-            )
-            ChatLib.chat(featureMessage);   
-        };
         data.firstInstall = true;
     };      
 });
@@ -21,12 +21,17 @@ register('gameLoad', () => {
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
-        `&a+ added format for miscellaneous data for responses`,
-        `&a+ added color for 'Vanquisher' in _be command responses`,
-        `&a+ reformatted functions to be even more flexible for edge cases`,
-        `&a+ re-added formatting for normal non-stuf links`
+        `&a+ hides messages if they are forwarded (where the message is blank)`,
+        `&acompletely refactored multi link messages for variety and changes &b(credits to gleb)`,
+        `&a+ removed unused functions`, 
+        `&a+ added prefix changing options in commands`,
+        `&ao &rDo &b/setguildprefix &e(prefixName)&r to set a guild prefix`,
+        `&ao &rDo &b/setbotprefix &ror &b/setbridgeprefix &e(prefixName)&r to set a bot prefix`,
+        `&ao &rDo &b/resetprefix &e[guild/bot/bridge]&r to reset a desired prefix`,
+        `&2Note: &rIf player does &b/resetprefix&r, there will be a confirmation message to reset both prefixes.`,
     ];
+
     const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
-    return new TextComponent('&3&l[&r&aHover for Changelog&3&l]')
+    return new TextComponent(`&3&l[&r&aHover for Changelog&3&l]`)
         .setHover(`show_text`, formattedChangelog);
 };

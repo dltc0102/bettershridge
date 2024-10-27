@@ -124,7 +124,6 @@ function botMessageHandler(prefix, message) {
 
     //! syntax error
     } else if (botMessage.includes('⚠ Usage:')) { 
-        console.log(botMessage);
         return getGuildResponse(prefix, botMessage, 'syntaxError');
 
     //! october specials
@@ -285,10 +284,8 @@ function messageHandler(message) {
             resMessage = strippedMessage;
         }
     }
-
-    console.log(' ');
-    console.log(type, resMessage);
-
+    // console.log(' ');
+    // console.log(type, resMessage);
     const prefix = type === 'bot' ? `&2${prefixData.bot}&2 > &a` : `&2${prefixData.guild}&2 > &a`;
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
     if (type === 'bot') return botMessageHandler(prefix, trimmedMessage);
@@ -323,14 +320,10 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         let finalMsg = msg; 
         if (starts) { // ending message of continued parts
             const endingMsg = msg.slice(msg.indexOf(continueSymbol)+1);
-            console.log(`endingMsg: ${endingMsg}`)
             finalMsg = multiMessages.pop() + endingMsg;
         };
 
         const newMsg = messageHandler(finalMsg);
-        console.log(`newMsg: ${newMsg}`);
-        console.log(' ')
-        console.log('----------------------------------')           
         if (newMsg && newMsg !== finalMsg) {    
             finalMsg = newMsg;
             replaceMessage(event, newMsg);    
@@ -342,14 +335,11 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
     } else if (starts) { // middle of multi-message -- bot
         const submsg = msg.substring(msg.indexOf(continueSymbol) + 1);
         const middlemsg = submsg.slice(0, submsg.indexOf(continueSymbol));
-
-        console.log(`middlemsg: ${middlemsg}`)
         multiMessages[0] += middlemsg;
         cancel(event);
         
     } else { // start of multi-message !starts && !ends
         const startMsg = msg.slice(0, msg.indexOf(continueSymbol));
-        console.log(`startMsg: ${startMsg}`)        
         multiMessages.push(startMsg);
         cancel(event);      
     };      
