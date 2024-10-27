@@ -7,13 +7,13 @@ import './guild.js';
 let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 register('gameLoad', () => {
     ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
-    if (moduleVersion === '0.1.5') {
-        const featureMessage = new Message(
-            `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
-        )
-        ChatLib.chat(featureMessage);   
-    };
     if (!data.firstInstall) {
+        if (moduleVersion === '0.1.5') {
+            const featureMessage = new Message(
+                `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+            )
+            ChatLib.chat(featureMessage);   
+        };
         data.firstInstall = true;
     };      
 });
