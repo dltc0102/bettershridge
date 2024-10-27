@@ -111,3 +111,7 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + hides messages if they are forwarded (where the message is blank)
 + completely refactored multi link messages for variety and changes (credits to gleb)
 + removed unused functions
++ added /setguildprefix commands
++ added /setbotprefix and /setbridgeprefix commands
++ added /resetprefix (bot/bridge/guild/none) command
+    Note: /resetprefix without any arguments resets both guild & bridge prefixes with a confirmation message.
