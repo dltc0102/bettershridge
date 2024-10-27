@@ -1,4 +1,4 @@
-import { createMessage, getInHypixel, getLinkHoverable, stripRank, removeRandomID, highlightTags, stripFormattedName } from './functions';
+import { getInHypixel, stripRank, removeRandomID, highlightTags, stripFormattedName, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN } from './functions';
 import { data } from './bots';
 import { prefixData } from './prefix';
 import { registerWhen, timeThis } from './utils';      
@@ -59,54 +59,19 @@ function separatePlayerAndMessage(e) {
     return [type, resMessage];  
 }               
 
-function handleLinkMessages(prefix, sender='', message) {
-    console.log(' ');
-    console.log(`prefix: ${prefix}`);
-    console.log(`sender: ${sender}`);
-    console.log(`message: ${message}`);
-    
-    // const linkRegex = /\[LINK\]\((.+?)\)/g;       
-    // let linkList = [];
-    // let foundLinks;
-    // while ((foundLinks = linkRegex.exec(message)) !== null) {
-    //     linkList.push(foundLinks[1]);
-    // }
+function handleLinkMessages(prefix, sender='', msg) {
+    const preFMessage = highlightTags(
+        msg.slice(msg.indexOf(': ')+1).removeFormatting().replace(/\s+/g, ' ')
+      ).trim();
 
-    // console.log(`linkList: ${JSON.stringify(linkList)}`)
-    // const resultSender = sender ? `${sender}: ` : ''; 
-    // if (linkList.length > 0) { 
-    //     console.log(`case: linkList contains links`) 
-    //     const otherText = message.replace(linkRegex, '').replace(resultSender, '').trim();
-    //     const titleMessage = `${prefix}${resultSender}&r${highlightTags(otherText)} `;
-
-    //     let linkHoverables = linkList.map(link => {
-    //         return getLinkHoverable(link);
-    //     })  
-    //     return createMessage(titleMessage, linkHoverables);
-    // }
-
-    // //* viewauction links       
-    // if (message.includes('viewauction')) {
-    //     console.log(`case: message contains a viewauction link`) 
-    //     const titleMessage = `${prefix}${sender}: `;
-    //     const auctionClickable = new TextComponent('&e&l[CLICK TO VIEW AUCTION] ')
-    //         .setClick('run_command', message)
-    //         .setHover('show_text', message);
-    //     return createMessage(titleMessage, [auctionClickable]); 
-
-    // //* normal links that hypixel allows    
-    // } else if (message.includes('http')) {
-    //     console.log(`case: message contains http links`);
-    //     const normalLinkRegex = /(.+?):(\s.*)?\s(https?:\/\/\S+)(.*)?/;
-    //     const match = message.match(normalLinkRegex);
-    //     if (match) {
-    //         const [_, sender, front='', link, back=''] = match;
-    //         const linkHoverable = getLinkHoverable(link);
-    //         return new Message (    
-    //             `${prefix}${sender.trim()}: `, `${highlightTags(front).trim()} `, linkHoverable, ` ${highlightTags(back).trim()}`
-    //         );      
-    //     };
-    // };
+    const processedMessageParts = splitMapN(preFMessage,
+        [/\[LINK\]\(([^\(\)]+)\)/, hoverableStufLink],
+        [/\/viewauction (\w+)/, hoverableAhLink],
+        [/(https?:\/\/\S+)/, hoverableWebLink]
+    );      
+    return new Message(         
+        prefix, `&a${sender}: &r`, ...processedMessageParts
+    );      
 };
                 
 function botMessageHandler(prefix, message) {
@@ -137,7 +102,7 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.includes('Your role does not have requirements!') || botMessage.includes('Role does not have requirements!')) {
         return getGuildResponse(prefix, botMessage, 'noReqUpdate');
     
-        //! _skill
+    //! _skill
     } else if (SKILL_NAMES.includes(botMessage.split(' ')[0]) && botMessage.includes('level for')) {
         return botMessage.includes('Overflow XP') 
             ? getGuildResponse(prefix, botMessage, 'skillMaxed')
@@ -250,13 +215,10 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.startsWith('I choose')) {
         return getGuildResponse(prefix, botMessage, 'pickCommand');
         
-    //! links
-    } else if (botMessage.includes('l$')) {
-        return getGuildResponse(prefix, botMessage, 'generalDecoded');
-    
     //! misc data for
     } else if (botMessage.includes('data for') && !botMessage.includes('slayer') && !botMessage.includes('Bazaar')) {
         return getGuildResponse(prefix, botMessage, 'miscDataFor');
+        
     //! responses & 8ball
     } else {
         return (botMessage.startsWith('⚠') && !botMessage.includes('Usage'))  
@@ -390,5 +352,5 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         console.log(`startMsg: ${startMsg}`)        
         multiMessages.push(startMsg);
         cancel(event);      
-    };
+    };      
 }), () => getInHypixel()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');

@@ -109,12 +109,5 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 
 # v1.5
 + hides messages if they are forwarded (where the message is blank)
-
-
-
-
-
-    
-
-
-
++ completely refactored multi link messages for variety and changes (credits to gleb)
++ removed unused functions

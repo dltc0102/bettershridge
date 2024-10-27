@@ -128,7 +128,7 @@ register('command', () => {
     
 }).setName('check_bettershridge_bot_messages');
 
-// discord player messages
+// discord player messages  
 register('command', () => {
     //* one link
     simulate(`[LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/23a4382a88986976781/23a95618a4138aa4771/jnbhf^qoh?fy=782aad1a&jt=78295b9a&in=15g6ba975a5c5f37f4g24323adea8352f216aedag18e5e5ceg9991e64e5d831b&)`)
@@ -232,3 +232,7 @@ register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rfishing completion for obiscuit (Coconut): Lily Pad 9/9 (1,294,522) Prismarine Shard 5/7 (375,433/400) Ink Sac 9/9 (109,331) Raw Fish 11/11 (4,019,164) Pufferfish 10/10 (829,070) Clownfish 7/9 (271,924/1,600) Raw Salmon 9/9 (1,641,426) Magmafish 12/12 (5➩&r`)
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩,916,928) Prismarine Crystals 7/7 (353,881) Clay 5/6 (20,645/2,500) Sponge 9/9 (215,757)  <@h8ilv7kawa5>&r`) 
 }).setName('test_collections');                 
+
+register('command', () => {         
+    ChatLib.simulateChat(`${RP_MSG_PREFIX} &r@oBiscuit [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/23a4382a88986976781/23a95618a4138aa4771/jnbhf^qoh?fy=782f4a5a&jt=782df8da&in=f81f93e2545ea58656f3ag84379848gb1457e9574gfede3d793b8c17g2b53b1c&) [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/23a4382a88986976781/23aa97822a967763459/jnbhf^qoh?fy=782fd428&jt=782e82a8&in=7465718c24dc7d943fa9bcf6bcead8684c6b717ae3949bg192e428bce5267962&) hahaha  /viewauction 225a8ee261824051afc49402c3ef3ba8 https://www.youtube.com/watch?v=ZxdVty0lXFk&list=RDZxdVty0lXFk&start_radio=1 https://www.youtube.com/watch?v=dQw4w9WgXcQ`)   
+}).setName('test_variety'); 

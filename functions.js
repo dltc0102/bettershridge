@@ -7,7 +7,7 @@ export function stripRank(name) {
 
 export function stripFormattedName(name) {
     return stripRank(name.removeFormatting());
-}
+};
 
 export function getInSkyblock() {
     return (World.isLoaded() && ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK"));
@@ -15,7 +15,7 @@ export function getInSkyblock() {
 
 export function getInHypixel() {
     return (World.isLoaded() && Server.getIP().includes('hypixel'));
-}
+};
 
 export function capitalise(word) {
     if (word.includes(' ')) {
@@ -34,7 +34,7 @@ export function formatTime(timeStr) {
         .replace(/ ?months?/g, 'M')
         .replace(/ ?years?/g, 'Y')
         .replace(/ ?weeks?/g, 'W');
-}
+};
 
 export function formatColonTime(timeStr) {
     const [h, m, s] = timeStr.split(':').map(Number);
@@ -53,6 +53,7 @@ const knownMonsters = {
     "Yeti": '&f',
     "Vanquisher": '&5',
 };
+
 export function getMonsterColor(name) {
     return name in knownMonsters ? knownMonsters[name] : '&r';  
 };
@@ -61,31 +62,10 @@ export function removeRandomID(msg) {
     return msg ? msg.replace(/<@.+>/g, '') : msg;
 };
 
-export function shortenMsg(str) {
-    const tempParts = (str.trim()).split(': ');
-    const shortenedMessage = tempParts.length > 1 ? tempParts.slice(1).join(': ').trim() : '';
-    return removeRandomID(shortenedMessage.removeFormatting());
-};
-
 export function highlightTags(message) {
     const tagRegex = /@\w+/g; 
     return message.replace(tagRegex, tag => `&b${tag}&r`);
 };
-
-export function isLinkExpired(link) {
-    const regex = /ex=([0-9a-fA-F]+)/;
-    const match = link.match(regex);
-    if (match) {
-        const [_, expiryHex] = match;
-        const expiryTime = parseInt(expiryHex, 16);
-        const currentTime = Math.floor(Date.now() / 1000);
-        return currentTime > expiryTime;
-    } else if (!match && !link.includes('viewauction')) {
-        return false;
-    } else if (link.includes('viewauction')) {
-        return 'auction link';
-    }
-}
 
 export function formatItemsToTable(items, columns = 2) {
     const result = [];
@@ -101,11 +81,7 @@ export function formatItemsToTable(items, columns = 2) {
         result.push(line.trim());   
     }
     return result;
-}                   
-
-function getShortenedLink(link) {
-    return link.slice(0, 25) + '...';
-}
+};
 
 function getAttachmentName(link) {      
     if (link.includes('tenor')) {
@@ -123,7 +99,7 @@ function getAttachmentName(link) {
         const match = link.match(regex);
         return match ? match[1] : '';
     }
-}
+};
 
 function getLinkSource(link) {
     let source;
@@ -136,13 +112,12 @@ function getLinkSource(link) {
     if (link.includes('imgur')) source = 'Imgur';
     if (link.includes('tenor')) source = 'Tenor';
     return source;  
-}
+};
 
 function getComponentParts(link) {
     let linkName, hoverText;
     const imageSuffixes = ['jpeg', 'jpg', 'png'];
     const videoSuffixes = ['mp4', 'mov', 'avi'];
-    const shortenedLink = getShortenedLink(link);
     const attachmentName = getAttachmentName(link);
     const linkSource = getLinkSource(link);
 
@@ -158,49 +133,9 @@ function getComponentParts(link) {
         linkName =  `&b&l[${linkSource} Gif]`;
         hoverText = attachmentName;
         
-    } else { 
-        if (link.includes('youtube') || link.includes('youtu.be')) {
-            linkName = '&e&l[&r&c&lYoutube LINK&r&e&l]';
-            hoverText = getShortenedLink(link);
-        } else {    
-            linkName = '&e&l[CLICK TO VIEW LINK]';
-            hoverText = shortenedLink;
-        }
     }
     return [linkName, hoverText]
-}
-   
-export function getLinkHoverable(link) {
-    let decodedLink;
-    if (link.includes('l$')) {
-        decodedLink = STuFLib.decode(link);
-    } else {
-        const urlPattern = /(https?:\/\/[^\s]+)/;
-        decodedLink = link.match(urlPattern)?.[0];  
-    }
-                
-    console.log('getlinkhoverable func');
-    console.log(`decodedLink: ${decodedLink}`)
-    const checkLinkExpired = isLinkExpired(decodedLink);
-    const [linkName, hoverText] = getComponentParts(decodedLink);
-
-    console.log(`checkLinkExpired: ${checkLinkExpired}`)
-    console.log(`linkName: ${linkName}`)
-    console.log(`hoverText: ${hoverText}`)          
-    return checkLinkExpired
-        ? '&b<link expired> '
-        : new TextComponent(`${linkName}`)       
-            .setClick('open_url', decodedLink)      
-            .setHover('show_text', hoverText);
-}
-
-export function createMessage(title, components, recursive = false) {
-    if (typeof components === 'string') {
-        return new Message(title, components).setRecursive(recursive);
-    } else if (Array.isArray(components)) {
-        return new Message(title, ...components).setRecursive(recursive);
-    }   
-}
+};
 
 export function truncateNumbers(amt, isCoins=false) { 
     const cost = Number(amt.toString().replace(/,/g, ''));
@@ -228,3 +163,61 @@ export function truncateNumbers(amt, isCoins=false) {
                 : cost.toString();
     }
 };
+
+function isLinkExpired(link) {
+    const regex = /ex=([0-9a-fA-F]+)/;
+    const match = link.match(regex);
+    if (match) {
+        const [_, expiryHex] = match;
+        const expiryTime = parseInt(expiryHex, 16);
+        const currentTime = Math.floor(Date.now() / 1000);
+        return currentTime > expiryTime;
+    } else if (!match && !link.includes('viewauction')) {
+        return false;
+    } else if (link.includes('viewauction')) {
+        return 'auction link';
+    }
+};
+
+export function hoverableStufLink(link) {
+    const decodedLink = STuFLib.decode(link);
+    const checkExpired = isLinkExpired(decodedLink);
+    const [linkName, hoverText] = getComponentParts(decodedLink);
+    return checkExpired 
+        ? '&b<link expired> '
+        : new TextComponent(`${linkName}`)       
+            .setClick('open_url', decodedLink)      
+            .setHover('show_text', hoverText);
+};
+
+export function hoverableAhLink(msg) {
+    const link = `/viewauction ${msg}`;
+    return new TextComponent(`&e&l[VIEW AUCTION]`)
+        .setClick('run_command', link)
+        .setHover('show_text', link);
+};
+
+export function hoverableWebLink(link) {
+    return new TextComponent(`&e&l[&r&cYouTube Link&r&e&l]`)
+        .setClick('run_command', link)
+        .setHover('show_text', link.slice(0, 45) + '...')
+};
+
+// Credit to @gleb
+// splitOpts is a list of [splitRegex, mapFunction]
+export const splitMapN = (text, ...splitOpts) => {
+    // Base case: no split options, equivalent to text.split()
+    if (splitOpts === undefined || splitOpts.length === 0) return [text];
+    const [regex, mapFn] = splitOpts[0];
+    // flatMap because the recursive splitMapN returns a list
+    return text.split(regex).map((val, idx) => {
+        // This is remaining text, continue to call splitMapN on it with the remaining options.
+        if (idx % 2 === 0) return splitMapN(val, ...splitOpts.slice(1));
+        // This is the text matched by the split regex, use mapFn on it.
+        else return mapFn(val);
+    }).reduce((acc, val) => {
+        if (val instanceof Array) acc.push(...val);
+        else acc.push(val);
+        return acc;
+    }, []);
+}           
