@@ -1,5 +1,5 @@
-import PogObject from '../PogData';
-import { getInHypixel } from './functions';
+import PogObject from '../../PogData';
+import { getInHypixel } from '../functions';
 
 export const data = new PogObject("bettershridge", {
     bots: ['Baltics', 'NqekMyBeloved', 'Shrimple77'],
@@ -19,6 +19,7 @@ register('command', (args) => {
             data.bots.push(args);
             ChatLib.chat(`&aBridge Bot added: &r${args}`);
             data.bots = data.bots.filter(bot => bot !== null);
+            ChatLib.deleteChat(999);    
         }
     }
 }).setName('addbot');

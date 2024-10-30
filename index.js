@@ -1,22 +1,11 @@
-import { data } from './bots.js';    
+import { getInHypixel } from './functions.js';
+import { data } from './utilities/bots.js';    
 import './guild.js';
+
+// import './utilities/cmdHelper.js'                       
 
 //! any misc problems (/ct dump and copy message here)
 //? ...
-
-let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
-register('gameLoad', () => {
-    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
-    if (!data.firstInstall) {
-        if (moduleVersion === '0.1.5') {
-            const featureMessage = new Message(
-                `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
-            )
-            ChatLib.chat(featureMessage);   
-        };
-        data.firstInstall = true;
-    };      
-});
 
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
@@ -35,3 +24,18 @@ function makeChangelogHoverable(moduleVersion) {
     return new TextComponent(`&3&l[&r&aHover for Changelog&3&l]`)
         .setHover(`show_text`, formattedChangelog);
 };
+
+let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
+register('gameLoad', () => {
+    if (!getInHypixel()) return;
+    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
+    if (!data.firstInstall) {
+        if (moduleVersion === '0.1.5') {
+            const featureMessage = new Message(
+                `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+            )
+            ChatLib.chat(featureMessage);   
+        };
+        data.firstInstall = true;
+    };      
+});

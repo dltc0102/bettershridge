@@ -1,6 +1,16 @@
 import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripFormattedName } from './functions.js';  
+import PogObject from '../PogData';
 
 const SPACING = `&2   |  &a`; 
+export const guildData = new PogObject("bettershridge", {
+    commands: [
+        "lbin", "bz", "cata", "8ball", "election", "help", "pick", "ping",
+        "skill", "slayer", "tfish", "contest", "fw", "fc", "is", "ib",
+        "collection", "be", "raw", "rlb", "boop", "glist", "gonline", "boo", "update"
+      ],
+}, './data/guildData.json');
+guildData.autosave(5);
+
 
 const collNameCodes = {
     "fishing": "&3",
@@ -34,7 +44,7 @@ function generateMessage(prefix, message, regex, formatHandler) {
     if (match) {
         return formatHandler(prefix, match);    
     } else {        
-        console.log('not matched -- bettershridge')
+            ('not matched -- bettershridge')
         console.log(`matched: false`);
         console.log(`formatHandler: ${formatHandler}`);
         console.log(`message: ${message}`);
@@ -51,6 +61,7 @@ export function getGuildResponse(prefix, message, type) {
         //     format: formatFunc,
         // },
         mayor: {
+            // regex: /Current mayor: (.+)\. Current minister: (.+)\. Next mayor: (.+), in (.+)\. Next special: (.+), in (.+)\./,
             regex: /Current mayor: (.+)\. Next mayor: (.+), in (.+)\. Next special: (.+), in (.+)\./,
             format: formatMayor
         },
@@ -182,6 +193,10 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+): _boop (.+)? (.+?)/,
             format: getBotBooper
         },
+        guildmateStatus: {
+            regex: /Guildmate (.+?) (is|is not) online\./,
+            format: formatGuildmateStatus
+        },
     };
 
     const { regex, format } = patterns[type];
@@ -203,14 +218,91 @@ const mayorColors = {
     'Unknown': '&c',
 };
 
+const mayorPerks = {
+    'Aatrox': {
+        'Slayer XP Buff': 'Earn 25% more Slayer XP.',
+        'Pathfinder': 'Gain rare drops 20% more often.',
+        'SLASHED Pricing': 'Starting slayer quests is half price.',
+    },
+    'Cole': {
+        'Mining Fiesta': `Mining Fiesta: Schedules 5 Mining Fiesta events that last for 7 SkyBlock Days each. Earn 2x drops and extra unique loot, including Refined Minerals and Glossy Gemstones. Grants +75 Mining Wisdom during the event which is only active on Public Islands.`,
+        'Mining XP Buff': 'Earn +60 Mining Wisdom on public islands.',
+        'Molten Forge': 'Decreases the time it takes to Forge items by 25%.',
+        'Prospection': 'Mining minions work 25% faster.',
+    },
+    'Diana': {
+        'Pet Luck XP Buff': 'Gain 35% more Pet XP.',
+        'Lucky!': 'Gain +25 Pet Luck.',
+        'Mythological Ritual': 'Mayor Diana will sell the Griffin Pet, which lets you find Mythological Creature and tons of unique items.',
+        'Sharing is Caring': 'You can have up to 3 EXP Shared Pets active at once. Your EXP Share rate is increased by 10%.',
+    },
+    'Diaz': {
+        'Long Term Investment': 'The elected Minister will appear in the next Election with all of their available perks.',
+        'Shopping Spree': 'Increase daily NPC buy limits by 10x.',
+        'Stock Exchange': 'Participate in the Stonks Auction for a chance to win Stock Of Stonks! Trade them for extravagant items at the ⏣ Trade Center.',
+        'Volume Trading': `Double the item quantity from Shen's Auction, Shen's Special, and Rift Shen's on the year Diaz is elected. Two additional Shen’s Special auctions will be available for the duration of Diaz being elected as Mayor.`,
+    },
+    'Finnegan': {
+        'Blooming Business': `Garden Visitors will give out Fine Flour and appear more often. Additional visitors may visit your Garden. Higher rarity Visitors are more likely to show up & will provide 10% more Copper.`,
+        'GOATed': `Jacob's Farming Contest brackets include up to 10% more players each.`,
+        'Pelt-pocalypse': `Obtain 1.5x more Pelts from Trevor in the ⏣ Mushroom Desert, hunt a new Trapper Mob, and purchase items from a new Trapper Shop.`,
+        'Pest Eradicator': `The duration of Pesthunter Phillip's ☘Farming Fortune bonus is now 60 minutes. Pests are now 4x more likely to spawn in sprayed plots.`,
+    },
+    'Foxy': {
+        'A Time for Giving': `Party Chests and Party Gifts can be obtained while this event is active.`,
+        'Chivalrous Carnival': `Schedules a Carnival in the Hub that is active throughout the entire year.`,
+        'Extra Event': `Schedules an extra (Fishing Festival/Mining Fiesta/Spooky Festival) event during the year.`,
+        'Sweet Benevolence': `Earn +30% more Candy, Gifts and Chocolate from duplicate Rabbits during their respective events.`,
+    }, 
+    'Marina': {
+        'Double Trouble': `For every 1 Sea Creature Chance, gain +0.1 Double Hook Chance.`,
+        'Fishing XP Buff': `Gain +50 ☯Fishing Wisdom on public islands.`,
+        'Fishing Festival': `Start a special fishing event during the first 3 days of each month! Fish and fight dangerous sharks and earn unique Shark loot.`,
+        'Luck of the Sea 2.0': `Gain +15 Sea Creature Chance.`,
+    }, 
+    'Paul': {
+        'Benediction': `Blessings are 25% stronger.`,
+        'Marauder': `Dungeon reward chests are 20% cheaper.`,
+        'EZPZ': `Gain 10 bonus score on dungeon runs.`,
+    },
+    'Jerry': {
+        'Perkpocalypse': `Activate all perks of another mayor every 18 SkyBlock days (6 hours).`,
+        'Statspocalypse': `Increases most stats by 10%.`,
+        'Jerrypocalypse': `Reveal Hidden Jerries from logging, farming, mining, and killing mobs.`,
+    },
+    'Derpy': {
+        'QUAD TAXES!!!': `Pay 4x the normal amount of taxes!`,
+        'TURBO MINIONS!!!': `Minions have double the output!`,
+        'DOUBLE MOBS HP!!!': `ALL monsters have double Health!`,
+        'MOAR SKILLZ!!!': `Gain +50% more skill experience! `,
+    },
+    'Scorpius': {
+        'Bribe': `If Scorpius wins and you voted for him, Mayor Scorpius will offer you Coins as a token of gratitude.`,
+        'Darker Auctions': `Scorpius will intrude in Dark Auctions increasing the amount of rounds to 6 and offering special items.` ,
+    },
+};
+
+function getCurrMayorPerks(nameWithPerkList) {
+    const [currMayorName, currMayorPerks] = nameWithPerkList.split(' ');
+    const perkIndicators = currMayorPerks.slice(1, -1).split('|');
+    const possiblePerks = mayorPerks[currMayorName];
+    const activePerks = perkIndicators
+        .map((indicator, idx) => indicator === '✓' ? Object.entries(possiblePerks)[idx] : null)
+        .filter(Boolean)
+        .map(([name, description]) => ({ name, description }));
+    return activePerks;
+}
+
 function getMayorColor(mayor) {
     return `${mayorColors[mayor]}${mayor}`
 };
 
 function formatMayor(prefix, match) {
     const [_, currMayor, nextMayor, nextTime, specialMayor, specialTime] = match;
+    // const [_, currMayor, currMinister, nextMayor, nextTime, specialMayor, specialTime] = match;
+    const minister = 'Foxy';        
     return [
-        `${prefix}Current mayor: ${getMayorColor(currMayor)}`,
+        `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,      
         `${SPACING}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
         `${SPACING}Next special: ${getMayorColor(specialMayor)} &r[${formatTime(specialTime)}]`
     ];
@@ -348,6 +440,10 @@ function formatBestiaryAll(prefix, match) {
 function formatCommandHelp(prefix, match) {
     const [_, commands] = match;
     const splittedCommands = commands.trim().split(', ')
+    splittedCommands
+        .filter(item => !guildData.commands.includes(item))
+        .forEach(item => guildData.commands.push(item))
+    guildData.save();
     const formattedCmdLst = formatItemsToTable(splittedCommands);   
     return [
         `${prefix}Available commands (_command):`,
@@ -579,4 +675,10 @@ function getBotBooper(prefix, match) {
     return booped === '' ? [booper, ''] : [booper, booped];
 };
 
-
+function formatGuildmateStatus(prefix, match) {
+    const [_, guildmateName, status] = match;
+    const formattedStatus = status === 'is not' 
+        ? '&r&ais &c&lOffline' 
+        : '&r&ais &lOnline';
+    return `${prefix}${guildmateName} ${formattedStatus}`;
+};

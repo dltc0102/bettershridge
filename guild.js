@@ -1,6 +1,6 @@
 import { getInHypixel, stripRank, removeRandomID, highlightTags, stripFormattedName, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN } from './functions';
-import { data } from './bots';
-import { prefixData } from './prefix';
+import { data } from './utilities/bots';
+import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
 
@@ -68,15 +68,14 @@ function handleLinkMessages(prefix, sender='', msg) {
         [/\[LINK\]\(([^\(\)]+)\)/, hoverableStufLink],
         [/\/viewauction (\w+)/, hoverableAhLink],
         [/(https?:\/\/\S+)/, hoverableWebLink]
-    );      
-    return new Message(         
+    );
+    return new Message(
         prefix, `&a${sender}: &r`, ...processedMessageParts
     );      
 };
                 
 function botMessageHandler(prefix, message) {
     const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
-
     //! _mayor  
     if (botMessage.startsWith('Current mayor: ')) {
         return getGuildResponse(prefix, botMessage, 'mayor')
@@ -217,7 +216,11 @@ function botMessageHandler(prefix, message) {
     //! misc data for
     } else if (botMessage.includes('data for') && !botMessage.includes('slayer') && !botMessage.includes('Bazaar')) {
         return getGuildResponse(prefix, botMessage, 'miscDataFor');
-        
+    
+    //! _gonline command
+    } else if (botMessage.startsWith('Guildmate')) {
+        return getGuildResponse(prefix, botMessage, 'guildmateStatus');     
+
     //! responses & 8ball
     } else {
         return (botMessage.startsWith('⚠') && !botMessage.includes('Usage'))  
@@ -265,7 +268,7 @@ function messageHandler(message) {
     //* bot     
     if (idRegex.test(message) || !message.includes(': ') && !message.includes('l$')) {
         type = 'bot';
-        resMessage = message;   
+        resMessage = message;
 
     //* guildPlayer
     } else if (/(&[a-qs-z0-9])(.+) &3(.+)&f: &r(.+)&r/.test(message) && !idRegex.test(message)) {
@@ -288,10 +291,10 @@ function messageHandler(message) {
     // console.log(type, resMessage);
     const prefix = type === 'bot' ? `&2${prefixData.bot}&2 > &a` : `&2${prefixData.guild}&2 > &a`;
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
-    if (type === 'bot') return botMessageHandler(prefix, trimmedMessage);
-    if (type === 'discordPlayer') return discordPlayerMessageHandler(prefix, trimmedMessage);
-    if (type === 'guildPlayer') return guildPlayerMessageHandler(prefix, trimmedMessage);
-    if (type === 'reply') return replyMessageHandler(prefix, trimmedMessage);
+    if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
+    if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];
+    if (type === 'guildPlayer') return [type, guildPlayerMessageHandler(prefix, trimmedMessage)];
+    if (type === 'reply') return [type, replyMessageHandler(prefix, trimmedMessage)];
 };
 
 function replaceMessage(event, message) {
@@ -313,7 +316,7 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
     const strippedMsg = msg.removeFormatting();
     const starts = strippedMsg.startsWith(continueSymbol);
     const ends = strippedMsg.endsWith(continueSymbol);
-    const player = stripRank(playerInfo);            
+    const player = stripRank(playerInfo);
     const isBot = data.bots.includes(player);
 
     if (!ends) { // finish (both multi and single message)
@@ -323,8 +326,20 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             finalMsg = multiMessages.pop() + endingMsg;
         };
 
-        const newMsg = messageHandler(finalMsg);
-        if (newMsg && newMsg !== finalMsg) {    
+        const [newType, newMsg] = messageHandler(finalMsg);
+        console.log(newType, newMsg);       
+        if (newType === 'bot' && !isBot) {
+            const yesClickable = new TextComponent('&a&l[YES] ')
+                .setClick('run_command', `/addbot ${player}`)
+                .setHover('show_text', `/addbot ${player}`);                        
+            const noClickable = new TextComponent('&c&l[NO] ')
+                .setClick('run_command', `/clearchatbyid 999`);
+            const updateBotMessage = new Message(
+                `&9[&bBetterShridge&9] &rIs &b${player}&r a new bot name? `, yesClickable, noClickable
+            ).setChatLineId(999);
+            ChatLib.chat(updateBotMessage);
+        }
+        if (newMsg && newMsg !== finalMsg) {        
             finalMsg = newMsg;
             replaceMessage(event, newMsg);    
 
@@ -344,3 +359,7 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         cancel(event);      
     };      
 }), () => getInHypixel()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
+
+register('command', (id) => {
+    ChatLib.deleteChat(id)
+}).setName('clearchatbyid');

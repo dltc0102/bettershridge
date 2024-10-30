@@ -4,6 +4,6 @@
     "version": "0.1.5",
     "author": "oBiscuit",
     "entry": "index.js",
-    "requires": ["STuFLib", "PogData"]
+    "requires": ["STuFLib", "PogData", "DocGuiLib"]
 }
 

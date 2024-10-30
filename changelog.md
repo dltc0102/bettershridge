@@ -115,3 +115,8 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + added /setbotprefix and /setbridgeprefix commands
 + added /resetprefix (bot/bridge/guild/none) command
     Note: /resetprefix without any arguments resets both guild & bridge prefixes with a confirmation message.
+
+# v1.6
++ dynamic bot updater
++ adds formatting for _gonline command
++ adds formatting for new mayor command's formats (minister and perks in hoverables)

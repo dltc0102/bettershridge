@@ -29,11 +29,11 @@ export function formatTime(timeStr) {
     return timeStr
         .replace(/ ?and /g, ' ')
         .replace(/ ?minutes?/g, 'm')
-        .replace(/ ?days?/g, 'D')
+        .replace(/ ?days?/g, 'd')
         .replace(/ ?hours?/g, 'h')
         .replace(/ ?months?/g, 'M')
-        .replace(/ ?years?/g, 'Y')
-        .replace(/ ?weeks?/g, 'W');
+        .replace(/ ?years?/g, 'y')
+        .replace(/ ?weeks?/g, 'w');
 };
 
 export function formatColonTime(timeStr) {
@@ -198,22 +198,22 @@ export function hoverableAhLink(msg) {
 };
 
 export function hoverableWebLink(link) {
-    return new TextComponent(`&e&l[&r&cYouTube Link&r&e&l]`)
+    const source = getLinkSource(link);
+    const linkName = source === 'Youtube' 
+        ? `&e&l[&r&cYouTube Link&r&e&l]` 
+        : `&b&l[${source} Link]`;
+        
+    return new TextComponent(linkName)
         .setClick('open_url', link)
         .setHover('show_text', link.slice(0, 45) + '...')
 };
 
 // Credit to @gleb
-// splitOpts is a list of [splitRegex, mapFunction]
 export const splitMapN = (text, ...splitOpts) => {
-    // Base case: no split options, equivalent to text.split()
     if (splitOpts === undefined || splitOpts.length === 0) return [text];
     const [regex, mapFn] = splitOpts[0];
-    // flatMap because the recursive splitMapN returns a list
     return text.split(regex).map((val, idx) => {
-        // This is remaining text, continue to call splitMapN on it with the remaining options.
         if (idx % 2 === 0) return splitMapN(val, ...splitOpts.slice(1));
-        // This is the text matched by the split regex, use mapFn on it.
         else return mapFn(val);
     }).reduce((acc, val) => {
         if (val instanceof Array) acc.push(...val);

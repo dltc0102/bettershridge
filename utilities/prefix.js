@@ -1,5 +1,5 @@
-import PogObject from '../PogData';
-import { getInHypixel } from './functions';
+import PogObject from '../../PogData';
+import { getInHypixel } from '../functions';
 
 export const prefixData = new PogObject("bettershridge", {
     guild: 'G',
