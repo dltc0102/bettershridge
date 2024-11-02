@@ -44,9 +44,7 @@ function generateMessage(prefix, message, regex, formatHandler) {
     if (match) {
         return formatHandler(prefix, match);    
     } else {        
-            ('not matched -- bettershridge')
-        console.log(`matched: false`);
-        console.log(`formatHandler: ${formatHandler}`);
+        console.log('not matched -- bettershridge')
         console.log(`message: ${message}`);
         console.log(`regex: ${regex}`);
         console.log(' ');
@@ -370,7 +368,6 @@ function formatSkillProgress(prefix, match) {
         `${SPACING}XP for next level (&6${nextLevel}&a): &r${xpLeft}`
     ];
 };
-
 
 // helper func for formatBazaar
 function formatItemColorBZ(str) {
