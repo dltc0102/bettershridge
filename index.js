@@ -10,7 +10,7 @@ function makeChangelogHoverable(moduleVersion) {
     const changelog = [
         `&a+ hides messages if they are forwarded (where the message is blank)`,
         `&a+ completely refactored multi link messages for variety and changes &b(credits to gleb)`,
-        `&a+ changed instabuy command formatting mistake from 'sell cost' to 'buy cost'`
+        `&a+ changed instabuy command formatting mistake from 'sell cost' to 'buy cost'`,
         `&a+ added formatting for _gonline command`, 
         `&a+ dynamic bot updater`, 
         `&a+ removed unused functions`, 

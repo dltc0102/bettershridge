@@ -220,4 +220,4 @@ export const splitMapN = (text, ...splitOpts) => {
         else acc.push(val);
         return acc;
     }, []);
-}           
+}

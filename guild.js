@@ -289,7 +289,9 @@ function messageHandler(message) {
     }
     // console.log(' ');
     // console.log(type, resMessage);
-    const prefix = type === 'bot' ? `&2${prefixData.bot}&2 > &a` : `&2${prefixData.guild}&2 > &a`;
+    const prefix = type === 'guildPlayer'
+        ? `&2${prefixData.guild}&2 > &a` 
+        : `&2${prefixData.bot}&2 > &a`;
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
     if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];

@@ -33,7 +33,7 @@ register('command', (args) => {
         const prefix = args.trim();
         ChatLib.chat(`&aBot prefix set: &r${prefix}`);
         prefixData.bot = prefix;
-        prefixData.save();    
+        prefixData.save();
     }
 }).setName('setbotprefix').setAliases('setbridgeprefix');
 
