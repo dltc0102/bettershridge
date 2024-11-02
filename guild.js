@@ -327,7 +327,6 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         };
 
         const [newType, newMsg] = messageHandler(finalMsg);
-        console.log(newType, newMsg);       
         if (newType === 'bot' && !isBot) {
             const yesClickable = new TextComponent('&a&l[YES] ')
                 .setClick('run_command', `/addbot ${player}`)

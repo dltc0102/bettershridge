@@ -632,7 +632,7 @@ function formatInstaBuy(prefix, match) {
     const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
     return [
         `${prefix}Insta-buy: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,
-        `${SPACING}Sell Cost: &6${sellCost}`,
+        `${SPACING}Buy Cost: &6${sellCost}`,
         `${SPACING}Ave. Cost/unit: &6${aveCost}`,
     ];
 };

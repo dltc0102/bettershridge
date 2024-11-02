@@ -2,9 +2,7 @@
     "bots": [
         "Baltics",
         "NqekMyBeloved",
-        "Shrimple77",
-        "Shrimplolle77",
-        "Shrimplollqte77"
+        "Shrimple77"
     ],
-    "firstInstall": true
+    "firstInstall": false
 }

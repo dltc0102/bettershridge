@@ -2,8 +2,6 @@ import { getInHypixel } from './functions.js';
 import { data } from './utilities/bots.js';    
 import './guild.js';
 
-// import './utilities/cmdHelper.js'                       
-
 //! any misc problems (/ct dump and copy message here)
 //? ...
 
@@ -11,7 +9,10 @@ function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
         `&a+ hides messages if they are forwarded (where the message is blank)`,
-        `&acompletely refactored multi link messages for variety and changes &b(credits to gleb)`,
+        `&a+ completely refactored multi link messages for variety and changes &b(credits to gleb)`,
+        `&a+ changed instabuy command formatting mistake from 'sell cost' to 'buy cost'`
+        `&a+ added formatting for _gonline command`, 
+        `&a+ dynamic bot updater`, 
         `&a+ removed unused functions`, 
         `&a+ added prefix changing options in commands`,
         `&ao &rDo &b/setguildprefix &e(prefixName)&r to set a guild prefix`,
@@ -29,13 +30,13 @@ let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).v
 register('gameLoad', () => {
     if (!getInHypixel()) return;
     ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
+    if (moduleVersion === '0.1.5') {
+        const featureMessage = new Message(
+            `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+        )
+        ChatLib.chat(featureMessage);   
+    };
     if (!data.firstInstall) {
-        if (moduleVersion === '0.1.5') {
-            const featureMessage = new Message(
-                `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
-            )
-            ChatLib.chat(featureMessage);   
-        };
         data.firstInstall = true;
     };      
 });

@@ -102,7 +102,7 @@ Minor Changes:
 WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
 
 # v1.4
-+ added format for miscellaneous data for responses
++ added format for miscellane   us data for responses
 + added color for 'Vanquisher' in _be command responses
 + reformatted functions to be even more flexible for edge cases
 + readded formatting for normal non-stuf links
@@ -115,8 +115,10 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + added /setbotprefix and /setbridgeprefix commands
 + added /resetprefix (bot/bridge/guild/none) command
     Note: /resetprefix without any arguments resets both guild & bridge prefixes with a confirmation message.
-
-# v1.6
 + dynamic bot updater
 + adds formatting for _gonline command
-+ adds formatting for new mayor command's formats (minister and perks in hoverables)
++ changed instabuy command formatting mistake from 'sell cost' to 'buy cost'
+
+# v1.6
+WIP: adds formatting for new mayor command's formats (minister and perks in hoverables)
+
