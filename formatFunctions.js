@@ -1,4 +1,4 @@
-import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripFormattedName } from './functions.js';  
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripFormattedName, stripRank } from './functions.js';  
 import PogObject from '../PogData';
 
 const SPACING = `&2   |  &a`; 
@@ -7,9 +7,16 @@ export const guildData = new PogObject("bettershridge", {
         "lbin", "bz", "cata", "8ball", "election", "help", "pick", "ping",
         "skill", "slayer", "tfish", "contest", "fw", "fc", "is", "ib",
         "collection", "be", "raw", "rlb", "boop", "glist", "gonline", "boo", "update"
-      ],
+    ],
+    booper: '',
+    booped: '',
 }, './data/guildData.json');
 guildData.autosave(5);
+
+register('command', () => {
+    ChatLib.chat(`booper: ${guildData.booper}`)
+    ChatLib.chat(`booped: ${guildData.booped}`) 
+}).setName('testdata');
 
 
 const collNameCodes = {
@@ -187,9 +194,21 @@ export function getGuildResponse(prefix, message, type) {
             regex: /(.+) data for (.+) \((.+)\): (.+)\/(.+) \((.+)\)/,
             format: formatMiscDataFor
         },
-        bot_boop: {
-            regex: /(.+): _boop (.+)? (.+?)/,
-            format: getBotBooper
+        getBooperGP: {
+            regex: /(.+?) &3\[.+\]&f: &r_boop (.+?)( .+)?&r/,       
+            format: getBotBooperGP
+        },
+        getBooperDP: {
+            regex: /(.+?): _boop (.+)/,
+            format: getBotBooperDP
+        },
+        getBooped: {
+            regex: /Booped (.+)!/,
+            format: formatGetBooped
+        },
+        resetBoop: {
+            regex: /reset the boop/,
+            format: resetBoop,
         },
         guildmateStatus: {
             regex: /Guildmate (.+?) (is|is not) online\./,
@@ -289,7 +308,7 @@ function getCurrMayorPerks(nameWithPerkList) {
         .filter(Boolean)
         .map(([name, description]) => ({ name, description }));
     return activePerks;
-}
+}                       
 
 function getMayorColor(mayor) {
     return `${mayorColors[mayor]}${mayor}`
@@ -667,10 +686,33 @@ function formatMiscDataFor(prefix, match) {
     return `${prefix}${itemName} data for &2${playerName}&a (${playerProfile}): &r${collectionColor}${collLevel}/${collMax} &r(${truncateNumbers(collItems)})`;
 };      
 
-function getBotBooper(prefix, match) {
-    const [_, booper, booped='', otherText=null] = match;
-    return booped === '' ? [booper, ''] : [booper, booped];
+function getBotBooperDP(prefix, match) {
+    const [_, boopSender, boopResponse=''] = match;
+    guildData.booper = stripRank(boopSender.removeFormatting());
+    guildData.booped = boopResponse.split(' ')[0];  
 };
+
+function getBotBooperGP(prefix, match) {
+    const [_, boopSender, boopTarget='', otherText=null] = match;
+    guildData.booper = stripRank(boopSender.removeFormatting());
+    guildData.booped = boopTarget;
+};
+
+function formatGetBooped(prefix, match) {
+    const [_, name] = match;
+    const isSelfBeingBooped = name.toLowerCase() === Player.getName().toLowerCase();
+    console.log(guildData.booper, guildData.booped);
+    if (isSelfBeingBooped) {
+        return `${prefix}&d&l${guildData.booper} Booped You!`;
+    } else {
+        return `${prefix}&d&l${guildData.booper} Booped ${name}!`;
+    }
+}
+
+function resetBoop(prefix, match) {
+    guildData.booper = '';
+    guildData.booped = '';
+}
 
 function formatGuildmateStatus(prefix, match) {
     const [_, guildmateName, status] = match;
@@ -678,4 +720,24 @@ function formatGuildmateStatus(prefix, match) {
         ? '&r&ais &c&lOffline' 
         : '&r&ais &lOnline';
     return `${prefix}${guildmateName} ${formattedStatus}`;
-};
+};  
+        
+register('command', () => { 
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &raltF5qt: _boop citwus <:(`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rBooped citwus! <@tpblghiospn>&r`)
+}).setName('simboop1');
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rSoutifDeluxe: _boop oBiscuit <:(`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rBooped oBiscuit! <@tpblghiospn>&r`)
+}).setName('simboop2');   
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rtrexmarrk: _boop tiriaa&r`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rBooped Tiriaa! <@e1e6jntzm95>&r`)
+}).setName('simboop3');  
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rDank: WHATS HE DOING BROP [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/2414225299739a622a1/jnbhf^qoh?fy=783ba43a&jt=783a52ba&in=c6fddddb53918c3be2af2fg52511fe23f7176a5e8edbc226f7fcd26b7ff124fc&)&r`    )
+}).setName('testlink');
+

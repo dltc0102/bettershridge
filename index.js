@@ -2,6 +2,7 @@ import { getInHypixel } from './functions.js';
 import { data } from './utilities/bots.js';    
 import './guild.js';
 
+import './utilities/cmdHelper.js'
 //! any misc problems (/ct dump and copy message here)
 //? ...
 

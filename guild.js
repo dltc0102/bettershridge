@@ -8,11 +8,7 @@ const continueSymbol = '➩';
 const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
-const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];          
-const tempBoop = {
-    'booper': '',
-    'booped': '',
-};      
+const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];            
 
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -39,7 +35,7 @@ function separatePlayerAndMessage(e) {
                 type = 'bot';
                 resMessage = newMessage;
                 
-                // &b[MVP&c+&b] Shrimple77 &3[Admin]&f: &rbiscuit [to] nqeuk: blah&r         
+            //  &b[MVP&c+&b] Shrimple77 &3[Admin]&f: &rbiscuit [to] nqeuk: blah&r         
             } else if (newMessage.includes(' [to] ')) {
                 type = 'reply';
                 resMessage = newMessage;
@@ -171,27 +167,11 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.includes('Next contest')) {
         return botMessage.includes('Active contest')    
             ? getGuildResponse(prefix, botMessage, 'activeContest')
-            : getGuildResponse(prefix, botMessage, 'nextContest');
-        
-    //! _boop player     
-    } else if (botMessage.includes('_boop')) {
-        [tempBoop.booper, tempBoop.booped] = getGuildResponse(prefix, botMessage, 'bot_boop');
-        return `${prefix}${tempBoop.booper}: &r_boop ${tempBoop.booped}`;       
+            : getGuildResponse(prefix, botMessage, 'nextContest');    
         
     //! booped player
     } else if (botMessage.includes('Booped')) {
-        const match = botMessage.match(/Booped (.+)!/);
-        if (match) {    
-            const [_, name] = match;
-            if (name.toLowerCase() === Player.getName().toLowerCase()) {    
-                return `${prefix}&d&l${tempBoop.booper}Booped You!`;
-            } else if (name === tempBoop.booped) {
-                return `${prefix}&d&l${tempBoop.booper} Booped ${name}!`;
-            } else {
-                return `${prefix}&d&lBooped ${name}!`;
-            }
-        }
-        return formatBotBooped(prefix, boopedMatch, booper, boopTarget);         
+        return getGuildResponse(prefix, botMessage, 'getBooped');
         
     //! _fw farming weight
     } else if (botMessage.includes('Farming weight for')) {
@@ -231,18 +211,22 @@ function botMessageHandler(prefix, message) {
 
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
-    const [sender, responses] = dpMessage.split(/: (.+)/);  
-    if (!responses) return null;   
-    return responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')    
-        ? handleLinkMessages(prefix, sender, dpMessage)
-        : `${prefix}${sender}&r: ${highlightTags(responses)}`;
-};  
+    const [sender, responses] = dpMessage.split(/: (.+)/);
+    if (!responses) return null;
+    if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
+        return handleLinkMessages(prefix, sender, dpMessage);
+    } else {
+        if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
+        return `${prefix}${sender}&r: ${highlightTags(responses)}`;
+    }
+};
 
 function guildPlayerMessageHandler(prefix, message) {
-    const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/); 
-    if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {     
+    const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/);
+    if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, sender, responses);
-    } else {                    
+    } else {
+        if (responses.includes('_boop')) getGuildResponse(prefix, message, 'getBooperGP');
         return `${prefix}${sender}&r: ${highlightTags(responses)}`;
     }
 };
@@ -340,7 +324,10 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             ).setChatLineId(999);
             ChatLib.chat(updateBotMessage);
         }
-        if (newMsg && newMsg !== finalMsg) {        
+        if (newMsg && newMsg !== finalMsg) {    
+            // if (newMsg.includes('Booped')) {
+            //     getGuildResponse('', 'reset the boop', 'resetBoop');
+            // }     
             finalMsg = newMsg;
             replaceMessage(event, newMsg);    
 

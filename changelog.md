@@ -116,12 +116,14 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + added /resetprefix (bot/bridge/guild/none) command
     Note: /resetprefix without any arguments resets both guild & bridge prefixes with a confirmation message.
 + dynamic bot updater
-+ adds formatting for _gonline command
++ adds formatting for _gonline command      
 + changed instabuy command formatting mistake from 'sell cost' to 'buy cost'
 
 # v1.6
-+ fixed prefixes only working for bot commands, should work 
++ fixed prefixes only working for bot commands
 
 # v1.7
-WIP: adds formatting for new mayor command's formats (minister and perks in hoverables)
++ fixed player booped player2 messages
++ added formatting for new mayor command's formats (minister and perks in hoverables)
++ added new feature: auto tab completions when using guild commands
 
