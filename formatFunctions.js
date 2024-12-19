@@ -20,12 +20,17 @@ register('command', () => {
 
 
 const collNameCodes = {
+    // categories
     "fishing": "&3",
     "combat": "&c",
     "foraging": "&2",
     "farming": "&6",
     "mining": "&b",
     "taming": "&d",
+
+    // sub categories
+    "lava": "&c",
+    "water": "&9",
 
     // bestiary
     "private island": "&f",
@@ -317,7 +322,7 @@ function getMayorColor(mayor) {
 function formatMayor(prefix, match) {
     const [_, currMayor, nextMayor, nextTime, specialMayor, specialTime] = match;
     // const [_, currMayor, currMinister, nextMayor, nextTime, specialMayor, specialTime] = match;
-    const minister = 'Foxy';        
+    const minister = '';
     return [
         `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,      
         `${SPACING}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
@@ -425,6 +430,8 @@ function formatBestiarySpecific(prefix, match) {
     return ratio ? beMessage + ` &6(${ratio})` : beMessage;        
 };
 
+const rareMobs = ['Lord Jawbus', 'Thunder', 'Plhlegblast', 'The Sea Emperor', 'Carrot King', 'Water Hydra', 'Yeti', 'Reindrake', 'Great White Shark', 'Grim Reaper', 'Phantom Fisher', 'Abyssal Miner'];
+
 function formatBestiaryAll(prefix, match) {
     const [_, bestiaryType, playerName, playerProfile, bestiaryData] = match;
     let bestiaryList = bestiaryData
@@ -432,26 +439,34 @@ function formatBestiaryAll(prefix, match) {
         .map(data => data.trim());
     
     const formatBestiaryDataByLine = (lst) => {
-        let resLst = [];
+        let bestiaryRare = [];
+        let bestiaryCommon = [];
         lst.forEach(line => {
             const lineRegex = /(.+?)\s(\d+\/\d+)\s?(\(\d+\.\d+\))?/;
             const lineMatch = line.match(lineRegex);
             if (lineMatch) {
                 const [_, name, kd, ratio = null] = lineMatch;
                 let showRatio = ratio ? ` &7${ratio}` : '';
-                resLst.push(`${SPACING}${name}: &r${kd}${showRatio}`);
+                let completedColor = showRatio === '' ? '&6' : '';
+                const bestiaryEntry = `${SPACING}${name}: &r${completedColor}${kd}${showRatio}`;
+                if (rareMobs.includes(name)) {
+                    bestiaryRare.push(bestiaryEntry);
+                } else {
+                    bestiaryCommon.push(bestiaryEntry);
+                }
             }
         });
-        return resLst;
+        return [bestiaryCommon, bestiaryRare];
     };
 
-    const formattedBestiaryList = formatBestiaryDataByLine(bestiaryList);
-    const formattedBeType = collNameCodes[bestiaryType.toLowerCase()] + capitalise(bestiaryType);
-    const titleMessage = `${prefix}${formattedBeType} bestiary data for &2${playerName}&a (${playerProfile}): `
+    const [beCommon, beRare] = formatBestiaryDataByLine(bestiaryList);
+    const bestiaryColor = collNameCodes[bestiaryType.toLowerCase()] ?? '&2';    
+    const formattedBeType = bestiaryColor + capitalise(bestiaryType);   
+    const titleMessage = `${prefix}${formattedBeType} &r&abestiary data for &2${playerName}&a (${playerProfile}): `
     return [
-        titleMessage, ...formattedBestiaryList   
-    ];          
-};
+        titleMessage, ...beCommon, SPACING, ...beRare  
+        ];          
+    };
 
 function formatCommandHelp(prefix, match) {
     const [_, commands] = match;
@@ -649,13 +664,14 @@ function formatInstaBuy(prefix, match) {
     return [
         `${prefix}Insta-buy: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,
         `${SPACING}Buy Cost: &6${sellCost}`,
-        `${SPACING}Ave. Cost/unit: &6${aveCost}`,
+        `${SPACING}Ave. Cost/unit: &6${aveCost}`,   
     ];
 };
 
 function formatCollections(prefix, match) {
     const [_, collName, playerName, playerProfile, items] = match;
     const collColor = collNameCodes[collName.toLowerCase()];
+    console.log(`coll color: ${collColor}`); 
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
         .map(item => {       

@@ -4,12 +4,16 @@ import { getInHypixel } from '../functions';
 export const prefixData = new PogObject("bettershridge", {
     guild: 'G',
     bot: 'B',
+    arrow: '>',
+    best: '&6',
 }, './data/prefixData.json');
 prefixData.autosave(5);
 
 function resetPrefixes() {
-    prefixData.guild = 'G';
-    prefixData.bot = 'B';
+    prefixData.guild = '&2G&r';
+    prefixData.bot = '&2B&r';
+    prefixData.arrow = '&2>&r';
+    prefixData.best = '&6'; 
     prefixData.save();
 }
 
@@ -39,6 +43,18 @@ register('command', (args) => {
 
 register('command', (args) => {
     if (!getInHypixel()) return;
+    if (!args) {
+        ChatLib.chat('&cCorrect Usage: &b/setarrowprefix (prefix name)')
+    } else if (args) {
+        const prefix = args.trim();
+        ChatLib.chat(`&aArrow prefix set: &r${prefix}`);
+        prefixData.arrow = prefix;
+        prefixData.save();
+    }
+}).setName('setarrowprefix');
+
+register('command', (args) => {
+    if (!getInHypixel()) return;
     if (!args) { // reset both
         const confirmButton = new TextComponent('&a&lCONFIRM?')
             .setClick('run_command', '/confirmResetPrefix')
@@ -50,20 +66,23 @@ register('command', (args) => {
         ChatLib.chat(confirmMessage);
     } else if (args) {
         if (args === 'bot' || args === 'bridge') {
-            prefixData.bot = 'B';
+            prefixData.bot = '&2B&r';
             prefixData.save();
             ChatLib.chat(`&aBot Prefix has been reset to &r&2B&a!`);
         } else if (args === 'guild') {
-            prefixData.guild = 'G';
+            prefixData.guild = '&2G&r';
             prefixData.save();
             ChatLib.chat(`&aGuild Prefix has been reset to &r&2G&a!`);
-
+        } else if (args === 'arrow') {
+            prefixData.arrow = '&2>&r';
+            prefixData.save();      
+            ChatLib.chat(`&aArrow Prefix has been reset to &r&2>&a!`);
         }
     }   
 }).setName('resetprefix');
 
 register('command', () => {
     if (!getInHypixel()) return;
-    resetPrefixes()
-    ChatLib.chat(`&aPrefixes have been reset! &rGuild: &2G&r | Bridge: &2B`);   
+    resetPrefixes()                     
+    ChatLib.chat(`&aPrefixes have been reset! &rGuild: &2G&r | Bridge: &2B&r | Arrow: &2>&r`)               ;   
 }).setName('confirmResetPrefix');

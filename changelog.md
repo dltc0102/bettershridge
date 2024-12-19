@@ -125,5 +125,12 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 # v1.7
 + fixed player booped player2 messages
 + added formatting for new mayor command's formats (minister and perks in hoverables)
-+ added new feature: auto tab completions when using guild commands
++ added arrow prefix changer (/setarrowprefix)
++ added support for directional discord links
++ make bestiary categories &6 if number is /0
++ fix undefined names for _be and _coll commands
+= rm-ed minister placeholder
++ add a /bettershridge (aliases: /bshelp, /bs) command for command help list
++ add /guild best command and /setbestcolor     
+
 

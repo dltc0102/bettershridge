@@ -3,6 +3,7 @@ import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
+import { bestData } from './utilities/best';
 
 const continueSymbol = '➩';
 const idRegex = /<@.+>/;
@@ -66,7 +67,7 @@ function handleLinkMessages(prefix, sender='', msg) {
         [/(https?:\/\/\S+)/, hoverableWebLink]
     );
     return new Message(
-        prefix, `&a${sender}: &r`, ...processedMessageParts
+        prefix, `${sender}: &r`, ...processedMessageParts
     );      
 };
                 
@@ -140,7 +141,7 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.includes('Catacombs level for')) {
         return getGuildResponse(prefix, botMessage, 'cata');
         
-    //! dungoen floor
+    //! dungeon floor
     } else if (botMessage.includes('Completions') && botMessage.includes('Fastest time')) {
         return getGuildResponse(prefix, botMessage, 'dungeonRecord');
 
@@ -211,15 +212,19 @@ function botMessageHandler(prefix, message) {
 
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
-    const [sender, responses] = dpMessage.split(/: (.+)/);
+    const [sender, responses] = dpMessage.split(/: (.+)/);  
+    console.log(`discordPlayerMessagehandler func:`)
+    console.log(`sender: ${sender}`)
+    console.log(`in bestData list?: ${bestData.names.includes(sender.toLowerCase())}`)      
+    const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${prefixData.best}${sender}` : `&a${sender}`;
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
-        return handleLinkMessages(prefix, sender, dpMessage);
+        return handleLinkMessages(prefix, formattedSender, dpMessage);
     } else {
         if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
-        return `${prefix}${sender}&r: ${highlightTags(responses)}`;
+        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
     }
-};
+};  
 
 function guildPlayerMessageHandler(prefix, message) {
     const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/);
@@ -274,8 +279,8 @@ function messageHandler(message) {
     // console.log(' ');
     // console.log(type, resMessage);
     const prefix = type === 'guildPlayer'
-        ? `&2${prefixData.guild}&2 > &a` 
-        : `&2${prefixData.bot}&2 > &a`;
+        ? `${prefixData.guild}&r ${prefixData.arrow}&r &a` 
+        : `${prefixData.bot}&r ${prefixData.arrow}&r &a`;                 
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
     if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];

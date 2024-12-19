@@ -83,7 +83,8 @@ export function formatItemsToTable(items, columns = 2) {
     return result;
 };
 
-function getAttachmentName(link) {      
+function getAttachmentName(link) {     
+    const extensions = ["png", "jpeg", "jpg", "mp4", "mov", "avi"]; 
     if (link.includes('tenor')) {
         const regex = /https?:\/\/tenor.com\/view\/(.+)-gif.+/;
         const match = link.match(regex);
@@ -94,11 +95,13 @@ function getAttachmentName(link) {
         const match = link.match(regex);
         return match ? match[1] : '';
 
-    } else {
+    } else if (extensions.some(ext => link.toLowerCase().includes(`.${ext}`))) {
         const regex = /https?:\/\/.+\/(.+\.(png|jpeg|jpg|mp4|mov|avi))/;
         const match = link.match(regex);
         return match ? match[1] : '';
-    }
+    } else {
+        return 'link';
+    }                                       
 };
 
 function getLinkSource(link) {
@@ -121,6 +124,10 @@ function getComponentParts(link) {
     const attachmentName = getAttachmentName(link);
     const linkSource = getLinkSource(link);
 
+    console.log(`getcomponentparts func: `)
+    console.log(`attaachment name: ${attachmentName}`)
+    console.log(`linkSource: ${linkSource}`)
+
     if (imageSuffixes.some(suffix => link.includes(suffix))) {
         linkName = `&b&l[${linkSource} Image]`;
         hoverText = attachmentName;        
@@ -132,8 +139,12 @@ function getComponentParts(link) {
     } else if (link.includes('gif')) {
         linkName =  `&b&l[${linkSource} Gif]`;
         hoverText = attachmentName;
-        
+    } else if (attachmentName === 'link') {
+        linkName = `&b&l[${linkSource} Link]`;
+        hoverText = `${link.slice(0, 35)}...`;       
     }
+    console.log(`linkname: ${linkName}`)
+    console.log(`hovertext: ${hoverText}`)      
     return [linkName, hoverText]
 };
 
@@ -219,5 +230,15 @@ export const splitMapN = (text, ...splitOpts) => {
         if (val instanceof Array) acc.push(...val);
         else acc.push(val);
         return acc;
-    }, []);
+    }, []); 
 }
+
+// ct sim
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rLava bestiary for obiscuit (Coconut) k/d (kdr): Fire Eel 8023/1 (8023.00) Flaming Worm 4246/0 Lava Blaze 1453/0 Lava Flame 10093/3 (3364.33) Lava Leech 15320/0 Lava Pigman 1426/0 Lord Jawbus 813/289 (2.81) Magma Slug 40597/1 (40597.00) Moogma 30513/13 (2➩&r`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩347.15) Plhlegblast 7/0 Pyroclastic Worm 10354/17 (609.06) Taurus 4815/6 (802.50) Thunder 2004/525 (3.82)  <@jbi32jdww8f>&r`)
+}).setName('simcolor'); 
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rMerry Gnasmas (Gnasez): [LINK](l$H07|ejtdpsedpn/diboofmt/8a8798172144234961/2274336825579958848/242a29a366869922289)&r`)   
+}).setName('simlink');
