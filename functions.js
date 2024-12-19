@@ -124,10 +124,6 @@ function getComponentParts(link) {
     const attachmentName = getAttachmentName(link);
     const linkSource = getLinkSource(link);
 
-    console.log(`getcomponentparts func: `)
-    console.log(`attaachment name: ${attachmentName}`)
-    console.log(`linkSource: ${linkSource}`)
-
     if (imageSuffixes.some(suffix => link.includes(suffix))) {
         linkName = `&b&l[${linkSource} Image]`;
         hoverText = attachmentName;        
@@ -143,8 +139,6 @@ function getComponentParts(link) {
         linkName = `&b&l[${linkSource} Link]`;
         hoverText = `${link.slice(0, 35)}...`;       
     }
-    console.log(`linkname: ${linkName}`)
-    console.log(`hovertext: ${hoverText}`)      
     return [linkName, hoverText]
 };
 

@@ -213,9 +213,6 @@ function botMessageHandler(prefix, message) {
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);  
-    console.log(`discordPlayerMessagehandler func:`)
-    console.log(`sender: ${sender}`)
-    console.log(`in bestData list?: ${bestData.names.includes(sender.toLowerCase())}`)      
     const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${prefixData.best}${sender}` : `&a${sender}`;
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {

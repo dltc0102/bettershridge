@@ -671,7 +671,6 @@ function formatInstaBuy(prefix, match) {
 function formatCollections(prefix, match) {
     const [_, collName, playerName, playerProfile, items] = match;
     const collColor = collNameCodes[collName.toLowerCase()];
-    console.log(`coll color: ${collColor}`); 
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
         .map(item => {       
@@ -717,7 +716,6 @@ function getBotBooperGP(prefix, match) {
 function formatGetBooped(prefix, match) {
     const [_, name] = match;
     const isSelfBeingBooped = name.toLowerCase() === Player.getName().toLowerCase();
-    console.log(guildData.booper, guildData.booped);
     if (isSelfBeingBooped) {
         return `${prefix}&d&l${guildData.booper} Booped You!`;
     } else {
