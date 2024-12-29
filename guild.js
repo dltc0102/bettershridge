@@ -213,7 +213,7 @@ function botMessageHandler(prefix, message) {
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);  
-    const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${prefixData.best}${sender}` : `&a${sender}`;
+    const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${bestData.best}${sender}` : `&a${sender}`;
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);
@@ -275,9 +275,10 @@ function messageHandler(message) {
     }
     // console.log(' ');
     // console.log(type, resMessage);
-    const prefix = type === 'guildPlayer'
-        ? `${prefixData.guild}&r ${prefixData.arrow}&r &a` 
-        : `${prefixData.bot}&r ${prefixData.arrow}&r &a`;                 
+    let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
+    if (type === 'guildPlayer') {
+        prefix = `${prefixData.guild}&r ${prefixData.arrow}&r &a`;
+    };
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
     if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];

@@ -2,10 +2,9 @@ import PogObject from '../../PogData';
 import { getInHypixel } from '../functions';
 
 export const prefixData = new PogObject("bettershridge", {
-    guild: 'G',
-    bot: 'B',
-    arrow: '>',
-    best: '&6',
+    guild: '&2G&r',
+    bot: '&2B&r',
+    arrow: '&2>&r',
 }, './data/prefixData.json');
 prefixData.autosave(5);
 
@@ -13,10 +12,10 @@ function resetPrefixes() {
     prefixData.guild = '&2G&r';
     prefixData.bot = '&2B&r';
     prefixData.arrow = '&2>&r';
-    prefixData.best = '&6'; 
     prefixData.save();
 }
 
+// set guild prefix
 register('command', (args) => {
     if (!getInHypixel()) return;
     if (!args) {
@@ -29,6 +28,7 @@ register('command', (args) => {
     }
 }).setName('setguildprefix');
 
+// set bot prefix
 register('command', (args) => {
     if (!getInHypixel()) return;
     if (!args) {
@@ -41,6 +41,7 @@ register('command', (args) => {
     }
 }).setName('setbotprefix').setAliases('setbridgeprefix');
 
+// set arrow prefix
 register('command', (args) => {
     if (!getInHypixel()) return;
     if (!args) {
@@ -50,9 +51,10 @@ register('command', (args) => {
         ChatLib.chat(`&aArrow prefix set: &r${prefix}`);
         prefixData.arrow = prefix;
         prefixData.save();
-    }
+    }   
 }).setName('setarrowprefix');
 
+// reset prefix
 register('command', (args) => {
     if (!getInHypixel()) return;
     if (!args) { // reset both
@@ -69,10 +71,12 @@ register('command', (args) => {
             prefixData.bot = '&2B&r';
             prefixData.save();
             ChatLib.chat(`&aBot Prefix has been reset to &r&2B&a!`);
+
         } else if (args === 'guild') {
             prefixData.guild = '&2G&r';
             prefixData.save();
             ChatLib.chat(`&aGuild Prefix has been reset to &r&2G&a!`);
+
         } else if (args === 'arrow') {
             prefixData.arrow = '&2>&r';
             prefixData.save();      
@@ -81,8 +85,10 @@ register('command', (args) => {
     }   
 }).setName('resetprefix');
 
+// confirm reset prefix
 register('command', () => {
     if (!getInHypixel()) return;
-    resetPrefixes()                     
-    ChatLib.chat(`&aPrefixes have been reset! &rGuild: &2G&r | Bridge: &2B&r | Arrow: &2>&r`)               ;   
-}).setName('confirmResetPrefix');
+    resetPrefixes();
+    prefixData.save();
+    ChatLib.chat(`&aPrefixes have been reset! &rGuild: ${prefixData.guild} | Bridge/Bot: ${prefixData.bot} | Arrow: ${prefixData.arrow}`);
+}).setName('confirmResetPrefix');                                       
