@@ -32,14 +32,14 @@ function makeChangelogHoverable(moduleVersion) {
 let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 register('gameLoad', () => {
     if (!getInHypixel()) return;
-    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7DM @oBiscuit for any concerns`)
-
-    const featureMessage = new Message(
-        `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
-    )
-    ChatLib.chat(featureMessage);   
-    // if (moduleVersion === '0.1.7') {
-    // };
+    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7DM @oBiscuit for any concerns`);
+        
+    if (moduleVersion === '0.1.6') {
+        const featureMessage = new Message(
+            `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+        )
+        ChatLib.chat(featureMessage);   
+    };
     if (!data.firstInstall) {
         data.firstInstall = true;
     };      

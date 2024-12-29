@@ -62,7 +62,6 @@ register('command', (arg) => {
         bestData.color = arg;
         bestData.save();
         ChatLib.chat(`&aGuild Best Color set: &r${bestData.color}test name`)
-        console.log(`guild best color is set to: ${bestData.color}`)                                        
     };
 }).setName('setbestcolor'); 
 

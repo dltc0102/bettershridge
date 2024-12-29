@@ -438,18 +438,25 @@ function formatBestiaryAll(prefix, match) {
         .match(/([A-Za-z\s]+ \d+\/\d+(?: \(\d+\.\d+\))?)/g)
         .map(data => data.trim());
     
+    
+    const getBestiaryEntry = (name, kd, ratio) => {
+        const mobColor = getMonsterColor(name, true);
+        const [currBe, maxBe] = kd.split('/');
+        const showRatio = ratio ? ` &7${ratio}` : '';
+        const kdColor = Number(currBe) >= Number(maxBe) ? `&6` : `&r`;
+        if (!ratio && kd === '0/0') return `${SPACING}${mobColor}${name}: &80/0`;
+        return `${SPACING}${mobColor}${name}: ${kdColor}${kd}${showRatio}`;     
+    }
+
     const formatBestiaryDataByLine = (lst) => {
         let bestiaryRare = [];
         let bestiaryCommon = [];
         lst.forEach(line => {
             const lineRegex = /(.+?)\s(\d+\/\d+)\s?(\(\d+\.\d+\))?/;
-            const lineMatch = line.match(lineRegex);
+            const lineMatch = line.match(lineRegex);                        
             if (lineMatch) {
-                const [_, name, kd, ratio = null] = lineMatch;
-                let showRatio = ratio ? ` &7${ratio}` : '';
-                let completedColor = showRatio === '' ? '&6' : '';
-                const mobColor = getMonsterColor(name, true);   
-                const bestiaryEntry = `${SPACING}${mobColor}${name}: &r${completedColor}${kd}${showRatio}`;
+                const [_, name, kd, ratio = null] = lineMatch;  
+                const bestiaryEntry = getBestiaryEntry(name, kd, ratio);
                 if (rareMobs.includes(name)) {
                     bestiaryRare.push(bestiaryEntry);
                 } else {
@@ -468,6 +475,12 @@ function formatBestiaryAll(prefix, match) {
         titleMessage, ...beCommon, SPACING, ...beRare  
         ];          
     };
+
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rLava bestiary for anddru (Watermelon) k/d (kdr): Fire Eel 15571/0 Flaming Worm 5768/0 Lava Blaze 4741/0 Lava Flame 20303/0 Lava Leech 27965/1 (27965.00) Lava Pigman 0/0 Lord Jawbus 1454/149 (9.76) Magma Slug 75804/4 (18951.00) Moogma 55878/3 (18626.00➩&r`)
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩) Plhlegblast 7/0 Pyroclastic Worm 18827/0 Taurus 9550/0 Thunder 4058/503 (8.07)  <@t7bkoo58b5i>&r`)
+}).setName('testbe');
 
 function formatCommandHelp(prefix, match) {
     const [_, commands] = match;

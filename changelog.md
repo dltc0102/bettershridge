@@ -121,8 +121,6 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 
 # v1.6
 + fixed prefixes only working for bot commands
-            
-# v1.7
 + fixed player1 booped player2 messages
 + added formatting for new mayor command's formats (minister and perks in hoverables)
 + added arrow prefix changer (/setarrowprefix)

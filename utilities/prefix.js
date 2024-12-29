@@ -12,7 +12,6 @@ function resetPrefixes() {
     prefixData.bot = '&2B&r';
     prefixData.arrow = '&2>&r';
     prefixData.save();  
-    console.log(`prefixdata. values all reset: ${prefixData.guild} | ${prefixData.bot} | ${prefixData.arrow}`)
 }
 
 // set guild prefix
@@ -25,7 +24,6 @@ register('command', (args) => {
         ChatLib.chat(`&aGuild prefix set: &r${prefix}`);
         prefixData.guild = prefix;
         prefixData.save();
-        console.log(`guild prefix set to: ${prefix}`)
     }
 }).setName('setguildprefix', true);
 
@@ -39,7 +37,6 @@ register('command', (args) => {
         ChatLib.chat(`&aBot prefix set: &r${prefix}`);
         prefixData.bot = prefix;
         prefixData.save();
-        console.log(`bot prefix set to: ${prefix}`)
     }
 }).setName('setbotprefix', true).setAliases('setbridgeprefix');
 
@@ -53,7 +50,6 @@ register('command', (args) => {
         ChatLib.chat(`&aArrow prefix set: &r${prefix}`);
         prefixData.arrow = prefix;
         prefixData.save();
-        console.log(`arrow prefix set to: ${prefix}`)
     }   
 }).setName('setarrowprefix', true);
 
@@ -75,19 +71,16 @@ register('command', (args) => {
             prefixData.bot = '&2B&r';
             prefixData.save();
             ChatLib.chat(`&aBot Prefix has been reset to &r&2B&a!`);
-            console.log(`bot prefix reset to: ${prefixData.bot}`)
 
         } else if (args === 'guild') {
             prefixData.guild = '&2G&r';
             prefixData.save();
             ChatLib.chat(`&aGuild Prefix has been reset to &r&2G&a!`);
-            console.log(`guild prefix reset to: ${prefixData.guild}`)
 
         } else if (args === 'arrow') {
             prefixData.arrow = '&2>&r';
             prefixData.save();      
             ChatLib.chat(`&aArrow Prefix has been reset to &r&2>&a!`);
-            console.log(`arrow prefix reset to: ${prefixData.arrow}`)   
         }
     }   
 }).setName('resetprefix', true);
@@ -98,5 +91,4 @@ register('command', () => {
     resetPrefixes();    
     prefixData.save();
     ChatLib.chat(`&aPrefixes have been reset! &rGuild: ${prefixData.guild} | Bridge/Bot: ${prefixData.bot} | Arrow: ${prefixData.arrow}`);
-    console.log(`all prefixes reset to: ${prefixData.guild} | ${prefixData.bot} | ${prefixData.arrow}`)
 }).setName('confirmResetPrefix', true);                                       
