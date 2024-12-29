@@ -448,7 +448,8 @@ function formatBestiaryAll(prefix, match) {
                 const [_, name, kd, ratio = null] = lineMatch;
                 let showRatio = ratio ? ` &7${ratio}` : '';
                 let completedColor = showRatio === '' ? '&6' : '';
-                const bestiaryEntry = `${SPACING}${name}: &r${completedColor}${kd}${showRatio}`;
+                const mobColor = getMonsterColor(name, true);   
+                const bestiaryEntry = `${SPACING}${mobColor}${name}: &r${completedColor}${kd}${showRatio}`;
                 if (rareMobs.includes(name)) {
                     bestiaryRare.push(bestiaryEntry);
                 } else {

@@ -45,16 +45,21 @@ export function formatColonTime(timeStr) {
 const knownMonsters = {
     "Lord Jawbus": '&c',
     "Thunder": '&b',
-    "Sea Emperor": '&e',
+    "Plhlegblast": "&4",
+    "The Sea Emperor": '&e',    
+    "Carrot King": "&6",
     "Water Hydra": '&9',
     "Great White Shark": '&3',
     "Abyssal Miner": '&2',
     "Grim Reaper": '&5',
+    "Phantom Fisher": "&d",
     "Yeti": '&f',
+    "Reindrake": "&c",
     "Vanquisher": '&5',
 };
 
-export function getMonsterColor(name) {
+export function getMonsterColor(name, bypass=false) {
+    if (bypass) return name in knownMonsters ? knownMonsters[name] : '&a';
     return name in knownMonsters ? knownMonsters[name] : '&r';  
 };
 
@@ -226,12 +231,6 @@ export const splitMapN = (text, ...splitOpts) => {
         return acc;
     }, []); 
 }
-
-// ct sim
-register('command', () => {
-    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rLava bestiary for obiscuit (Coconut) k/d (kdr): Fire Eel 8023/1 (8023.00) Flaming Worm 4246/0 Lava Blaze 1453/0 Lava Flame 10093/3 (3364.33) Lava Leech 15320/0 Lava Pigman 1426/0 Lord Jawbus 813/289 (2.81) Magma Slug 40597/1 (40597.00) Moogma 30513/13 (2➩&r`)
-    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &r➩347.15) Plhlegblast 7/0 Pyroclastic Worm 10354/17 (609.06) Taurus 4815/6 (802.50) Thunder 2004/525 (3.82)  <@jbi32jdww8f>&r`)
-}).setName('simcolor'); 
 
 register('command', () => {
     ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rMerry Gnasmas (Gnasez): [LINK](l$H07|ejtdpsedpn/diboofmt/8a8798172144234961/2274336825579958848/242a29a366869922289)&r`)   

@@ -2,7 +2,7 @@ import PogObject from '../../PogData';
 
 export const bestData = new PogObject("bettershridge", {
     names: [],
-    best: '&6',
+    color: '&6',
 }, './data/bestData.json');
 bestData.autosave(5);
 
@@ -14,7 +14,7 @@ register('command', (arg) => {
             return;
 
         } else {                
-            ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: &r['${bestData.best}test name&r']`);
+            ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: &r['${bestData.color}test name&r']`);
             for (let i=0; i < bestData.names.length; i++) {
                 let bestName = bestData.names[i];
                 ChatLib.chat(` &3o&r &b${bestName}`)
@@ -59,9 +59,10 @@ register('command', (arg) => {
     if (!arg || !arg.includes('&')) {
         ChatLib.chat(`&cPlease input a color code for the Guild Best Color.`)
     } else {
-        bestData.best = arg;
+        bestData.color = arg;
         bestData.save();
-        ChatLib.chat(`&aGuild Best Color set: &r${bestData.best}test name`)
+        ChatLib.chat(`&aGuild Best Color set: &r${bestData.color}test name`)
+        console.log(`guild best color is set to: ${bestData.color}`)                                        
     };
 }).setName('setbestcolor'); 
 

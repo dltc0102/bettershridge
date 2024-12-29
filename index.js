@@ -3,6 +3,7 @@ import { data } from './utilities/bots.js';
 import { prefixData } from './utilities/prefix.js';  
 import './guild.js';
 import './utilities/best.js';
+import { bestData } from './utilities/best.js';
 
 // import './utilities/cmdHelper.js'
 //! any misc problems (/ct dump and copy message here)
@@ -11,18 +12,17 @@ import './utilities/best.js';
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
-        `&a+ hides messages if they are forwarded (where the message is blank)`,
-        `&a+ completely refactored multi link messages for variety and changes &b(credits to gleb)`,
-        `&a+ changed instabuy command formatting mistake from 'sell cost' to 'buy cost'`,
-        `&a+ added formatting for _gonline command`, 
-        `&a+ dynamic bot updater`, 
-        `&a+ removed unused functions`, 
-        `&a+ added prefix changing options in commands`,
-        `&ao &rDo &b/setguildprefix &e(prefixName)&r to set a guild prefix`,
-        `&ao &rDo &b/setbotprefix &ror &b/setbridgeprefix &e(prefixName)&r to set a bot prefix`,
-        `&ao &rDo &b/resetprefix &e[guild/bot/bridge]&r to reset a desired prefix`,
-        `&2Note: &rIf player does &b/resetprefix&r, there will be a confirmation message to reset both prefixes.`,
-    ];
+        "&a+ Fixed player1 booped player2 messages",
+        "&a+ Added formatting for new mayor command's formats (minister and perks in hoverables)",
+        "&a+ Added arrow prefix changer (&r/setarrowprefix&a)",
+        "&a+ Added support for directional Discord links",
+        "&a+ Made bestiary categories &6gold&a if number is /0",
+        "&a+ Fixed undefined names for _be and _coll commands",
+        "&a+ Added a &r/bettershridge&a (aliases: &r/bshelp&a, &r/bs&a) command for command help list",
+        "&a+ Added &r/guildbest&a command and &r/setbestcolor&a",
+        "&a+ Added commands for the guild best friend system",
+        "&d<!> v1.8 WIP: /gb online to see best friends that are online"
+      ];
 
     const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
     return new TextComponent(`&3&l[&r&aHover for Changelog&3&l]`)
@@ -32,17 +32,18 @@ function makeChangelogHoverable(moduleVersion) {
 let moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 register('gameLoad', () => {
     if (!getInHypixel()) return;
-    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7Send @oBiscuit a dm if for any concerns`)   
-    if (moduleVersion === '0.1.5') {
-        const featureMessage = new Message(
-            `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
-        )
-        ChatLib.chat(featureMessage);   
-    };
+    ChatLib.chat(`&9[&bBetterShridge&9] &3Loaded! &7DM @oBiscuit for any concerns`)
+
+    const featureMessage = new Message(
+        `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+    )
+    ChatLib.chat(featureMessage);   
+    // if (moduleVersion === '0.1.7') {
+    // };
     if (!data.firstInstall) {
         data.firstInstall = true;
     };      
-});
+});     
 
 
 register('command', () => {
@@ -57,6 +58,6 @@ register('command', () => {
     ChatLib.chat(`      &6<&3Guild Best System&6> &b------ &r(/guildbest | /gb)`)
     ChatLib.chat(`${bulletSpace}&f/guildbest list &3- Shows all the names in the guild best list`)                
     ChatLib.chat(`${bulletSpace}&f/guildbest (name) &3- Sets/Adds a name to the guild best list \n      &c(Do the command again to remove name)`)
-    ChatLib.chat(`${bulletSpace}&f/setbestcolor &3- Sets color for guild best list names \n      &eCurrent: &r['${prefixData.best}test name&r'] `)
+    ChatLib.chat(`${bulletSpace}&f/setbestcolor &3- Sets color for guild best list names \n      &eCurrent: &r['${bestData.best}test name&r'] `)
     ChatLib.chat(ChatLib.getChatBreak(' '))
 }).setName('bettershridge').setAliases('bshelp', 'bs');

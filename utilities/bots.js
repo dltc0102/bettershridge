@@ -22,7 +22,7 @@ register('command', (args) => {
             ChatLib.deleteChat(999);    
         }
     }
-}).setName('addbot');
+}).setName('addbot', true);
 
 register('command', () => {
     if (!getInHypixel()) return;
@@ -32,7 +32,7 @@ register('command', () => {
         if (idx+1 === data.bots.length+1) return;
         ChatLib.chat(`${idx+1}. ${data.bots[idx]}`);
     };
-}).setName('botlist');
+}).setName('botlist', true);
 
 register('command', (args) => {
     if (!getInHypixel()) return;
@@ -44,4 +44,4 @@ register('command', (args) => {
         ChatLib.chat(new TextComponent('&e&l[CLICK TO VIEW BOTLIST]').setClick('run_command', '/botlist').setHover('show_text', '/botlist'));
         data.save();
     }
-}).setName('rmbot');
+}).setName('rmbot', true);

@@ -212,8 +212,8 @@ function botMessageHandler(prefix, message) {
 
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
-    const [sender, responses] = dpMessage.split(/: (.+)/);  
-    const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${bestData.best}${sender}` : `&a${sender}`;
+    const [sender, responses] = dpMessage.split(/: (.+)/);          
+    const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${bestData.color}${sender}` : `&a${sender}`;
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);

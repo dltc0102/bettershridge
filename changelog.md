@@ -132,5 +132,5 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 = rm-ed minister placeholder
 + add a /bettershridge (aliases: /bshelp, /bs) command for command help list
 + add /guild best command and /setbestcolor     
-
+WIP: /gb online to see best friends that are online
 
