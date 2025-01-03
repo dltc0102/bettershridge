@@ -46,7 +46,7 @@ register('gameLoad', () => {
 });     
 
 
-register('command', () => {
+register('command', () => {     
     const bulletSpace = '   &bo&r  ';
     ChatLib.chat(ChatLib.getChatBreak(' '))
     ChatLib.chat(`&6[&r&3Better Shridge&6]&r &cHelpline -------------`);
@@ -56,8 +56,10 @@ register('command', () => {
     ChatLib.chat(`${bulletSpace}&f/resetprefix (&9bot&r | &9guild&r | &9arrow&r) &3- Resets all prefixes`)
     ChatLib.chat(' ');
     ChatLib.chat(`      &6<&3Guild Best System&6> &b------ &r(/guildbest | /gb)`)
-    ChatLib.chat(`${bulletSpace}&f/guildbest list &3- Shows all the names in the guild best list`)                
+    ChatLib.chat(`${bulletSpace}&f/guildbest list &3- Shows all the names in the guild best list`)
     ChatLib.chat(`${bulletSpace}&f/guildbest (name) &3- Sets/Adds a name to the guild best list \n      &c(Do the command again to remove name)`)
-    ChatLib.chat(`${bulletSpace}&f/setbestcolor &3- Sets color for guild best list names \n      &eCurrent: &r['${bestData.best}test name&r'] `)
+    ChatLib.chat(`${bulletSpace}&f/guildbest clear &3- Removes all names from the guild best list`)
+    ChatLib.chat(`${bulletSpace}&f/setbestcolor &3- Sets color for guild best list names \n      &eCurrent: &r['${bestData.color}test name&r'] `)
+    ChatLib.chat(`${bulletSpace}&f/overriderankcolor | /orc &3- Overrides the rank colors for guild-best colors`)
     ChatLib.chat(ChatLib.getChatBreak(' '))
 }).setName('bettershridge').setAliases('bshelp', 'bs');

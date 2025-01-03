@@ -3,8 +3,8 @@ import PogObject from '../../PogData';
 export const bestData = new PogObject("bettershridge", {
     names: [],
     color: '&6',
+    trigger: false,
 }, './data/bestData.json');
-bestData.autosave(5);
 
 register('command', (arg) => {
     // list 
@@ -40,24 +40,36 @@ register('command', (arg) => {
         if (bestData.names.includes(loweredName)) {
             let tempLst = [];
             ChatLib.chat(`&cRemoved ${arg} &cfrom the Guild Best List!`)
+            console.log(`&cRemoved ${arg} &cfrom the Guild Best List!`)
             tempLst = bestData.names.filter(name => name !== loweredName);
             bestData.names = tempLst;
             bestData.save();
+            console.log(`new bestData.names: ${bestData.names}`)
+            console.log(' ');   
             return;
 
         } else {
             ChatLib.chat(`&aAdded ${arg} &ato the Guild Best List!`)
-                bestData.names.push(loweredName);
-                bestData.save();
+            console.log(`&aAdded ${arg} &ato the Guild Best List!`)
+            bestData.names.push(loweredName);
+            bestData.save();    
+            console.log(`new bestData.names: ${bestData.names}`)
+            console.log(' ');   
             return;                 
-        }
+        }   
     }
 
 }).setName('guildbest').setAliases('gb');
 
+function isValidColorCode(arg) {
+    const invalidArgs = ['&k', '&l', '&m', '&n', '&o'];
+    return !invalidArgs.includes(arg);
+}
+
 register('command', (arg) => {
-    if (!arg || !arg.includes('&')) {
-        ChatLib.chat(`&cPlease input a color code for the Guild Best Color.`)
+    if (!arg || !arg.includes('&') && !isValidColorCode(arg)) {
+        ChatLib.chat(`&cPlease input a color code for the Guild Best Color.`);
+            
     } else {
         bestData.color = arg;
         bestData.save();
@@ -65,4 +77,11 @@ register('command', (arg) => {
     };
 }).setName('setbestcolor'); 
 
+register('command', () => {
+    bestData.trigger = !bestData.trigger;
+    bestData.save();
+    console.log(`orc command run: ${bestData.trigger}`)
+    const dilemma = bestData.trigger ? '&a&lYES&r' : '&c&lNO&r';
+    ChatLib.chat(`&6[&r&3Better Shridge&6] &bOverride Rank Colors: ${dilemma}`);    
+}).setName('overriderankcolor').setAliases('orc');
 

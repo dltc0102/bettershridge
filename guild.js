@@ -5,11 +5,11 @@ import { registerWhen, timeThis } from './utils';
 import { getGuildResponse } from './formatFunctions';
 import { bestData } from './utilities/best';
 
-const continueSymbol = '➩';
+const continueSymbol = '➩';    
 const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
-const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];            
+const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];
 
 function separatePlayerAndMessage(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -224,12 +224,29 @@ function discordPlayerMessageHandler(prefix, message) {
 };  
 
 function guildPlayerMessageHandler(prefix, message) {
-    const [sender, responses] = removeRandomID(message).replace(/  /g, '').split(/: (.+)/);
-    if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
-        return handleLinkMessages(prefix, sender, responses);
-    } else {
-        if (responses.includes('_boop')) getGuildResponse(prefix, message, 'getBooperGP');
-        return `${prefix}${sender}&r: ${highlightTags(responses)}`;
+    const rawMessage = removeRandomID(message).replace(/  /g, '');
+    const regex = /(.+?) &3\[(\w+)\]&f: &r(.+)&r/;
+    const match = rawMessage.match(regex);
+    if (match) {
+        const [_, sender, role, responses] = match; 
+        const rawName = stripRank(sender.removeFormatting());
+        const formattedSender = bestData.names.includes(rawName.toLowerCase())
+            ? `${bestData.color}${rawName} &3[${role}]&r`
+            : `${sender} &3[${role}]&r`;
+
+        console.log(`rawname: ${rawName}`)
+        console.log(`gb names: ${bestData.names}`)              
+        console.log(`included in gbnames?: ${bestData.names.includes(rawName.toLowerCase())}`)  
+        console.log(`trigger: ${bestData.trigger}`)  
+        console.log(`formatted sender: ${formattedSender}`);
+        console.log(' ');
+
+        if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {  
+            return handleLinkMessages(prefix, formattedSender, responses);
+        } else {
+            if (responses.includes('_boop')) getGuildResponse(prefix, message, 'getBooperGP');
+            return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;        
+        }
     }
 };
 
@@ -275,6 +292,12 @@ function messageHandler(message) {
     }
     // console.log(' ');
     // console.log(type, resMessage);
+    console.log(`message handler:`)
+    console.log(`type: ${type}`)
+    console.log(`.bot: ${prefixData.bot}`)
+    console.log(`.guild: ${prefixData.guild}`)
+    console.log(`.arrow: ${prefixData.arrow}`)
+    console.log(' ')
     let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
     if (type === 'guildPlayer') {
         prefix = `${prefixData.guild}&r ${prefixData.arrow}&r &a`;
