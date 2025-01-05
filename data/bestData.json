@@ -1,5 +1,7 @@
 {
-    "names": [],
+    "names": [
+        "gnasez"
+    ],
     "color": "&4",
-    "trigger": false
+    "trigger": true
 }

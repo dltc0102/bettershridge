@@ -42,23 +42,23 @@ export function formatColonTime(timeStr) {
     return `${formatTime}${s}s`.trim();
 };        
 
-const knownMonsters = {
-    "Lord Jawbus": '&c',
-    "Thunder": '&b',
-    "Plhlegblast": "&4",
-    "The Sea Emperor": '&e',    
-    "Carrot King": "&6",
-    "Water Hydra": '&9',
-    "Great White Shark": '&3',
-    "Abyssal Miner": '&2',
-    "Grim Reaper": '&5',
-    "Phantom Fisher": "&d",
-    "Yeti": '&f',
-    "Reindrake": "&c",
-    "Vanquisher": '&5',
-};
-
 export function getMonsterColor(name, bypass=false) {
+    const knownMonsters = {
+        "Lord Jawbus": '&c',
+        "Thunder": '&b',
+        "Plhlegblast": "&4",
+        "The Sea Emperor": '&e',    
+        "Carrot King": "&6",
+        "Water Hydra": '&9',
+        "Great White Shark": '&3',
+        "Abyssal Miner": '&2',
+        "Grim Reaper": '&5',
+        "Phantom Fisher": "&d",
+        "Yeti": '&f',
+        "Reindrake": "&c",
+        "Vanquisher": '&5',
+    };
+    
     if (bypass) return name in knownMonsters ? knownMonsters[name] : '&a';
     return name in knownMonsters ? knownMonsters[name] : '&r';  
 };
@@ -230,4 +230,15 @@ export const splitMapN = (text, ...splitOpts) => {
         else acc.push(val);
         return acc;
     }, []); 
-};          
+};
+
+export function isValidColorCode(arg) {
+    const invalidArgs = ['&k', '&l', '&m', '&n', '&o'];
+    return !invalidArgs.includes(arg);
+};
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rCurrent mayor: Derpy. Next mayor: Foxy, in 3 days and 17 hours. Next special: Jerry, in 1 month and 1 week. <@v3trq8iw2oq>&r`)
+    ChatLib.simulateChat(`&r&r&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rGnasez: _boop bloosi&r&r`)
+    ChatLib.simulateChat(`&r&2Guild > &6[MVP&3++&6] bloosi &3[Admin]&f: &rgrrrrrrr&r`)
+}).setName('testprefix');   

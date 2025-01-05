@@ -6,6 +6,7 @@ export const prefixData = new PogObject("bettershridge", {
     bot: '&2B&r',
     arrow: '&2>&r',
 }, './data/prefixData.json');
+prefixData.autosave(1);
 
 function resetPrefixes() {
     prefixData.guild = '&2G&r';

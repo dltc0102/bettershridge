@@ -1,7 +1,8 @@
 import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripFormattedName, stripRank } from './functions.js';  
 import PogObject from '../PogData';
 
-const SPACING = `&2   |  &a`; 
+
+//! GLOBALS
 export const guildData = new PogObject("bettershridge", {
     commands: [
         "lbin", "bz", "cata", "8ball", "election", "help", "pick", "ping",
@@ -10,14 +11,9 @@ export const guildData = new PogObject("bettershridge", {
     ],
     booper: '',
     booped: '',
+    spacing: `&2   |  &a`,
 }, './data/guildData.json');
 guildData.autosave(5);
-
-register('command', () => {
-    ChatLib.chat(`booper: ${guildData.booper}`)
-    ChatLib.chat(`booped: ${guildData.booped}`) 
-}).setName('testdata');
-
 
 const collNameCodes = {
     // categories
@@ -51,6 +47,109 @@ const collNameCodes = {
     "kuudra": "&c",
 };
 
+const mayorColors = {
+    'Aatrox': '&f',
+    'Cole': '&8',
+    'Diana': '&6',
+    'Diaz': '&f',
+    'Finnegan': '&f',
+    'Foxy': '&f',
+    'Marina': '&3',
+    'Paul': '&f',
+    'Jerry': '&d',
+    'Derpy': '&d',
+    'Scorpius': '&d',
+    'Unknown': '&c',
+};
+
+const mayorPerks = {
+    'Aatrox': {
+        'Slayer XP Buff': 'Earn 25% more Slayer XP.',
+        'Pathfinder': 'Gain rare drops 20% more often.',
+        'SLASHED Pricing': 'Starting slayer quests is half price.',
+    },
+    'Cole': {
+        'Mining Fiesta': `Mining Fiesta: Schedules 5 Mining Fiesta events that last for 7 SkyBlock Days each. Earn 2x drops and extra unique loot, including Refined Minerals and Glossy Gemstones. Grants +75 Mining Wisdom during the event which is only active on Public Islands.`,
+        'Mining XP Buff': 'Earn +60 Mining Wisdom on public islands.',
+        'Molten Forge': 'Decreases the time it takes to Forge items by 25%.',
+        'Prospection': 'Mining minions work 25% faster.',
+    },
+    'Diana': {
+        'Pet Luck XP Buff': 'Gain 35% more Pet XP.',
+        'Lucky!': 'Gain +25 Pet Luck.',
+        'Mythological Ritual': 'Mayor Diana will sell the Griffin Pet, which lets you find Mythological Creature and tons of unique items.',
+        'Sharing is Caring': 'You can have up to 3 EXP Shared Pets active at once. Your EXP Share rate is increased by 10%.',
+    },
+    'Diaz': {
+        'Long Term Investment': 'The elected Minister will appear in the next Election with all of their available perks.',
+        'Shopping Spree': 'Increase daily NPC buy limits by 10x.',
+        'Stock Exchange': 'Participate in the Stonks Auction for a chance to win Stock Of Stonks! Trade them for extravagant items at the ⏣ Trade Center.',
+        'Volume Trading': `Double the item quantity from Shen's Auction, Shen's Special, and Rift Shen's on the year Diaz is elected. Two additional Shen’s Special auctions will be available for the duration of Diaz being elected as Mayor.`,
+    },
+    'Finnegan': {
+        'Blooming Business': `Garden Visitors will give out Fine Flour and appear more often. Additional visitors may visit your Garden. Higher rarity Visitors are more likely to show up & will provide 10% more Copper.`,
+        'GOATed': `Jacob's Farming Contest brackets include up to 10% more players each.`,
+        'Pelt-pocalypse': `Obtain 1.5x more Pelts from Trevor in the ⏣ Mushroom Desert, hunt a new Trapper Mob, and purchase items from a new Trapper Shop.`,
+        'Pest Eradicator': `The duration of Pesthunter Phillip's ☘Farming Fortune bonus is now 60 minutes. Pests are now 4x more likely to spawn in sprayed plots.`,
+    },
+    'Foxy': {
+        'A Time for Giving': `Party Chests and Party Gifts can be obtained while this event is active.`,
+        'Chivalrous Carnival': `Schedules a Carnival in the Hub that is active throughout the entire year.`,
+        'Extra Event': `Schedules an extra (Fishing Festival/Mining Fiesta/Spooky Festival) event during the year.`,
+        'Sweet Benevolence': `Earn +30% more Candy, Gifts and Chocolate from duplicate Rabbits during their respective events.`,
+    }, 
+    'Marina': {
+        'Double Trouble': `For every 1 Sea Creature Chance, gain +0.1 Double Hook Chance.`,
+        'Fishing XP Buff': `Gain +50 ☯Fishing Wisdom on public islands.`,
+        'Fishing Festival': `Start a special fishing event during the first 3 days of each month! Fish and fight dangerous sharks and earn unique Shark loot.`,
+        'Luck of the Sea 2.0': `Gain +15 Sea Creature Chance.`,
+    }, 
+    'Paul': {
+        'Benediction': `Blessings are 25% stronger.`,
+        'Marauder': `Dungeon reward chests are 20% cheaper.`,
+        'EZPZ': `Gain 10 bonus score on dungeon runs.`,
+    },
+    'Jerry': {
+        'Perkpocalypse': `Activate all perks of another mayor every 18 SkyBlock days (6 hours).`,
+        'Statspocalypse': `Increases most stats by 10%.`,
+        'Jerrypocalypse': `Reveal Hidden Jerries from logging, farming, mining, and killing mobs.`,
+    },
+    'Derpy': {
+        'QUAD TAXES!!!': `Pay 4x the normal amount of taxes!`,
+        'TURBO MINIONS!!!': `Minions have double the output!`,
+        'DOUBLE MOBS HP!!!': `ALL monsters have double Health!`,
+        'MOAR SKILLZ!!!': `Gain +50% more skill experience! `,
+    },
+    'Scorpius': {
+        'Bribe': `If Scorpius wins and you voted for him, Mayor Scorpius will offer you Coins as a token of gratitude.`,
+        'Darker Auctions': `Scorpius will intrude in Dark Auctions increasing the amount of rounds to 6 and offering special items.` ,
+    },
+};
+
+const tfishColorsDict = {
+    'Blobfish': '&f', 
+    'Gusher': '&f', 
+    'Obfuscated 1': '&f', 
+    'Sulphur Skitter': '&f', 
+    'Steaming-Hot Flounder': '& f', 
+    'Obfuscated 2': '&a', 
+    'Slugfish': '&a', 
+    'Flyfish': '&a', 
+    'Obfuscated 3': '&9', 
+    'Lavahorse': '&9',
+    'Mana Ray': '&9', 
+    'Volcanic Stonefish': '&9', 
+    'Vanille': '&9', 
+    'Skeleton Fish': '&5', 
+    'Moldfin': '&5', 
+    'Soulfish': '&5', 
+    'Karate Fish': '&5', 
+    'Golden Fish': '&6' 
+};
+
+const rareMobs = ['Lord Jawbus', 'Thunder', 'Plhlegblast', 'The Sea Emperor', 'Carrot King', 'Water Hydra', 'Yeti', 'Reindrake', 'Great White Shark', 'Grim Reaper', 'Phantom Fisher', 'Abyssal Miner'];
+
+//! FUNCTIONS
 function generateMessage(prefix, message, regex, formatHandler) {
     const match = message.match(regex);
     if (match) {
@@ -225,84 +324,6 @@ export function getGuildResponse(prefix, message, type) {
     return generateMessage(prefix, message, regex, format);
 };
 
-const mayorColors = {
-    'Aatrox': '&f',
-    'Cole': '&8',
-    'Diana': '&6',
-    'Diaz': '&f',
-    'Finnegan': '&f',
-    'Foxy': '&f',
-    'Marina': '&3',
-    'Paul': '&f',
-    'Jerry': '&d',
-    'Derpy': '&d',
-    'Scorpius': '&d',
-    'Unknown': '&c',
-};
-
-const mayorPerks = {
-    'Aatrox': {
-        'Slayer XP Buff': 'Earn 25% more Slayer XP.',
-        'Pathfinder': 'Gain rare drops 20% more often.',
-        'SLASHED Pricing': 'Starting slayer quests is half price.',
-    },
-    'Cole': {
-        'Mining Fiesta': `Mining Fiesta: Schedules 5 Mining Fiesta events that last for 7 SkyBlock Days each. Earn 2x drops and extra unique loot, including Refined Minerals and Glossy Gemstones. Grants +75 Mining Wisdom during the event which is only active on Public Islands.`,
-        'Mining XP Buff': 'Earn +60 Mining Wisdom on public islands.',
-        'Molten Forge': 'Decreases the time it takes to Forge items by 25%.',
-        'Prospection': 'Mining minions work 25% faster.',
-    },
-    'Diana': {
-        'Pet Luck XP Buff': 'Gain 35% more Pet XP.',
-        'Lucky!': 'Gain +25 Pet Luck.',
-        'Mythological Ritual': 'Mayor Diana will sell the Griffin Pet, which lets you find Mythological Creature and tons of unique items.',
-        'Sharing is Caring': 'You can have up to 3 EXP Shared Pets active at once. Your EXP Share rate is increased by 10%.',
-    },
-    'Diaz': {
-        'Long Term Investment': 'The elected Minister will appear in the next Election with all of their available perks.',
-        'Shopping Spree': 'Increase daily NPC buy limits by 10x.',
-        'Stock Exchange': 'Participate in the Stonks Auction for a chance to win Stock Of Stonks! Trade them for extravagant items at the ⏣ Trade Center.',
-        'Volume Trading': `Double the item quantity from Shen's Auction, Shen's Special, and Rift Shen's on the year Diaz is elected. Two additional Shen’s Special auctions will be available for the duration of Diaz being elected as Mayor.`,
-    },
-    'Finnegan': {
-        'Blooming Business': `Garden Visitors will give out Fine Flour and appear more often. Additional visitors may visit your Garden. Higher rarity Visitors are more likely to show up & will provide 10% more Copper.`,
-        'GOATed': `Jacob's Farming Contest brackets include up to 10% more players each.`,
-        'Pelt-pocalypse': `Obtain 1.5x more Pelts from Trevor in the ⏣ Mushroom Desert, hunt a new Trapper Mob, and purchase items from a new Trapper Shop.`,
-        'Pest Eradicator': `The duration of Pesthunter Phillip's ☘Farming Fortune bonus is now 60 minutes. Pests are now 4x more likely to spawn in sprayed plots.`,
-    },
-    'Foxy': {
-        'A Time for Giving': `Party Chests and Party Gifts can be obtained while this event is active.`,
-        'Chivalrous Carnival': `Schedules a Carnival in the Hub that is active throughout the entire year.`,
-        'Extra Event': `Schedules an extra (Fishing Festival/Mining Fiesta/Spooky Festival) event during the year.`,
-        'Sweet Benevolence': `Earn +30% more Candy, Gifts and Chocolate from duplicate Rabbits during their respective events.`,
-    }, 
-    'Marina': {
-        'Double Trouble': `For every 1 Sea Creature Chance, gain +0.1 Double Hook Chance.`,
-        'Fishing XP Buff': `Gain +50 ☯Fishing Wisdom on public islands.`,
-        'Fishing Festival': `Start a special fishing event during the first 3 days of each month! Fish and fight dangerous sharks and earn unique Shark loot.`,
-        'Luck of the Sea 2.0': `Gain +15 Sea Creature Chance.`,
-    }, 
-    'Paul': {
-        'Benediction': `Blessings are 25% stronger.`,
-        'Marauder': `Dungeon reward chests are 20% cheaper.`,
-        'EZPZ': `Gain 10 bonus score on dungeon runs.`,
-    },
-    'Jerry': {
-        'Perkpocalypse': `Activate all perks of another mayor every 18 SkyBlock days (6 hours).`,
-        'Statspocalypse': `Increases most stats by 10%.`,
-        'Jerrypocalypse': `Reveal Hidden Jerries from logging, farming, mining, and killing mobs.`,
-    },
-    'Derpy': {
-        'QUAD TAXES!!!': `Pay 4x the normal amount of taxes!`,
-        'TURBO MINIONS!!!': `Minions have double the output!`,
-        'DOUBLE MOBS HP!!!': `ALL monsters have double Health!`,
-        'MOAR SKILLZ!!!': `Gain +50% more skill experience! `,
-    },
-    'Scorpius': {
-        'Bribe': `If Scorpius wins and you voted for him, Mayor Scorpius will offer you Coins as a token of gratitude.`,
-        'Darker Auctions': `Scorpius will intrude in Dark Auctions increasing the amount of rounds to 6 and offering special items.` ,
-    },
-};
 
 function getCurrMayorPerks(nameWithPerkList) {
     const [currMayorName, currMayorPerks] = nameWithPerkList.split(' ');
@@ -325,8 +346,8 @@ function formatMayor(prefix, match) {
     const minister = '';
     return [
         `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,      
-        `${SPACING}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
-        `${SPACING}Next special: ${getMayorColor(specialMayor)} &r[${formatTime(specialTime)}]`
+        `${guildData.spacing}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
+        `${guildData.spacing}Next special: ${getMayorColor(specialMayor)} &r[${formatTime(specialTime)}]`
     ];
 };
 
@@ -357,9 +378,9 @@ function formatUpdatedMessage(prefix, match) {
     const [_, fexp, sblevels, nextRole] = match;   
     return [    
         `${prefix}Role is already up to date!`, 
-        `${SPACING}Next Role: &6${nextRole}`,
-        `${SPACING}Missing &3Fishing XP&a: &r${fexp}`,
-        `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,
+        `${guildData.spacing}Next Role: &6${nextRole}`,
+        `${guildData.spacing}Missing &3Fishing XP&a: &r${fexp}`,
+        `${guildData.spacing}Missing Skyblock Lvls: &r${sblevels}`,
     ];      
 };
 
@@ -367,9 +388,9 @@ function formatNoReqUpdateMessage(prefix, match) {
     const [_, your, fexp, sblevels, nextRole] = match;  
     return [
         `${prefix}&c${your} does not have requirements!`,
-        `${SPACING}Next Role: &6${nextRole}`,
-        `${SPACING}Missing &3Fishing XP&a: &r${fexp}`,
-        `${SPACING}Missing Skyblock Lvls: &r${sblevels}`,
+        `${guildData.spacing}Next Role: &6${nextRole}`,
+        `${guildData.spacing}Missing &3Fishing XP&a: &r${fexp}`,
+        `${guildData.spacing}Missing Skyblock Lvls: &r${sblevels}`,
     ];
 };
 
@@ -378,8 +399,8 @@ function formatSkillMaxed(prefix, match) {
     const skillColor = collNameCodes[skillName.toLowerCase()];
     return [
         `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,    
-        `${SPACING}Total XP: &r${totalXP}`, 
-        `${SPACING}Overflow XP: &r${overflowXP}`
+        `${guildData.spacing}Total XP: &r${totalXP}`, 
+        `${guildData.spacing}Overflow XP: &r${overflowXP}`
     ];  
 };
 
@@ -388,12 +409,11 @@ function formatSkillProgress(prefix, match) {
     const skillColor = collNameCodes[skillName.toLowerCase()];
     return [
         `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,    
-        `${SPACING}Total XP: &r${totalXP}`, 
-        `${SPACING}XP for next level (&6${nextLevel}&a): &r${xpLeft}`
+        `${guildData.spacing}Total XP: &r${totalXP}`, 
+        `${guildData.spacing}XP for next level (&6${nextLevel}&a): &r${xpLeft}`
     ];
 };
 
-// helper func for formatBazaar
 function formatItemColorBZ(str) {
     let itemColor = '&f';
     if (str.includes('Ultimate')) {
@@ -404,7 +424,6 @@ function formatItemColorBZ(str) {
     return itemColor;
 };
 
-// helper func for formatBazaar
 function formatEssence(str) {
     return str.startsWith('Essence ') ? `${str.split(' ')[1]} Essence` : str;
 }
@@ -417,8 +436,8 @@ function formatBazaar(prefix, match) {
     const sellColor = sellPrice === 'Not available' ? '&c' : '&6';
     return [
         `${prefix}Bazaar data for &r${itemColor}${formatEssence(formattedName)}&a:`,
-        `${SPACING}Insta-buy: ${buyColor}${buyPrice}`,
-        `${SPACING}Insta-sell: ${sellColor}${sellPrice}`
+        `${guildData.spacing}Insta-buy: ${buyColor}${buyPrice}`,
+        `${guildData.spacing}Insta-sell: ${sellColor}${sellPrice}`
     ];
 };
 
@@ -432,8 +451,6 @@ function formatBestiarySpecific(prefix, match) {
     return ratio ? beMessage + ` &6(${ratio})` : beMessage;        
 };
 
-const rareMobs = ['Lord Jawbus', 'Thunder', 'Plhlegblast', 'The Sea Emperor', 'Carrot King', 'Water Hydra', 'Yeti', 'Reindrake', 'Great White Shark', 'Grim Reaper', 'Phantom Fisher', 'Abyssal Miner'];
-
 function formatBestiaryAll(prefix, match) {
     const [_, bestiaryType, playerName, playerProfile, bestiaryData] = match;
     let bestiaryList = bestiaryData
@@ -446,8 +463,8 @@ function formatBestiaryAll(prefix, match) {
         const [currBe, maxBe] = kd.split('/');
         const showRatio = ratio ? ` &7${ratio}` : '';
         const kdColor = Number(currBe) >= Number(maxBe) ? `&6` : `&r`;
-        if (!ratio && kd === '0/0') return `${SPACING}${mobColor}${name}: &80/0`;
-        return `${SPACING}${mobColor}${name}: ${kdColor}${kd}${showRatio}`;     
+        if (!ratio && kd === '0/0') return `${guildData.spacing}${mobColor}${name}: &80/0`;
+        return `${guildData.spacing}${mobColor}${name}: ${kdColor}${kd}${showRatio}`;     
     }
 
     const formatBestiaryDataByLine = (lst) => {
@@ -474,10 +491,9 @@ function formatBestiaryAll(prefix, match) {
     const formattedBeType = bestiaryColor + capitalise(bestiaryType);   
     const titleMessage = `${prefix}${formattedBeType} &r&abestiary data for &2${playerName}&a (${playerProfile}): `
     return [
-        titleMessage, ...beCommon, SPACING, ...beRare  
+        titleMessage, ...beCommon, guildData.spacing, ...beRare  
         ];          
-    };
-
+};
 
 function formatCommandHelp(prefix, match) {
     const [_, commands] = match;
@@ -528,8 +544,8 @@ function formatCata(prefix, match) {
     const [_, playerName, playerProfile, cataLvl, totalXP, currLvl, currXPProgress] = match;
     return [
         `${prefix}Catacombs level for &2${playerName}&a (${playerProfile}): &6${cataLvl}`,
-        `${SPACING}Total XP: &r${totalXP}`,
-        `${SPACING}XP for Cata. Lvl &6${currLvl}&a: &r${currXPProgress}`,
+        `${guildData.spacing}Total XP: &r${totalXP}`,
+        `${guildData.spacing}XP for Cata. Lvl &6${currLvl}&a: &r${currXPProgress}`,
     ];
 };
 
@@ -539,10 +555,10 @@ function formatDungeonRecords(prefix, match) {
     const floorColor = floor.startsWith('M') ? '&c' : '&e';
     return [
         `${prefix}${floorColor}${floor}&r&a data for &2${playerName}&a (${playerProfile}):`,
-        `${SPACING}Completions: &r${comps}`,
-        `${SPACING}Fastest Time: &r${fTime}`,
-        `${SPACING}Fastest Time (&6S&a): &r${fTimeS}`,
-        `${SPACING}Fastest Time (&cS+&a): &r${fTimeSPlus}`,
+        `${guildData.spacing}Completions: &r${comps}`,
+        `${guildData.spacing}Fastest Time: &r${fTime}`,
+        `${guildData.spacing}Fastest Time (&6S&a): &r${fTimeS}`,
+        `${guildData.spacing}Fastest Time (&cS+&a): &r${fTimeSPlus}`,
     ];      
 };
 
@@ -560,30 +576,9 @@ function formatSlayer(prefix, match) {
     const slayerColor = slayerColors[slayerName];
     return [   
         `${prefix}${slayerColor}${slayerName}&r&a Slayer Data for &2${playerName}&a (${playerProfile}):`,
-        `${SPACING}Total XP: &r${totalXP}`,
-        `${SPACING}Kills&r: &7T1: &a${t1} &8| &7T2: &e${t2} &8| &7T3: &c${t3} &8| &7T4: &4${t4} &8| &7T5: &5${t5}`,             
+        `${guildData.spacing}Total XP: &r${totalXP}`,
+        `${guildData.spacing}Kills&r: &7T1: &a${t1} &8| &7T2: &e${t2} &8| &7T3: &c${t3} &8| &7T4: &4${t4} &8| &7T5: &5${t5}`,             
     ];
-};
-
-const fishColorsDict = {
-    'Blobfish': '&f', 
-    'Gusher': '&f', 
-    'Obfuscated 1': '&f', 
-    'Sulphur Skitter': '&f', 
-    'Steaming-Hot Flounder': '& f', 
-    'Obfuscated 2': '&a', 
-    'Slugfish': '&a', 
-    'Flyfish': '&a', 
-    'Obfuscated 3': '&9', 
-    'Lavahorse': '&9',
-    'Mana Ray': '&9', 
-    'Volcanic Stonefish': '&9', 
-    'Vanille': '&9', 
-    'Skeleton Fish': '&5', 
-    'Moldfin': '&5', 
-    'Soulfish': '&5', 
-    'Karate Fish': '&5', 
-    'Golden Fish': '&6' 
 };
 
 function formatTfishGeneral(prefix, match) {
@@ -591,7 +586,7 @@ function formatTfishGeneral(prefix, match) {
     const title = `${prefix}Trophy Fish for &2${playerName}&a (${playerProfile}):`;  
     return [    
         title,
-        `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
+        `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
     ];      
 };
 
@@ -600,16 +595,16 @@ function formatTfishObf(prefix, match) {
     const title = `${prefix}Trophy fish for &2${playerName}&a (${playerProfile}) &cwithout Obf 1&a: `; 
     return [
         title,
-        `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
+        `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
     ]
 };
 
 function formatTfishSpecific(prefix, match) {
     const [_, fishName, playerName, playerProfile, fishName2, totalFish, bronzeFish, silverFish, goldFish, diamondFish] = match;
-    const fishNameColor = fishName in fishColorsDict ? fishColorsDict[fishName] : ''; 
+    const fishNameColor = fishName in tfishColorsDict ? tfishColorsDict[fishName] : ''; 
     return [
         `${prefix}${fishNameColor}${fishName} &adata for &2${playerName}&a (${playerProfile}):`,                         
-        `${SPACING}Total Fish: &r${totalFish} &a[&r &8${bronzeFish} &a|&r &7${silverFish} &a|&r &6${goldFish} &a|&r &b${diamondFish} &a]&r`,        
+        `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeFish} &a|&r &7${silverFish} &a|&r &6${goldFish} &a|&r &b${diamondFish} &a]&r`,        
     ];
 };
 
@@ -625,7 +620,7 @@ function formatNextContest(prefix, match) {
     const f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
     return [
         `${prefix}Next Contest in ${formatColonTime(timeTillNext)}!`,
-        `${SPACING}Crops: &6${f_nextCrops}`
+        `${guildData.spacing}Crops: &6${f_nextCrops}`
     ];  
 };
 
@@ -635,8 +630,8 @@ function formatActiveContest(prefix, match) {
     const f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
     return [        
         `${prefix}Contest is Active! [&r${formatColonTime          (currContestTimeLeft)} left&a] &8|&r &7Next in ${formatColonTime(nextContestTime)}`,
-        `${SPACING}Current Contest: &6${currCrops}`,
-        `${SPACING}Next Contest: &6${f_nextCrops}`
+        `${guildData.spacing}Current Contest: &6${currCrops}`,
+        `${guildData.spacing}Next Contest: &6${f_nextCrops}`
     ];
 };
 
@@ -647,12 +642,12 @@ function formatFarmingWeight(prefix, match) {
         const fwFormatMatch = weightLine.match(fwFormatRegex);
         if (fwFormatMatch) {
             const [_, name, weight] = fwFormatMatch;
-            return `${SPACING}${name}: &r${weight}`;
+            return `${guildData.spacing}${name}: &r${weight}`;
         };
     });
     return [
         `${prefix}&eFarming &aweight for &2${playerName}&a (${playerProfile}): &6${weight}`,
-        `${SPACING}Collections: &r${collWeight}`,
+        `${guildData.spacing}Collections: &r${collWeight}`,
         ...otherWeights, 
     ];
 };
@@ -663,8 +658,8 @@ function formatInstaSell(prefix, match) {
     const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim(); 
     return [
         `${prefix}Insta-sell: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,        
-        `${SPACING}Sell Cost: &6${sellCost}`,
-        `${SPACING}Ave. Cost/unit: &6${aveCost}`,
+        `${guildData.spacing}Sell Cost: &6${sellCost}`,
+        `${guildData.spacing}Ave. Cost/unit: &6${aveCost}`,
     ];
 };
 
@@ -674,8 +669,8 @@ function formatInstaBuy(prefix, match) {
     const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
     return [
         `${prefix}Insta-buy: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,
-        `${SPACING}Buy Cost: &6${sellCost}`,
-        `${SPACING}Ave. Cost/unit: &6${aveCost}`,   
+        `${guildData.spacing}Buy Cost: &6${sellCost}`,
+        `${guildData.spacing}Ave. Cost/unit: &6${aveCost}`,   
     ];
 };
 
@@ -690,7 +685,7 @@ function formatCollections(prefix, match) {
             if (itemMatch) {
                 const [_, itemName, itemLvl, itemMaxLvl, itemAmount] = itemMatch;
                 const maxColor = itemLvl === itemMaxLvl ? '&6' : '';
-                return `${SPACING}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
+                return `${guildData.spacing}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
             };
         });
 

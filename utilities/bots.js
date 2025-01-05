@@ -2,6 +2,7 @@ import PogObject from '../../PogData';
 import { getInHypixel } from '../functions';
 
 export const data = new PogObject("bettershridge", {
+    modulePrefix: '&9[&bBetterShridge&9]',
     bots: ['Baltics', 'NqekMyBeloved', 'Shrimple77'],
     firstInstall: false,
 }, './data/data.json');

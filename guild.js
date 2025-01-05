@@ -1,9 +1,9 @@
-import { getInHypixel, stripRank, removeRandomID, highlightTags, stripFormattedName, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN } from './functions';
+import { getInHypixel, stripRank, removeRandomID, highlightTags, stripFormattedName, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode } from './functions';
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';      
 import { getGuildResponse } from './formatFunctions';
-import { bestData } from './utilities/best';
+import PogObject from '../PogData';
 
 const continueSymbol = '➩';    
 const idRegex = /<@.+>/;
@@ -212,9 +212,8 @@ function botMessageHandler(prefix, message) {
 
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
-    const [sender, responses] = dpMessage.split(/: (.+)/);          
+    const [sender, responses] = dpMessage.split(/: (.+)/);
     const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${bestData.color}${sender}` : `&a${sender}`;
-    if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);
     } else {
@@ -230,17 +229,12 @@ function guildPlayerMessageHandler(prefix, message) {
     if (match) {
         const [_, sender, role, responses] = match; 
         const rawName = stripRank(sender.removeFormatting());
-        const formattedSender = bestData.names.includes(rawName.toLowerCase())
-            ? `${bestData.color}${rawName} &3[${role}]&r`
-            : `${sender} &3[${role}]&r`;
-
-        console.log(`rawname: ${rawName}`)
-        console.log(`gb names: ${bestData.names}`)              
-        console.log(`included in gbnames?: ${bestData.names.includes(rawName.toLowerCase())}`)  
-        console.log(`trigger: ${bestData.trigger}`)  
-        console.log(`formatted sender: ${formattedSender}`);
-        console.log(' ');
-
+        let formattedSender = `${sender} &3[${role}]&r`;
+        if (bestData.trigger) {
+            if (bestData.names.includes(rawName.toLowerCase())) {
+                formattedSender = `${bestData.color}${rawName} &3[${role}]&r`;
+            }
+        }
         if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {  
             return handleLinkMessages(prefix, formattedSender, responses);
         } else {
@@ -346,7 +340,7 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             const noClickable = new TextComponent('&c&l[NO] ')
                 .setClick('run_command', `/clearchatbyid 999`);
             const updateBotMessage = new Message(
-                `&9[&bBetterShridge&9] &rIs &b${player}&r a new bot name? `, yesClickable, noClickable
+                `${data.modulePrefix} &rIs &b${player}&r a new bot name? `, yesClickable, noClickable
             ).setChatLineId(999);
             ChatLib.chat(updateBotMessage);
         }
@@ -376,4 +370,85 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
 
 register('command', (id) => {
     ChatLib.deleteChat(id)
-}).setName('clearchatbyid');
+}).setName('clearchatbyid', true);
+
+
+
+//! guild best system
+export const bestData = new PogObject("bettershridge", {
+    names: [],
+    color: '&4',
+    trigger: false,
+}, './data/bestData.json');
+bestData.autosave(1)
+
+register('command', (arg) => {
+    if (!getInHypixel()) return;
+    const lowerArg = arg ? arg.toLowerCase() : null;
+
+    if (!arg || lowerArg === 'list') {
+        if (bestData.names.length === 0) {
+            ChatLib.chat(`&cGuild Best List is currently empty! Use &b/guildbest (name) &cto add a name!`);
+        } else {
+            ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
+            bestData.names.forEach((name, index) => {
+                ChatLib.chat(` &3${index + 1}.&r &b${name}`);
+            });
+        }
+        return;
+    };
+
+    if (lowerArg === 'clear') {
+        if (bestData.names.length === 0) {
+            ChatLib.chat(`&cGuild Best List is already empty!`);
+        } else {
+            bestData.names = [];
+            bestData.save();
+            ChatLib.chat(`&cCleared Guild Best List!`);
+        }
+        return;
+    }
+
+    const nameIdx = bestData.names.indexOf(lowerArg);
+    if (nameIdx !== -1) {       
+        // remove name if exists
+        bestData.names.splice(nameIdx, 1);
+        bestData.save();
+        ChatLib.chat(`&cRemoved ${arg} &cfrom the Guild Best List!`);
+    } else {    
+        // add name if doesn't exist
+        bestData.names.push(lowerArg);
+        bestData.save();
+        ChatLib.chat(`&aAdded ${arg} &ato the Guild Best List!`);
+    }       
+}).setName('guildbest', true).setAliases('gb'); 
+
+register('command', (arg) => {
+    if (!getInHypixel()) return;
+    if (!arg || !arg.includes('&') || !isValidColorCode(arg)) {
+        ChatLib.chat(`&cPlease input a color code for the Guild Best Color.`);
+            
+    } else {
+        bestData.color = arg;   
+        bestData.save();
+        ChatLib.chat(`&aGuild Best Color set: &r${bestData.color}test name`)
+    };
+}).setName('setbestcolor', true);
+
+register('command', () => {
+    if (!getInHypixel()) return;
+    if (bestData.trigger) {
+        bestData.trigger = false;
+        bestData.save();
+        ChatLib.chat(`${data.modulePrefix} &bOverride Rank Colors: &c&lNO&r`);
+    } else {
+        bestData.trigger = true;
+        bestData.save();
+        ChatLib.chat(`${data.modulePrefix} &bOverride Rank Colors: &a&lYES&r`);
+    };
+}).setName('overriderankcolor', true).setAliases('orc');
+register('command', () => {
+    ChatLib.chat(`names: ${bestData.names}`)
+    ChatLib.chat(`best color: ${bestData.color}test`)
+    ChatLib.chat(`trigger: ${bestData.trigger}`)
+}).setName('testgb');
