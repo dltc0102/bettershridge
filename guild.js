@@ -284,14 +284,8 @@ function messageHandler(message) {
             resMessage = strippedMessage;
         }
     }
-    // console.log(' ');
+    // console.log(' ');    
     // console.log(type, resMessage);
-    console.log(`message handler:`)
-    console.log(`type: ${type}`)
-    console.log(`.bot: ${prefixData.bot}`)
-    console.log(`.guild: ${prefixData.guild}`)
-    console.log(`.arrow: ${prefixData.arrow}`)
-    console.log(' ')
     let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
     if (type === 'guildPlayer') {
         prefix = `${prefixData.guild}&r ${prefixData.arrow}&r &a`;
@@ -316,6 +310,7 @@ function replaceMessage(event, message) {
     }
 };
 
+//! multi message handler
 let multiMessages = [];
 registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole, playerStuff, event) => {
     const [msgType, msg] = separatePlayerAndMessage(event); 

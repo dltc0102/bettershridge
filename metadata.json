@@ -1,7 +1,7 @@
 {
     "name": "bettershridge",
     "description": "bridge formatter for guild Shrimple and sister guild Prawn Academy",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "author": "oBiscuit",
     "entry": "index.js",
     "requires": ["STuFLib", "PogData"]

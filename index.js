@@ -3,8 +3,7 @@ import { data } from './utilities/bots.js';
 import { prefixData } from './utilities/prefix.js';  
 import { bestData } from './guild.js';
 import './guild.js';
-// import './utilities/best.js';
-// import { bestData } from './utilities/best.js';
+import './utilities/online.js'
 
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
@@ -16,7 +15,6 @@ function makeChangelogHoverable(moduleVersion) {
         "&a+ Made bestiary categories &6gold&a if number is /0",
         "&a+ Fixed undefined names for _be and _coll commands",
         "&a+ Added a &r/bettershridge&a (aliases: &r/bshelp&a, &r/bs&a) command for command help list",
-        "&a+ Added &r/guildbest&a command and &r/setbestcolor&a",
         "&a+ Added commands for the guild best friend system",
         "&d<!> v1.8 WIP: /gb online to see best friends that are online"
       ];
@@ -31,7 +29,7 @@ register('gameLoad', () => {
     ChatLib.chat(`${data.modulePrefix} &3Loaded! &7DM @oBiscuit for any concerns`);
     
     const moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
-    if (moduleVersion === '0.1.6') {
+    if (moduleVersion === '0.1.7') {
         const featureMessage = new Message(
             `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
         )

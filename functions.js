@@ -236,9 +236,3 @@ export function isValidColorCode(arg) {
     const invalidArgs = ['&k', '&l', '&m', '&n', '&o'];
     return !invalidArgs.includes(arg);
 };
-
-register('command', () => {
-    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rCurrent mayor: Derpy. Next mayor: Foxy, in 3 days and 17 hours. Next special: Jerry, in 1 month and 1 week. <@v3trq8iw2oq>&r`)
-    ChatLib.simulateChat(`&r&r&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rGnasez: _boop bloosi&r&r`)
-    ChatLib.simulateChat(`&r&2Guild > &6[MVP&3++&6] bloosi &3[Admin]&f: &rgrrrrrrr&r`)
-}).setName('testprefix');   

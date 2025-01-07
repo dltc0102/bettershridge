@@ -127,8 +127,7 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + added support for directional discord links
 + make bestiary categories &6 if number is /0
 + fix undefined names for _be and _coll commands
-= rm-ed minister placeholder
 + add a /bettershridge (aliases: /bshelp, /bs) command for command help list
-+ add /guild best command and /setbestcolor     
-WIP: /gb online to see best friends that are online
++ Added commands for the guild best friend system
+WIP: /gb online to see best friends in guild that are online
 

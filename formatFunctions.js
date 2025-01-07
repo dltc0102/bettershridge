@@ -343,9 +343,10 @@ function getMayorColor(mayor) {
 function formatMayor(prefix, match) {
     const [_, currMayor, nextMayor, nextTime, specialMayor, specialTime] = match;
     // const [_, currMayor, currMinister, nextMayor, nextTime, specialMayor, specialTime] = match;
-    const minister = '';
+    // const minister = '';
     return [
-        `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,      
+        // `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,    
+        `${prefix}Current mayor: ${getMayorColor(currMayor)}`,   
         `${guildData.spacing}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
         `${guildData.spacing}Next special: ${getMayorColor(specialMayor)} &r[${formatTime(specialTime)}]`
     ];
