@@ -130,4 +130,11 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + add a /bettershridge (aliases: /bshelp, /bs) command for command help list
 + Added commands for the guild best friend system
 WIP: /gb online to see best friends in guild that are online
+WIP: [paste to chat]
+
+# v1.7
++ /gb online to see best friends in guild that are online
++ /setreplyprefix
++ made so that if name is in guild best list, if they are replying to/being replied to, their name will be be in best-color too
+
 
