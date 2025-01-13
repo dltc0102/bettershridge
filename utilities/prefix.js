@@ -18,6 +18,7 @@ function resetPrefixes() {
 }
 
 function fixFormattedPrefix(text) {
+    if (text === '[empty]') return '';
     return text.includes('[rb]') || text.includes('&z')     
     ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').trim() 
     : text.trim();

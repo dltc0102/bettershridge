@@ -246,7 +246,7 @@ function guildPlayerMessageHandler(prefix, message) {
 };  
 
 function getGBColor(user) {
-    const lowerUser = user.toLowerCase();
+    const lowerUser = user.toLowerCase().trim();
     return bestData.names.includes(lowerUser) 
         ? `${bestData.color}${user}&r` 
         : `&a${user}&r`;
@@ -256,6 +256,9 @@ function replyMessageHandler(prefix, message) {
     const replyMessage = removeAntiSpamID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');
+    console.log(JSON.stringify(name1))  
+    console.log(JSON.stringify(name2))
+
     const formattedSender = `${getGBColor(name1)} ${prefixData.reply} ${getGBColor(name2)}`;      
     
     if (!responses) return null;
@@ -294,9 +297,10 @@ function messageHandler(message) {
     }           
     // console.log(' ');    
     // console.log(type, resMessage);
-    let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
+    const arrow = prefixData.arrow ? ` ${prefixData.arrow}` : '';
+    let prefix = `${prefixData.bot}&r${arrow}&r &a`;
     if (type === 'guildPlayer') {
-        prefix = `${prefixData.guild}&r ${prefixData.arrow}&r &a`;
+        prefix = `${prefixData.guild}&r${arrow}&r &a`;
     };
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
@@ -377,7 +381,7 @@ register('command', (id) => {
 //! guild best system
 export const bestData = new PogObject("bettershridge", {
     names: [],
-    color: '&4',
+    color: '&6',
     trigger: false,
 }, './data/bestData.json');
 bestData.autosave(1)

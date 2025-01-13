@@ -143,6 +143,8 @@ WIP: [paste to chat]
 = added /setreplyprefix
 = added Rainbow Colors using '[rb]' or '&z'
 = removed useless functions like 'stripFormattedName'
+= added [empty] for if anyone wants to set their prefix as empty :: Usage: /setarrowprefix [empty]
+= removed double space between bot/guild prefix and message if arrow prefix is empty
 
 TODO:
 + new helper module: interface for making your own prefix with color picking    
