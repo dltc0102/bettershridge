@@ -20,7 +20,7 @@ register('command', (args) => {
             data.bots.push(args);
             ChatLib.chat(`&aBridge Bot added: &r${args}`);
             data.bots = data.bots.filter(bot => bot !== null);
-            ChatLib.deleteChat(999);    
+            ChatLib.deleteChat(999);
         }
     }
 }).setName('addbot', true);
@@ -40,8 +40,8 @@ register('command', (args) => {
     if (!args) {
         ChatLib.chat('&cCorrect Usage: /rmbot (botName) &7(botName is case sensitive)')
     } else {
-        data.bots = data.bots.filter(bot => bot !== args);        
-        ChatLib.chat(`&a${args} &cremoved &afrom bot list.`);       
+        data.bots = data.bots.filter(bot => bot !== args);
+        ChatLib.chat(`&a${args} &cremoved &afrom bot list.`);
         ChatLib.chat(new TextComponent('&e&l[CLICK TO VIEW BOTLIST]').setClick('run_command', '/botlist').setHover('show_text', '/botlist'));
         data.save();
     }

@@ -47,7 +47,7 @@ function alignEntry(longest, entry) {
     }
     return str;
 }
-  
+
 function sortEntry(e1, e2) {
     e1RankWeight = getRankWeight(e1);
     e2RankWeight = getRankWeight(e2);
@@ -68,11 +68,11 @@ const newGList = {
 
 register('chat', (event) => {
     if (!isInHypixel()) return;
-    const message = ChatLib.getChatMessage(event, true);  
+    const message = ChatLib.getChatMessage(event, true);
     const entries = message.split(/\s{2}/).filter(c => c.match(/●/));
     if (!entries.length > 0) return;
-    console.log(message);                         
-    cancel(event);  
+    console.log(message);
+    cancel(event);
 });
 
 // for some reason, this regex doesnt work but separating each of them does... :/
@@ -97,7 +97,7 @@ guildListTitles.forEach(element => {
         if (/Guild Name: Shrimple/.test(element)) {
             // ChatLib.chat(`&6Guild Name: Shrimple`);
             newGList.newLines.push(`&6Guild Name: Shrimple`);
-        }   
+        }
         if (/-- .+ --/.test(element)) {
             ChatLib.chat(ChatLib.getCenteredText(`&a${element.toString().replace(/\//g, '')}`));
             newGList.newLines.push(ChatLib.getCenteredText(`&a${element}`));

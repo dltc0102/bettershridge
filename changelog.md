@@ -59,12 +59,12 @@ WIP: gifs
 + added support for any bot name for shridge/pridge
 + added support for _tfish noobf command
 + added formatting to syntax errors (hover details for instabuy/instasell commands)
-+ fixed greedy regex for 'player talking response' 
++ fixed greedy regex for 'player talking response'
 + updated formatLbin() func to format words nicer
 + updated createMessage() func
 + fix highlighting with encoded link messages
 + added formatting for promotion/demotion messages
-+ Added source to links 
++ Added source to links
 + added formatting to october special ('bo      o') command messages
 + added formatting for tfishi (w/o obf 1) messages
 
@@ -116,7 +116,7 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + added /resetprefix (bot/bridge/guild/none) command
     Note: /resetprefix without any arguments resets both guild & bridge prefixes with a confirmation message.
 + dynamic bot updater
-+ adds formatting for _gonline command      
++ adds formatting for _gonline command
 + changed instabuy command formatting mistake from 'sell cost' to 'buy cost'
 
 # v1.6
@@ -147,10 +147,9 @@ WIP: [paste to chat]
 = removed double space between bot/guild prefix and message if arrow prefix is empty
 
 TODO:
-+ new helper module: interface for making your own prefix with color picking    
++ new helper module: interface for making your own prefix with color picking
 + new g list
 + /gb online to see best friends in guild that are online
 
 
-    
 

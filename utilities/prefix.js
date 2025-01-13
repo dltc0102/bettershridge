@@ -14,13 +14,13 @@ function resetPrefixes() {
     prefixData.bot = '&2Bot&r';
     prefixData.arrow = '&2>&r';
     prefixData.reply = '&2[to]&r';
-    prefixData.save();  
+    prefixData.save();
 }
 
 function fixFormattedPrefix(text) {
     if (text === '[empty]') return '';
-    return text.includes('[rb]') || text.includes('&z')     
-    ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').trim() 
+    return text.includes('[rb]') || text.includes('&z')
+    ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').trim()
     : text.trim();
 }
 // set guild prefix
@@ -59,7 +59,7 @@ register('command', (args) => {
         ChatLib.chat(`&aArrow prefix set: &r${prefix}`);
         prefixData.arrow = prefix;
         prefixData.save();
-    }   
+    }
 }).setName('setarrowprefix', true);
 
 // set reply prefix
@@ -72,13 +72,13 @@ register('command', (args) => {
         ChatLib.chat(`&aReply prefix set: &r${prefix}`);
         prefixData.reply = prefix;
         prefixData.save();
-    }   
+    }
 }).setName('setreplyprefix', true);
 
 // reset prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
-    if (!args) { // reset both                  
+    if (!args) { // reset both
         const confirmButton = new TextComponent('&a&lCONFIRM?')
             .setClick('run_command', '/confirmResetPrefix')
             .setHover('show_text', 'Click to Confirm Prefix Reset');
@@ -88,8 +88,8 @@ register('command', (args) => {
         )
         ChatLib.chat(confirmMessage);
 
-    } else { 
-        if (args === 'bot') {  
+    } else {
+        if (args === 'bot') {
             prefixData.bot = '&2Bot&r';
             prefixData.save();
             ChatLib.chat(`&aBot Prefix has been reset to &r&2Bot&a!`);
@@ -101,21 +101,21 @@ register('command', (args) => {
 
         } else if (args === 'arrow') {
             prefixData.arrow = '&2>&r';
-            prefixData.save();  
+            prefixData.save();
             ChatLib.chat(`&aArrow Prefix has been reset to &r&2>&a!`);
 
         } else if (args === 'reply') {
             prefixData.reply = '&2[to]&r';
-            prefixData.save();      
+            prefixData.save();
             ChatLib.chat(`&aArrow Prefix has been reset to &2[to]&r&a!`);
         }
-    }   
+    }
 }).setName('resetprefix', true);
 
 // confirm reset prefix
 register('command', () => {
     if (!isInHypixel()) return;
-    resetPrefixes();    
+    resetPrefixes();
     prefixData.save();
     ChatLib.chat(`&aPrefixes have been reset! &rGuild: ${prefixData.guild} | Bridge/Bot: ${prefixData.bot} | Arrow: ${prefixData.arrow} | Reply: ${prefixData.reply}`);
-}).setName('confirmResetPrefix', true);                                       
+}).setName('confirmResetPrefix', true);
