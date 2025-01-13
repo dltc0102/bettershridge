@@ -88,7 +88,7 @@ register('command', (args) => {
 
 // confirm reset prefix
 register('command', () => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     resetPrefixes();    
     prefixData.save();
     ChatLib.chat(`&aPrefixes have been reset! &rGuild: ${prefixData.guild} | Bridge/Bot: ${prefixData.bot} | Arrow: ${prefixData.arrow}`);
