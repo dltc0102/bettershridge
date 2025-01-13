@@ -1,5 +1,6 @@
 {
-    "guild": "&2G&r",
-    "bot": "&2B&r",
-    "arrow": "&2>&r"
+    "guild": "&2Guild&r",
+    "bot": "&2Bot&r",
+    "arrow": "&2>&r",
+    "reply": "&2[to]&r"
 }

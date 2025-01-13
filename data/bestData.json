@@ -1,9 +1,5 @@
 {
-    "names": [
-        "gnasez",
-        "1zez",
-        "appable"
-    ],
-    "color": "&c",
-    "trigger": true
+    "names": [],
+    "color": "&4",
+    "trigger": false
 }

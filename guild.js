@@ -1,4 +1,4 @@
-import { getInHypixel, stripRank, removeRandomID, highlightTags, stripFormattedName, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode } from './functions';
+import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode } from './functions';
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';      
@@ -9,9 +9,9 @@ const continueSymbol = '➩';
 const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
-const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];
+const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
 
-function separatePlayerAndMessage(e) {
+function sortMessageByType(e) {
     const message = ChatLib.getChatMessage(e, true);
     const playerMessage = message.substring(message.indexOf("> ")+1).trim();
     let type = '';
@@ -20,10 +20,10 @@ function separatePlayerAndMessage(e) {
     const playerMatch = playerMessage.match(playerRegex);
     if (playerMatch) {
         const [_, formattedName, roleColor, roleName, message] = playerMatch;
-        const sender = stripFormattedName(formattedName);
+        const sender = stripRank(formattedName.removeFormatting()).trim();
         
         // &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r&r
-        if (!data.bots.includes(sender)) {
+        if (!data.bots.includes(stripRank(sender))) {
             type = 'guildPlayer';
             resMessage = playerMatch[0];         
         }
@@ -52,7 +52,7 @@ function separatePlayerAndMessage(e) {
                 resMessage = newMessage;
             }   
         }
-    }
+    }   
     return [type, resMessage];  
 }               
 
@@ -61,18 +61,19 @@ function handleLinkMessages(prefix, sender='', msg) {
         msg.slice(msg.indexOf(': ')+1).removeFormatting().replace(/\s+/g, ' ')
       ).trim();
 
-    const processedMessageParts = splitMapN(preFMessage,
+    const processedMessageParts = splitMapN(preFMessage,        
         [/\[LINK\]\(([^\(\)]+)\)/, hoverableStufLink],
         [/\/viewauction (\w+)/, hoverableAhLink],
         [/(https?:\/\/\S+)/, hoverableWebLink]
     );
-    return new Message(
+    return new Message(     
         prefix, `${sender}: &r`, ...processedMessageParts
     );      
 };
                 
 function botMessageHandler(prefix, message) {
-    const botMessage = removeRandomID(message).removeFormatting().replace(idRegex, '').trim();
+    const botMessage = removeAntiSpamID(message).removeFormatting().trim();
+    
     //! _mayor  
     if (botMessage.startsWith('Current mayor: ')) {
         return getGuildResponse(prefix, botMessage, 'mayor')
@@ -204,14 +205,14 @@ function botMessageHandler(prefix, message) {
 
     //! responses & 8ball
     } else {
-        return (botMessage.startsWith('⚠') && !botMessage.includes('Usage'))  
-        ? `${prefix}&c${botMessage}` 
-        : `${prefix}${botMessage}`;     
+        return botMessage.startsWith('⚠') && !botMessage.includes('Usage') 
+        ? `${prefix}&c${botMessage}`
+        :`${prefix}${botMessage}`;
     }
 };
 
 function discordPlayerMessageHandler(prefix, message) {
-    const dpMessage = removeRandomID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
+    const dpMessage = removeAntiSpamID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);
     const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${bestData.color}${sender}` : `&a${sender}`;
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
@@ -223,7 +224,7 @@ function discordPlayerMessageHandler(prefix, message) {
 };  
 
 function guildPlayerMessageHandler(prefix, message) {
-    const rawMessage = removeRandomID(message).replace(/  /g, '');
+    const rawMessage = removeAntiSpamID(message).replace(/  /g, '');
     const regex = /(.+?) &3\[(\w+)\]&f: &r(.+)&r/;
     const match = rawMessage.match(regex);
     if (match) {
@@ -242,19 +243,26 @@ function guildPlayerMessageHandler(prefix, message) {
             return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;        
         }
     }
-};
+};  
+
+function getGBColor(user) {
+    const lowerUser = user.toLowerCase();
+    return bestData.names.includes(lowerUser) 
+        ? `${bestData.color}${user}&r` 
+        : `&a${user}&r`;
+}
 
 function replyMessageHandler(prefix, message) {
-    const replyMessage = removeRandomID(message.removeFormatting().replace(/  /g, ''));
+    const replyMessage = removeAntiSpamID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
-    const [name1, name2] = sender.split(' [to] ');   
-    const formattedSender = `&a${name1} &2[to]&a ${name2}`; 
+    const [name1, name2] = sender.split(' [to] ');
+    const formattedSender = `${getGBColor(name1)} ${prefixData.reply} ${getGBColor(name2)}`;      
+    
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
-        return handleLinkMessages(prefix, formattedSender, responses);      
-
+        return handleLinkMessages(prefix, formattedSender,  responses);      
     } else {    
-        return `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
+        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
     }
 };  
 
@@ -283,7 +291,7 @@ function messageHandler(message) {
             type = 'discordPlayer';
             resMessage = strippedMessage;
         }
-    }
+    }           
     // console.log(' ');    
     // console.log(type, resMessage);
     let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
@@ -313,7 +321,7 @@ function replaceMessage(event, message) {
 //! multi message handler
 let multiMessages = [];
 registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole, playerStuff, event) => {
-    const [msgType, msg] = separatePlayerAndMessage(event); 
+    const [msgType, msg] = sortMessageByType(event); 
     const strippedMsg = msg.removeFormatting();
     const starts = strippedMsg.startsWith(continueSymbol);
     const ends = strippedMsg.endsWith(continueSymbol);
@@ -340,9 +348,6 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             ChatLib.chat(updateBotMessage);
         }
         if (newMsg && newMsg !== finalMsg) {    
-            // if (newMsg.includes('Booped')) {
-            //     getGuildResponse('', 'reset the boop', 'resetBoop');
-            // }     
             finalMsg = newMsg;
             replaceMessage(event, newMsg);    
 
@@ -361,7 +366,7 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         multiMessages.push(startMsg);
         cancel(event);      
     };      
-}), () => getInHypixel()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
+}), () => isInHypixel()).setCriteria('Guild > ${playerInfo} [${playerRole}]: ${playerStuff}');
 
 register('command', (id) => {
     ChatLib.deleteChat(id)
@@ -378,7 +383,7 @@ export const bestData = new PogObject("bettershridge", {
 bestData.autosave(1)
 
 register('command', (arg) => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     const lowerArg = arg ? arg.toLowerCase() : null;
 
     if (!arg || lowerArg === 'list') {
@@ -419,7 +424,7 @@ register('command', (arg) => {
 }).setName('guildbest', true).setAliases('gb'); 
 
 register('command', (arg) => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     if (!arg || !arg.includes('&') || !isValidColorCode(arg)) {
         ChatLib.chat(`&cPlease input a color code for the Guild Best Color.`);
             
@@ -431,7 +436,7 @@ register('command', (arg) => {
 }).setName('setbestcolor', true);
 
 register('command', () => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     if (bestData.trigger) {
         bestData.trigger = false;
         bestData.save();
@@ -442,8 +447,4 @@ register('command', () => {
         ChatLib.chat(`${data.modulePrefix} &bOverride Rank Colors: &a&lYES&r`);
     };
 }).setName('overriderankcolor', true).setAliases('orc');
-register('command', () => {
-    ChatLib.chat(`names: ${bestData.names}`)
-    ChatLib.chat(`best color: ${bestData.color}test`)
-    ChatLib.chat(`trigger: ${bestData.trigger}`)
-}).setName('testgb');
+            

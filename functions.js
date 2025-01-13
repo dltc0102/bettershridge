@@ -5,15 +5,7 @@ export function stripRank(name) {
     return name.match(rankNameRegex)?.[1] || name.trim();
 };
 
-export function stripFormattedName(name) {
-    return stripRank(name.removeFormatting());
-};
-
-export function getInSkyblock() {
-    return (World.isLoaded() && ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK"));
-};
-
-export function getInHypixel() {
+export function isInHypixel() {
     return (World.isLoaded() && Server.getIP().includes('hypixel'));
 };
 
@@ -28,7 +20,7 @@ export function capitalise(word) {
 export function formatTime(timeStr) {
     return timeStr
         .replace(/ ?and /g, ' ')
-        .replace(/ ?minutes?/g, 'm')
+        .replace(/ ?minutes?/g, 'm')    
         .replace(/ ?days?/g, 'd')
         .replace(/ ?hours?/g, 'h')
         .replace(/ ?months?/g, 'M')
@@ -63,7 +55,7 @@ export function getMonsterColor(name, bypass=false) {
     return name in knownMonsters ? knownMonsters[name] : '&r';  
 };
 
-export function removeRandomID(msg) {   
+export function removeAntiSpamID(msg) {   
     return msg ? msg.replace(/<@.+>/g, '') : msg;
 };
 
@@ -147,7 +139,10 @@ function getComponentParts(link) {
     return [linkName, hoverText]
 };
 
+// Truncate big cost numbers to their abbreviated forms ending with 'k', 'm', or 'b'
 export function truncateNumbers(amt, isCoins=false) { 
+    if (typeof amt === 'string' && amt.includes('/')) return amt;
+                
     const cost = Number(amt.toString().replace(/,/g, ''));
     const formatNumber = (num) => {
         const fixedNum = num.toFixed(2);
@@ -219,7 +214,7 @@ export function hoverableWebLink(link) {
 };
 
 // Credit to @gleb
-export const splitMapN = (text, ...splitOpts) => {
+export const splitMapN = (text, ...splitOpts) => {  
     if (splitOpts === undefined || splitOpts.length === 0) return [text];
     const [regex, mapFn] = splitOpts[0];
     return text.split(regex).map((val, idx) => {

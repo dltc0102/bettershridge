@@ -1,22 +1,14 @@
-import { getInHypixel } from './functions.js';
+import { isInHypixel } from './functions.js';
 import { data } from './utilities/bots.js';  
 import { prefixData } from './utilities/prefix.js';  
 import { bestData } from './guild.js';
 import './guild.js';
-import './utilities/online.js'
+import './glist.js';
 
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
-        "&a+ Fixed player1 booped player2 messages",
-        "&a+ Added formatting for new mayor command's formats (minister and perks in hoverables)",
-        "&a+ Added arrow prefix changer (&r/setarrowprefix&a)",
-        "&a+ Added support for directional Discord links",
-        "&a+ Made bestiary categories &6gold&a if number is /0",
-        "&a+ Fixed undefined names for _be and _coll commands",
-        "&a+ Added a &r/bettershridge&a (aliases: &r/bshelp&a, &r/bs&a) command for command help list",
-        "&a+ Added commands for the guild best friend system",
-        "&d<!> v1.8 WIP: /gb online to see best friends that are online"
+        //? ...
       ];
 
     const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
@@ -25,7 +17,7 @@ function makeChangelogHoverable(moduleVersion) {
 };
 
 register('gameLoad', () => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     ChatLib.chat(`${data.modulePrefix} &3Loaded! &7DM @oBiscuit for any concerns`);
     
     const moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
@@ -41,14 +33,16 @@ register('gameLoad', () => {
 });     
 
 register('command', () => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     const bulletSpace = '   &bo&r  ';
     ChatLib.chat(ChatLib.getChatBreak(' '))
     ChatLib.chat(`${data.modulePrefix}&r &cHelpline -------------`);
+    ChatLib.chat(`   &d✯&r   &6Use '&r[rb]&6' to make a text §zrainbow!`)
     ChatLib.chat(`${bulletSpace}&f/setbotprefix &3- Sets Bot Prefix &r| &eCurrent: &r['${prefixData.bot}&r']`)
     ChatLib.chat(`${bulletSpace}&f/setguildprefix &3- Sets Guild Prefix &r| &eCurrent: &r['${prefixData.guild}&r']`)
     ChatLib.chat(`${bulletSpace}&f/setarrowprefix &3- Sets Arrow Prefix &r| &eCurrent: &r['${prefixData.arrow}&r']`)
-    ChatLib.chat(`${bulletSpace}&f/resetprefix (&9bot&r | &9guild&r | &9arrow&r) &3- Resets all prefixes`)
+    ChatLib.chat(`${bulletSpace}&f/setreplyprefix &3- Sets Reply Prefix &r| &eCurrent: &r['${prefixData.reply}&r']`)
+    ChatLib.chat(`${bulletSpace}&f/resetprefix (&9bot&r | &9guild&r | &9arrow&r | &9reply&r ) &3- Resets all prefixes`)
     ChatLib.chat(' ');
     ChatLib.chat(`      &6<&3Guild Best System&6> &b------ &r(/guildbest | /gb)`)
     ChatLib.chat(`${bulletSpace}&f/guildbest list &3- Shows all the names in the guild best list`)
@@ -58,4 +52,3 @@ register('command', () => {
     ChatLib.chat(`${bulletSpace}&f/overriderankcolor | /orc &3- Overrides the rank colors for guild-best colors`)
     ChatLib.chat(ChatLib.getChatBreak(' '))
 }).setName('bettershridge', true).setAliases('bshelp', 'bs');
-

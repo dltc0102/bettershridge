@@ -132,9 +132,23 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 WIP: /gb online to see best friends in guild that are online
 WIP: [paste to chat]
 
-# v1.7
-+ /gb online to see best friends in guild that are online
-+ /setreplyprefix
-+ made so that if name is in guild best list, if they are replying to/being replied to, their name will be be in best-color too
+# v1.7.1
+= renamed func name 'getInHypixel' to 'isInHypixel'
+= renamed func name 'removeRandomID' to 'removeAntiSpamID'
+= renamed func name 'separatePlayerAndMessage' to 'sortMessageByType'
+= changed func truncateNumbers(...) to return input if input is a string that contains '/' - in the case when api doesn't recognise a collection/bestiary being maxed
+= added glist.js to parse guild lists and reformat them based on type of command.
+= names that appear in replies on bridge, if in the guild best list, will be set to best color
+= removed unused/unneccessary comments
+= added /setreplyprefix
+= added Rainbow Colors using '[rb]' or '&z'
+= removed useless functions like 'stripFormattedName'
 
+TODO:
++ new helper module: interface for making your own prefix with color picking    
++ new g list
++ /gb online to see best friends in guild that are online
+
+
+    
 

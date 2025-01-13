@@ -1,6 +1,7 @@
-import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripFormattedName, stripRank } from './functions.js';  
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripRank } from './functions.js';  
 import PogObject from '../PogData';
 
+        
 
 //! GLOBALS
 export const guildData = new PogObject("bettershridge", {
@@ -149,20 +150,31 @@ const tfishColorsDict = {
 
 const rareMobs = ['Lord Jawbus', 'Thunder', 'Plhlegblast', 'The Sea Emperor', 'Carrot King', 'Water Hydra', 'Yeti', 'Reindrake', 'Great White Shark', 'Grim Reaper', 'Phantom Fisher', 'Abyssal Miner'];
 
+
+
 //! FUNCTIONS
+
+/**
+ * Generates a message for bot messages based on the parameters passed in, using the formatHandler for the respective regex.
+ * @param {*} prefix - bot prefix (ex. &2B&r > )
+ * @param {*} message - message to be formatted with formatHandler
+ * @param {*} regex - regex for unique message 
+ * @param {*} formatHandler - formats the unique message into something aesthetically pleasing
+ * @returns a formatted message for the respective bot message
+ */
 function generateMessage(prefix, message, regex, formatHandler) {
     const match = message.match(regex);
     if (match) {
-        return formatHandler(prefix, match);    
+        return formatHandler(prefix, match);        
     } else {        
         console.log('not matched -- bettershridge')
         console.log(`message: ${message}`);
         console.log(`regex: ${regex}`);
-        console.log(' ');
+        console.log(' ');   
         return;
     }
 }
-
+    
 export function getGuildResponse(prefix, message, type) {
     const patterns = {
         // template: {
@@ -365,13 +377,13 @@ function formatMayorPicked(prefix, match) {
 
 function formatPromotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
-    const playerFName = `${playerColor}${stripFormattedName(playerName)}`       
+    const playerFName = `${playerColor}${playerName.removeFormatting()}`;
     return `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;          
 };
 
 function formatDemotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
-    const playerFName = `${playerColor}${stripFormattedName(playerName)}`
+    const playerFName = `${playerColor}${playerName.removeFormatting()}`;
     return `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
 };
 
@@ -705,7 +717,7 @@ function formatPickMesage(prefix, match) {
 function formatMiscDataFor(prefix, match) {
     const [_, itemName, playerName, playerProfile, collLevel, collMax, collItems] = match;
     const collectionColor = collLevel === collMax ? '&6' : '&a';
-    return `${prefix}${itemName} data for &2${playerName}&a (${playerProfile}): &r${collectionColor}${collLevel}/${collMax} &r(${truncateNumbers(collItems)})`;
+    return `${prefix}${itemName} data for &2${playerName}&a (${playerProfile}): &r${collectionColor}${collLevel}/${collMax} &r(${truncateNumbers(collItems)})`;     
 };      
 
 function getBotBooperDP(prefix, match) {

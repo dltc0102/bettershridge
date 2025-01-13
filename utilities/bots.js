@@ -1,5 +1,5 @@
 import PogObject from '../../PogData';
-import { getInHypixel } from '../functions';
+import { isInHypixel } from '../functions';
 
 export const data = new PogObject("bettershridge", {
     modulePrefix: '&9[&bBetterShridge&9]',
@@ -9,7 +9,7 @@ export const data = new PogObject("bettershridge", {
 data.autosave(5);
 
 register('command', (args) => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     if (!args) {
         ChatLib.chat('&cCorrect Usage: &b/setbot (botName) &7(botName is case sensitive)')
     } else if (args) {
@@ -26,7 +26,7 @@ register('command', (args) => {
 }).setName('addbot', true);
 
 register('command', () => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     ChatLib.chat(`Bot list: `)
     ChatLib.chat('---------------------------')
     for (let idx = 0; idx < data.bots.length+1; idx++) {
@@ -36,7 +36,7 @@ register('command', () => {
 }).setName('botlist', true);
 
 register('command', (args) => {
-    if (!getInHypixel()) return;
+    if (!isInHypixel()) return;
     if (!args) {
         ChatLib.chat('&cCorrect Usage: /rmbot (botName) &7(botName is case sensitive)')
     } else {
