@@ -1,6 +1,7 @@
 let checkingTrigs = [];
 /**
- * Registers and unregisters the trigger depending on the result of the checkFunc. Use with render triggers to reduce lag when they are not being used.
+ * Registers and unregisters the trigger depending on the result of the checkFunc. 
+ * Use with render triggers to reduce lag when they are not being used.
  * @param {string} eventName
  * @param {idek} callback
  * @param {() => boolean} checkFunc
@@ -51,3 +52,15 @@ register('command', () => {
     });
     console.log(' ');
 }).setName('logtimestore', true);
+
+
+//! logger wrapper
+function logErrors(fn) {
+    return function (...args) {
+        try {
+            fn(...args);
+        } catch (err) {
+            // do some logging
+        }
+    };      
+}

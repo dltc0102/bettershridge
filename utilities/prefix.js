@@ -26,7 +26,7 @@ function fixFormattedPrefix(text) {
 // set guild prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
-    if (!args) {
+    if (!args || args.removeFormatting() === '') {
         ChatLib.chat('&cCorrect Usage: &b/setguildprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
@@ -39,7 +39,7 @@ register('command', (args) => {
 // set bot prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
-    if (!args) {
+    if (!args || args.removeFormatting().trim() === '') {
         ChatLib.chat('&cCorrect Usage: &b/setbotprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
@@ -52,7 +52,7 @@ register('command', (args) => {
 // set arrow prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
-    if (!args) {
+    if (!args || args.removeFormatting().trim() === '') {
         ChatLib.chat('&cCorrect Usage: &b/setarrowprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
@@ -65,7 +65,7 @@ register('command', (args) => {
 // set reply prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
-    if (!args) {
+    if (!args || args.removeFormatting().trim() === '') {
         ChatLib.chat('&cCorrect Usage: &b/setreplyprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
@@ -78,7 +78,7 @@ register('command', (args) => {
 // reset prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
-    if (!args) { // reset both
+    if (!args) { // reset all prefixes
         const confirmButton = new TextComponent('&a&lCONFIRM?')
             .setClick('run_command', '/confirmResetPrefix')
             .setHover('show_text', 'Click to Confirm Prefix Reset');

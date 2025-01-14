@@ -163,16 +163,13 @@ const rareMobs = ['Lord Jawbus', 'Thunder', 'Plhlegblast', 'The Sea Emperor', 'C
  * @returns a formatted message for the respective bot message
  */
 function generateMessage(prefix, message, regex, formatHandler) {
-    const match = message.match(regex);
-    if (match) {
+    try {
+        const match = message.match(regex);
         return formatHandler(prefix, match);
-    } else {
-        console.log('not matched -- bettershridge')
-        console.log(`message: ${message}`);
-        console.log(`regex: ${regex}`);
-        console.log(' ');
-        return;
-    }
+    } catch(error) {
+        ChatLib.chat(`&4[&b!&4]&r &cUnrecognised statement, please contact oBiscuit`)
+        console.error(`not matched -- bettershridge\nError: ${error}\nMessage: '${message}\nregex: ${regex}'`);
+    };
 }
 
 export function getGuildResponse(prefix, message, type) {
@@ -311,11 +308,11 @@ export function getGuildResponse(prefix, message, type) {
             format: formatMiscDataFor
         },
         getBooperGP: {
-            regex: /(.+?) &3\[.+\]&f: &r_boop (.+?)( .+)?&r/,
+            regex: /(.+?) &3\[.+\]&f: &r_boop( .+)?&r/,
             format: getBotBooperGP
         },
         getBooperDP: {
-            regex: /(.+?): _boop (.+)/,
+            regex: /(.+?): _boop( .+)?/,
             format: getBotBooperDP
         },
         getBooped: {
@@ -722,14 +719,14 @@ function formatMiscDataFor(prefix, match) {
 
 function getBotBooperDP(prefix, match) {
     const [_, boopSender, boopResponse=''] = match;
-    guildData.booper = stripRank(boopSender.removeFormatting());
-    guildData.booped = boopResponse.split(' ')[0];
+    guildData.booper = stripRank(boopSender.removeFormatting().trim());
+    guildData.booped = boopResponse.trim().split(' ')[0];
 };
 
 function getBotBooperGP(prefix, match) {
     const [_, boopSender, boopTarget='', otherText=null] = match;
-    guildData.booper = stripRank(boopSender.removeFormatting());
-    guildData.booped = boopTarget;
+    guildData.booper = stripRank(boopSender.trim().removeFormatting());
+    guildData.booped = boopTarget.trim();
 };
 
 function formatGetBooped(prefix, match) {

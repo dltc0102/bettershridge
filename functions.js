@@ -6,7 +6,7 @@ export function stripRank(name) {
 };
 
 export function isInHypixel() {
-    return (World.isLoaded() && Server.getIP().includes('hypixel'));
+    return (World.isLoaded() && Server.getIP().toLowerCase().includes('hypixel'));
 };
 
 export function capitalise(word) {
@@ -60,8 +60,9 @@ export function removeAntiSpamID(msg) {
 };
 
 export function highlightTags(message) {
-    const tagRegex = /@\w+/g;
-    return message.replace(tagRegex, tag => `&b${tag}&r`);
+    console.log(`highlightTags message: ${message}`)
+    // const tagRegex = /@\w*@?/g;              
+    // return message.replace(tagRegex, tag => `&b${tag}&r`);
 };
 
 export function formatItemsToTable(items, columns = 2) {
