@@ -59,11 +59,16 @@ export function removeAntiSpamID(msg) {
     return msg ? msg.replace(/<@.+>/g, '') : msg;
 };
 
-export function highlightTags(message) {
-    console.log(`highlightTags message: ${message}`)
-    // const tagRegex = /@\w*@?/g;              
-    // return message.replace(tagRegex, tag => `&b${tag}&r`);
-};
+export function highlightTags(msg) {
+    const tagRegex = /@\w+/g;
+    if (msg.includes('@_@')) {
+        let emojiIdx = msg.indexOf('@_@');
+        let tempMessage = msg.replace('@_@', '').replace(tagRegex, tag => `&b${tag}&r`)
+        const newMessage = tempMessage.slice(0, emojiIdx) + '&b@_@&r' + tempMessage.substring(emojiIdx);
+        return newMessage
+    }                   
+    return msg.replace(tagRegex, tag => `&b${tag}&r`);
+}
 
 export function formatItemsToTable(items, columns = 2) {
     const result = [];

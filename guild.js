@@ -211,15 +211,43 @@ function botMessageHandler(prefix, message) {
     }
 };
 
+
+/**
+ * Formats the sender by some conditions with either the default &a color or the best color.
+ * only for guildMessageHandler, discordPlayerMessageHandler and replyMessageHandler
+ * @param {Object} userObj : name, role
+ * @param {Object} givData : bestData for trigger, names and color
+ * @returns formatted name based on conditions.
+ */
+// works for replies, discord messages, guild player messages
+function updateFormattedSender(userObj, givData) {
+    const addRole = userObj.role ? ` &3[${userObj.role}]&r` : '';
+    const strippedName = stripRank(userObj.name.removeFormatting()).toLowerCase();  
+
+    if (givData.names.includes(userObj.name) || givData.names.includes(strippedName)) {
+        return givData.trigger
+            ? `${givData.color}${stripRank(userObj.name.removeFormatting())}${addRole}`
+            : `${givData.color}${userObj.name}${addRole}`;
+
+    } else if (givData.names.some(name => userObj.name.includes(name) || strippedName.includes(name))) {
+        return givData.trigger
+            ? `${givData.color}${stripRank(userObj.name )}${addRole}`
+            : `${givData.color}${userObj.name}${addRole}`;
+
+    } else {
+        return `&a${userObj.name}${addRole}`;
+    }
+}
+
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeAntiSpamID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);
-    const formattedSender = bestData.names.includes(sender.toLowerCase()) ? `${bestData.color}${sender}` : `&a${sender}`;
+    const formattedSender = updateFormattedSender({name: sender}, bestData);
+
     if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);
     } else {
         if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
-        console.log(responses);             
         return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
     }
 };
@@ -230,13 +258,7 @@ function guildPlayerMessageHandler(prefix, message) {
     const match = rawMessage.match(regex);
     if (match) {
         const [_, sender, role, responses] = match;
-        const rawName = stripRank(sender.removeFormatting());
-        let formattedSender = `${sender} &3[${role}]&r`;
-        if (bestData.trigger) {
-            if (bestData.names.includes(rawName.toLowerCase())) {
-                formattedSender = `${bestData.color}${rawName} &3[${role}]&r`;
-            }
-        }
+        const formattedSender = updateFormattedSender({name: sender, role: role}, bestData);
         if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
             return handleLinkMessages(prefix, formattedSender, responses);
         } else {
@@ -246,24 +268,19 @@ function guildPlayerMessageHandler(prefix, message) {
     }
 };
 
-function getGBColor(user) {
-    const lowerUser = user.toLowerCase().trim();
-    return bestData.names.includes(lowerUser)
-        ? `${bestData.color}${user}&r`
-        : `&a${user}&r`;
-}
-
 function replyMessageHandler(prefix, message) {
     const replyMessage = removeAntiSpamID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');
-    const formattedSender = `${getGBColor(name1)} ${prefixData.reply} ${getGBColor(name2)}`;
+    const formatted1 = updateFormattedSender({name: name1}, bestData);
+    const formatted2 = updateFormattedSender({name: name2}, bestData);
+    const formattedSender = `${formatted1} ${prefixData.reply} ${formatted2}`;
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
         return handleLinkMessages(prefix, formattedSender,  responses);
     } else {
         return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
-    }
+    };
 };
 
 function messageHandler(message) {
