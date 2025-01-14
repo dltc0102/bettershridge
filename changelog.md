@@ -137,7 +137,6 @@ WIP: [paste to chat]
 = renamed func name 'removeRandomID' to 'removeAntiSpamID'
 = renamed func name 'separatePlayerAndMessage' to 'sortMessageByType'
 = changed func truncateNumbers(...) to return input if input is a string that contains '/' - in the case when api doesn't recognise a collection/bestiary being maxed
-= added glist.js to parse guild lists and reformat them based on type of command.
 = names that appear in replies on bridge, if in the guild best list, will be set to best color
 = removed unused/unneccessary comments
 = added /setreplyprefix

@@ -222,7 +222,7 @@ function botMessageHandler(prefix, message) {
 // works for replies, discord messages, guild player messages
 function updateFormattedSender(userObj, givData) {
     const addRole = userObj.role ? ` &3[${userObj.role}]&r` : '';
-    const strippedName = stripRank(userObj.name.removeFormatting()).toLowerCase();  
+    const strippedName = stripRank(userObj.name.removeFormatting()).toLowerCase();
 
     if (givData.names.includes(userObj.name) || givData.names.includes(strippedName)) {
         return givData.trigger
@@ -393,6 +393,77 @@ register('command', (id) => {
 
 
 
+//! glist
+function getOnlineMembers(storedGuildData, givData) {
+    let onlineMembers = [];
+    storedGuildData.forEach(member => {
+        if (member.endsWith('&a ●')) onlineMembers.push(member);
+    })
+    return getOnlineBests(onlineMembers, givData);
+};
+
+function getOnlineBests(onlineLst, inputData) {
+    let onlineBests = [];
+    onlineLst.map(onlineMember => stripRank(onlineMember.removeFormatting()).toLowerCase()).forEach(onlineMember => {
+        if (inputData.names.includes(onlineMember) || inputData.names.some(bestName => onlineMember.includes(bestName))) {
+            onlineBests.push(onlineMember);
+        };
+    });
+    return onlineBests;
+};
+
+let guildMembers = [];
+let glLoads = 6;
+register('chat', (event) => {
+    if (!isInHypixel()) return;
+    const message = ChatLib.getChatMessage(event, true);
+    const entries = message.split(/\s{2}/).filter(c => c.match(/●/));
+    if (!entries.length > 0) return;
+    if (glLoads > 0) {
+        guildMembers.push(...entries);
+        glLoads -= 1;
+    }
+
+    if (glLoads === 0) {
+        let onlineBestMembers = getOnlineMembers(guildMembers, bestData);
+        ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
+        ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
+        bestData.names.forEach(bestName => {
+            const bestNameStatus = onlineBestMembers.includes(bestName) || onlineBestMembers.some(name => name.includes(bestName)) ? '&a' : '&c';
+            ChatLib.chat(`${bestNameStatus}●&r &b${bestName}`)
+        });
+        ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
+        glLoads = 6;
+    }
+    cancel(event);
+});
+
+const guildListTitles = [
+    /Total Members: \d+/,
+    /Online Members: \d+/,
+    /Offline Members: \d+/,
+    /Guild Name: Shrimple/,
+    /\s*-- Guild Master --\s*/,
+    /\s*-- Admin --\s*/,
+    /\s*-- Lobster --\s*/,
+    /\s*-- Shrimp --\s*/,
+    /\s*-- Crayfish --\s*/,
+    /\s*-- Krill --\s*/,
+];
+
+guildListTitles.forEach(element => {
+    register('chat', (event) => {
+        if (!isInHypixel()) return;
+        cancel(event);
+    }).setCriteria(element);
+});
+
+register('chat', (event) => {
+    const message = ChatLib.getChatMessage(event, true);
+    if (message === '&b&m-----------------------------------------------------&r') cancel(event);
+});
+
+
 //! guild best system
 export const bestData = new PogObject("bettershridge", {
     names: [],
@@ -401,19 +472,16 @@ export const bestData = new PogObject("bettershridge", {
 }, './data/bestData.json');
 bestData.autosave(1)
 
-register('command', (arg) => {
+register('command', (arg) => {                              
     if (!isInHypixel()) return;
     const lowerArg = arg ? arg.toLowerCase() : null;
 
-    if (!arg || lowerArg === 'list') {
+    if (!arg || lowerArg === 'list' || lowerArg === 'online') {
         if (bestData.names.length === 0) {
             ChatLib.chat(`&cGuild Best List is currently empty! Use &b/guildbest (name) &cto add a name!`);
-        } else {
-            ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
-            bestData.names.forEach((name, index) => {
-                ChatLib.chat(` &3${index + 1}.&r &b${name}`);
-            });
+            return;
         }
+        ChatLib.command('gl');
         return;
     };
 
@@ -466,27 +534,3 @@ register('command', () => {
         ChatLib.chat(`${data.modulePrefix} &bOverride Rank Colors: &a&lYES&r`);
     };
 }).setName('overriderankcolor', true).setAliases('orc');
-
-
-
-//! helpline
-register('command', () => {
-    if (!isInHypixel()) return;
-    const bulletSpace = '   &bo&r  ';
-    ChatLib.chat(ChatLib.getChatBreak(' '))
-    ChatLib.chat(`${data.modulePrefix}&r &cHelpline -------------`);
-    ChatLib.chat(`   &d✯&r   &6Use '&r[rb]&6' to make a text §zrainbow&r&6! &b*Note: Only works in Skyblock`);
-    ChatLib.chat(`${bulletSpace}&f/setbotprefix &3- Sets Bot Prefix &r| &eCurrent: &r['${prefixData.bot}&r']`);
-    ChatLib.chat(`${bulletSpace}&f/setguildprefix &3- Sets Guild Prefix &r| &eCurrent: &r['${prefixData.guild}&r']`);
-    ChatLib.chat(`${bulletSpace}&f/setarrowprefix &3- Sets Arrow Prefix &r| &eCurrent: &r['${prefixData.arrow}&r']`);
-    ChatLib.chat(`${bulletSpace}&f/setreplyprefix &3- Sets Reply Prefix &r| &eCurrent: &r['${prefixData.reply}&r']`);
-    ChatLib.chat(`${bulletSpace}&f/resetprefix (&9bot&r | &9guild&r | &9arrow&r | &9reply&r ) &3- Resets all prefixes`);
-    ChatLib.chat(' ');
-    ChatLib.chat(`      &6<&3Guild Best System&6> &b------ &r(/guildbest | /gb)`);
-    ChatLib.chat(`${bulletSpace}&f/guildbest list &3- Shows all the names in the guild best list`);
-    ChatLib.chat(`${bulletSpace}&f/guildbest (name) &3- Sets/Adds a name to the guild best list \n      &c(Do the command again to remove name)`);
-    ChatLib.chat(`${bulletSpace}&f/guildbest clear &3- Removes all names from the guild best list`);
-    ChatLib.chat(`${bulletSpace}&f/setbestcolor &3- Sets color for guild best list names \n      &eCurrent: &r['${bestData.color}test name&r'] `);
-    ChatLib.chat(`${bulletSpace}&f/overriderankcolor | /orc &3- Overrides the rank colors for guild-best colors`);
-    ChatLib.chat(ChatLib.getChatBreak(' '));
-}).setName('bettershridge', true).setAliases('bshelp', 'bs');

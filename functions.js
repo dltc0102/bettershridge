@@ -66,7 +66,7 @@ export function highlightTags(msg) {
         let tempMessage = msg.replace('@_@', '').replace(tagRegex, tag => `&b${tag}&r`)
         const newMessage = tempMessage.slice(0, emojiIdx) + '&b@_@&r' + tempMessage.substring(emojiIdx);
         return newMessage
-    }                   
+    }
     return msg.replace(tagRegex, tag => `&b${tag}&r`);
 }
 
