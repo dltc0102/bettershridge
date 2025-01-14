@@ -399,7 +399,7 @@ function getOnlineMembers(storedGuildData, givData) {
     storedGuildData.forEach(member => {
         if (member.endsWith('&a ●')) onlineMembers.push(member);
     })
-    return getOnlineBests(onlineMembers, givData);
+    return onlineMembers;
 };
 
 function getOnlineBests(onlineLst, inputData) {
@@ -424,8 +424,9 @@ register('chat', (event) => {
         glLoads -= 1;
     }
 
-    if (glLoads === 0) {
-        let onlineBestMembers = getOnlineMembers(guildMembers, bestData);
+    if (glLoads === 0 && showGBList) {
+        let onlineMembers = getOnlineMembers(guildMembers);
+        let onlineBestMembers = getOnlineBests(onlineMembers, bestData);
         ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
         ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
         bestData.names.forEach(bestName => {
@@ -434,9 +435,29 @@ register('chat', (event) => {
         });
         ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
         glLoads = 6;
+        showGBList = false;
     }
     cancel(event);
 });
+
+let showGBList = false;
+register('command', () => {
+    if (!isInHypixel()) return;
+    showGBList = true;
+}).setName('dontshowgb', true);
+
+register('command', (query) => {
+    if (!isInHypixel()) return;
+    if (!query) {
+        ChatLib.chat(`${data.modulePrefix} &cQuery Unrecognised, enter a name!`);
+    };
+
+    ChatLib.command('gl');
+    let onlineMembers = getOnlineMembers(guildMembers);
+    const queryName = query.toLowerCase();
+    const isOnline = onlineMembers.some(member => member.includes(queryName) || stripRank(member.removeFormatting()).toLowerCase() === queryName) ? ' -- &aONLINE' : ' -- &cOFFLINE';
+    ChatLib.chat(`${data.modulePrefix} &r&aSearch Query: &f${JSON.stringify(query)}${isOnline}`);
+}).setName('gsearch', true).setAliases('gs');
 
 const guildListTitles = [
     /Total Members: \d+/,
@@ -472,7 +493,7 @@ export const bestData = new PogObject("bettershridge", {
 }, './data/bestData.json');
 bestData.autosave(1)
 
-register('command', (arg) => {                              
+register('command', (arg) => {
     if (!isInHypixel()) return;
     const lowerArg = arg ? arg.toLowerCase() : null;
 
@@ -482,6 +503,7 @@ register('command', (arg) => {
             return;
         }
         ChatLib.command('gl');
+        showGBList = true;
         return;
     };
 
