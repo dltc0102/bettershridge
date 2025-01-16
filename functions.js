@@ -59,7 +59,7 @@ export function removeAntiSpamID(msg) {
     return msg ? msg.replace(/<@.+>/g, '') : msg;
 };
 
-export function highlightTags(msg) {
+function highlightTags(msg) {
     const tagRegex = /@\w+/g;
     if (msg.includes('@_@')) {
         let emojiIdx = msg.indexOf('@_@');
@@ -69,6 +69,16 @@ export function highlightTags(msg) {
     }
     return msg.replace(tagRegex, tag => `&b${tag}&r`);
 }
+
+function emojis(msg) {
+    const parsedEmojis = JSON.parse(FileLib.read('bettershridge', '/data/emojis.json'));
+    const emojiRegex = /:\w+:/g;
+    return msg.replace(emojiRegex, match => parsedEmojis[match] || match);
+};
+
+export function processMessage(message) {
+    return emojis(highlightTags(message));
+};
 
 export function formatItemsToTable(items, columns = 2) {
     const result = [];
@@ -109,14 +119,15 @@ function getAttachmentName(link) {
 
 function getLinkSource(link) {
     let source;
-    if (link.includes('youtube') || link.includes('youtu.be')) source = 'Youtube';
-    if (link.includes('twitch')) source = 'Twitch';
-    if (link.includes('discord')) source = 'Discord';
-    if (link.includes('twitter')) source = 'Twitter';
-    if (link.includes('hypixel')) source = 'Hypixel';
-    if (link.includes('facebook')) source = 'Facebook';
-    if (link.includes('imgur')) source = 'Imgur';
-    if (link.includes('tenor')) source = 'Tenor';
+    if (link.includes('youtube') || link.includes('youtu.be')) return 'Youtube';
+    if (link.includes('twitch')) return 'Twitch';
+    if (link.includes('discord')) return 'Discord';
+    if (link.includes('twitter')) return 'Twitter';
+    if (link.includes('hypixel')) return 'Hypixel';
+    if (link.includes('facebook')) return 'Facebook';
+    if (link.includes('imgur')) return 'Imgur';
+    if (link.includes('tenor')) return 'Tenor';
+    if (link.includes('regex101')) return 'regex101';
     return source;
 };
 
@@ -210,9 +221,14 @@ export function hoverableAhLink(msg) {
 
 export function hoverableWebLink(link) {
     const source = getLinkSource(link);
-    const linkName = source === 'Youtube'
-        ? `&e&l[&r&cYouTube Link&r&e&l]`
-        : `&b&l[${source} Link]`;
+    let linkName = '';
+    if (!source) {
+        return '&b&l[Link]';
+    } else if (source === 'Youtube') {
+        linkName =`&e&l[&r&cYouTube Link&r&e&l]`;
+    } else {
+        linkName = `&b&l[${source} Link]`;
+    }
 
     return new TextComponent(linkName)
         .setClick('open_url', link)

@@ -1,4 +1,4 @@
-import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode } from './functions';
+import { isInHypixel, stripRank, removeAntiSpamID, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage } from './functions';      
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';
@@ -6,7 +6,7 @@ import { getGuildResponse } from './formatFunctions';
 import PogObject from '../PogData';
 
 const continueSymbol = '➩';
-const idRegex = /<@.+>/;
+const idRegex = /<@.+>/;        
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
@@ -57,7 +57,7 @@ function sortMessageByType(e) {
 }
 
 function handleLinkMessages(prefix, sender='', msg) {
-    const preFMessage = highlightTags(
+    const preFMessage = processMessage(
         msg.slice(msg.indexOf(': ')+1).removeFormatting().replace(/\s+/g, ' ')
       ).trim();
 
@@ -248,7 +248,7 @@ function discordPlayerMessageHandler(prefix, message) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);
     } else {
         if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
-        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
+        return `${prefix}${formattedSender}&r: ${processMessage(responses)}`;
     }
 };
 
@@ -263,7 +263,7 @@ function guildPlayerMessageHandler(prefix, message) {
             return handleLinkMessages(prefix, formattedSender, responses);
         } else {
             if (responses.includes('_boop')) getGuildResponse(prefix, message, 'getBooperGP');
-            return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
+            return `${prefix}${formattedSender}&r: ${processMessage(responses)}`;
         }
     }
 };
@@ -279,7 +279,7 @@ function replyMessageHandler(prefix, message) {
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
         return handleLinkMessages(prefix, formattedSender,  responses);
     } else {
-        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
+        return `${prefix}${formattedSender}&r: ${processMessage(responses)}`;
     };
 };
 

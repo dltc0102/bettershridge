@@ -54,13 +54,3 @@ register('command', () => {
 }).setName('logtimestore', true);
 
 
-//! logger wrapper
-function logErrors(fn) {
-    return function (...args) {
-        try {
-            fn(...args);
-        } catch (err) {
-            // do some logging
-        }
-    };      
-}
