@@ -8,7 +8,7 @@ export const guildData = new PogObject("bettershridge", {
     commands: [
         "lbin", "bz", "cata", "8ball", "election", "help", "pick", "ping",
         "skill", "slayer", "tfish", "contest", "fw", "fc", "is", "ib",
-        "collection", "be", "raw", "rlb", "boop", "glist", "gonline", "boo", "update"
+        "collection", "be", "raw", "rlb", "boop", "glist", "gonline", "boo", "update", "bettershridge"
     ],
     booper: '',
     booped: '',
@@ -506,15 +506,15 @@ function formatBestiaryAll(prefix, match) {
     const titleMessage = `${prefix}${formattedBeType} &r&abestiary data for &2${playerName}&a (${playerProfile}): `
     return [
         titleMessage, ...beCommon, guildData.spacing, ...beRare
-        ];
-};
+    ];
+};      
 
 function formatCommandHelp(prefix, match) {
     const [_, commands] = match;
-    const splittedCommands = commands.trim().split(', ')
-    splittedCommands
-        .filter(item => !guildData.commands.includes(item))
-        .forEach(item => guildData.commands.push(item))
+    const withBS = commands + ', bettershridge';
+    const splittedCommands = withBS.trim().split(', ')
+    splittedCommands.filter(item => !guildData.commands.includes(item))
+        .forEach(item => guildData.commands.push(item));
     guildData.save();
     const formattedCmdLst = formatItemsToTable(splittedCommands);
     return [
@@ -522,6 +522,10 @@ function formatCommandHelp(prefix, match) {
         ...formattedCmdLst
     ];
 };
+
+register('command', () => {
+    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rAvailable commands (_command): lbin, bz, cata, 8ball, election, help, pick, ping, skill, slayer, tfish, contest, fw, fc, is, ib, collection, be, raw, rlb, boop, glist, gonline, resetglist, update <@u4qirfmn9s>&r`)
+}).setName('testhelp');
 
 function formatSyntaxErrors(prefix, match) {
     const [_, cmdName, optionsStr] = match;

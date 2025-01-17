@@ -243,8 +243,10 @@ function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeAntiSpamID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);
     const formattedSender = updateFormattedSender({name: sender}, bestData);
-
-    if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
+        if (responses === '_bettershridge') {
+            ChatLib.chat(`${data.modulePrefix}&r &6Hiya!\n&6Do &r/bs help&6 to be redirected to the Bettershridge Helpline!`)
+            return;
+    } else if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);
     } else {
         if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
@@ -483,7 +485,7 @@ guildListTitles.forEach(element => {
 //     const message = ChatLib.getChatMessage(event, true);
 //     if (message === '&b&m-----------------------------------------------------&r') cancel(event);
 // });
-                                        
+
 
 //! guild best system
 export const bestData = new PogObject("bettershridge", {
