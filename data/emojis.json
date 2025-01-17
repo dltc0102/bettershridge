@@ -592,7 +592,7 @@
   ":second_place:": "㖱",
   ":second_place_medal:": "㖱",
   ":third_place:": "㖲",
-  ":third_place_medal:": "㖲",
+  ":third_place_medal:": "㖲",    
   ":reminder_ribbon:": "㖳",
   ":rosette:": "㖴",
   ":ticket:": "唄",
@@ -693,5 +693,6 @@
   ":keyboard:": "㗻",
   ":desktop:": "㗼",
   ":desktop_computer:": "㗼",
-  ":printer:": "㗽" 
-}
+  ":printer:": "㗽",
+  ":test1:": ":test1|batch-4:"  
+} 

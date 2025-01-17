@@ -70,6 +70,34 @@ function highlightTags(msg) {
     return msg.replace(tagRegex, tag => `&b${tag}&r`);
 }
 
+function getBatchSymbols(symbol, batch) {
+    let resBatch = [];
+    const numPerSide = Math.sqrt(Number(batch));
+    let row = symbol.repeat(numPerSide)
+    resBatch.push(row);
+    return resBatch;
+}
+
+function batchEmojis(msg, originalMessage) {
+    const customEmojis = {
+        ":test1|batch-4:": '㗾',
+    };
+
+    const batchRegex = /:(\w+\|batch-(\d+)):/;
+    const match = msg.match(batchRegex);
+    if (match) {
+        const newEmojiName = `:${match[1]}:`;
+        const batchNum = match[2];
+        const batchSymbol = customEmojis[newEmojiName];
+        const batchMessages = getBatchSymbols(batchSymbol, batchNum);
+        const senderLength = originalMessage.split(': ')[0].length + 1;
+        const paddedBatch = batchMessages.map(row => ' '.repeat(senderLength) + row);
+        const firstLine = msg.replace(newEmojiName, batchSymbol.repeat(Math.sqrt(batchNum)));
+        return [firstLine, ...paddedBatch];
+    }
+    return [msg];
+}
+
 function emojis(msg) {
     const parsedEmojis = JSON.parse(FileLib.read('bettershridge', '/data/emojis.json'));
     const emojiRegex = /:\w+:/g;
@@ -77,7 +105,8 @@ function emojis(msg) {
 };
 
 export function processMessage(message) {
-    return emojis(highlightTags(message));
+    const emojied = emojis(highlightTags(message));
+    return batchEmojis(emojied, message).join('\n');
 };
 
 export function formatItemsToTable(items, columns = 2) {
@@ -125,6 +154,7 @@ function getLinkSource(link) {
     if (link.includes('twitter')) return 'Twitter';
     if (link.includes('hypixel')) return 'Hypixel';
     if (link.includes('facebook')) return 'Facebook';
+    if (link.includes('instagram')) return 'Instagram';
     if (link.includes('imgur')) return 'Imgur';
     if (link.includes('tenor')) return 'Tenor';
     if (link.includes('regex101')) return 'regex101';
@@ -253,3 +283,4 @@ export function isValidColorCode(arg) {
     const invalidArgs = ['&k', '&l', '&m', '&n', '&o'];
     return !invalidArgs.includes(arg);
 };
+        

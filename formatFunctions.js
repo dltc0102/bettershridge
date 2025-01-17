@@ -24,6 +24,10 @@ const collNameCodes = {
     "farming": "&6",
     "mining": "&b",
     "taming": "&d",
+    "alchemy": "&e",
+    "runecrafting": "&5",
+    "enchanting": "&9",
+
 
     // sub categories
     "lava": "&c",
@@ -406,7 +410,7 @@ function formatNoReqUpdateMessage(prefix, match) {
 
 function formatSkillMaxed(prefix, match) {
     const [_, skillName, playerName, playerProfile, skillLevel, totalXP, overflowXP] = match;
-    const skillColor = collNameCodes[skillName.toLowerCase()];
+    const skillColor = collNameCodes.includes(skillName.toLowerCase()) ? collNameCodes[skillName.toLowerCase()] : '&a';
     return [
         `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,
         `${guildData.spacing}Total XP: &r${totalXP}`,
@@ -416,7 +420,7 @@ function formatSkillMaxed(prefix, match) {
 
 function formatSkillProgress(prefix, match) {
     const [_, skillName, playerName, playerProfile, skillLevel, totalXP, nextLevel, xpLeft] = match;
-    const skillColor = collNameCodes[skillName.toLowerCase()];
+    const skillColor = collNameCodes.includes(skillName.toLowerCase()) ? collNameCodes[skillName.toLowerCase()] : '&a';
     return [
         `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,
         `${guildData.spacing}Total XP: &r${totalXP}`,

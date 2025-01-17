@@ -1,4 +1,4 @@
-import { isInHypixel, stripRank, removeAntiSpamID, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage } from './functions';      
+import { isInHypixel, stripRank, removeAntiSpamID, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage } from './functions';
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';
@@ -6,7 +6,7 @@ import { getGuildResponse } from './formatFunctions';
 import PogObject from '../PogData';
 
 const continueSymbol = '➩';
-const idRegex = /<@.+>/;        
+const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
@@ -479,11 +479,11 @@ guildListTitles.forEach(element => {
     }).setCriteria(element);
 });
 
-register('chat', (event) => {
-    const message = ChatLib.getChatMessage(event, true);
-    if (message === '&b&m-----------------------------------------------------&r') cancel(event);
-});
-
+// register('chat', (event) => {
+//     const message = ChatLib.getChatMessage(event, true);
+//     if (message === '&b&m-----------------------------------------------------&r') cancel(event);
+// });
+                                        
 
 //! guild best system
 export const bestData = new PogObject("bettershridge", {
