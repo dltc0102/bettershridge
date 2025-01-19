@@ -73,7 +73,7 @@ register('command', (args) => {
         ChatLib.chat(`&aReply prefix set: &r${prefix}`);
         prefixData.reply = prefix;
         prefixData.save();
-    }   
+    }
 }).setName('setreplyprefix', true);
 
 // reset prefix
@@ -118,5 +118,9 @@ register('command', () => {
     if (!isInHypixel()) return;
     resetPrefixes();
     prefixData.save();
-    ChatLib.chat(`&aPrefixes have been reset! &rGuild: ${prefixData.guild} | Bridge/Bot: ${prefixData.bot} | Arrow: ${prefixData.arrow} | Reply: ${prefixData.reply}`);
+    ChatLib.chat(`
+        &aPrefixes have been reset!\n
+        &rGuild: ${prefixData.guild}&r | Bridge/Bot: ${prefixData.bot}\n
+        &rArrow: ${prefixData.arrow}&r | Reply: ${prefixData.reply}
+    `);
 }).setName('confirmResetPrefix', true);

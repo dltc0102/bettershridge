@@ -109,15 +109,15 @@ function getAttachmentName(link) {
 
 function getLinkSource(link) {
     let source;
-    if (link.includes('youtube') || link.includes('youtu.be')) source = 'Youtube';
-    if (link.includes('twitch')) source = 'Twitch';
-    if (link.includes('discord')) source = 'Discord';
-    if (link.includes('twitter')) source = 'Twitter';
-    if (link.includes('hypixel')) source = 'Hypixel';
-    if (link.includes('facebook')) source = 'Facebook';
+    if (link.includes('youtube') || link.includes('youtu.be')) return 'Youtube';
+    if (link.includes('twitch')) return 'Twitch';
+    if (link.includes('discord')) return 'Discord';
+    if (link.includes('twitter')) return 'Twitter';
+    if (link.includes('hypixel')) return 'Hypixel';
+    if (link.includes('facebook')) return 'Facebook';
     if (link.includes('instagram')) return 'Instagram';
-    if (link.includes('imgur')) source = 'Imgur';
-    if (link.includes('tenor')) source = 'Tenor';
+    if (link.includes('imgur')) return 'Imgur';
+    if (link.includes('tenor')) return 'Tenor';
     if (link.includes('regex101')) return 'regex101';
     if (link.inlcudes('chattriggers')) return 'CT';
     const linkRegex = /https?:\/\/(.+)?\.(com|net|org|int|edu|gov)\/.*?/;

@@ -282,7 +282,7 @@ function replyMessageHandler(prefix, message) {
         return handleLinkMessages(prefix, formattedSender, responses);
 
     } else {
-        return `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
+        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
     }
 };
 
@@ -393,11 +393,103 @@ register('command', (id) => {
 }).setName('clearchatbyid', true);
 
 
+//! glist
+function getOnlineMembers(storedGuildData, givData) {
+    let onlineMembers = [];
+    storedGuildData.forEach(member => {
+        if (member.endsWith('&a ●')) onlineMembers.push(member);
+    })
+    return onlineMembers;
+};
+
+function getOnlineBests(onlineLst, inputData) {
+    let onlineBests = [];
+    onlineLst.map(onlineMember => stripRank(onlineMember.removeFormatting()).toLowerCase()).forEach(onlineMember => {
+        if (inputData.names.includes(onlineMember) || inputData.names.some(bestName => onlineMember.includes(bestName))) {
+            onlineBests.push(onlineMember);
+        };
+    });
+    return onlineBests;
+};
+
+let guildMembers = [];
+let glLoads = 6;
+register('chat', (event) => {
+    if (!isInHypixel()) return;
+    const message = ChatLib.getChatMessage(event, true);
+    const entries = message.split(/\s{2}/).filter(c => c.match(/●/));
+    if (!entries.length > 0) return;
+    if (glLoads > 0) {
+        guildMembers.push(...entries);
+        glLoads -= 1;
+    }
+
+    if (glLoads === 0 && showGBList) {
+        let onlineMembers = getOnlineMembers(guildMembers);
+        let onlineBestMembers = getOnlineBests(onlineMembers, bestData);
+        ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
+        ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
+        bestData.names.forEach(bestName => {
+            const bestNameStatus = onlineBestMembers.includes(bestName) || onlineBestMembers.some(name => name.includes(bestName)) ? '&a' : '&c';
+            ChatLib.chat(`${bestNameStatus}●&r &b${bestName}`)
+        });
+        ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
+        glLoads = 6;
+        showGBList = false;
+    }
+    cancel(event);
+});
+
+let showGBList = false;
+register('command', () => {
+    if (!isInHypixel()) return;
+    showGBList = true;
+}).setName('dontshowgb', true);
+
+register('command', (query) => {
+    if (!isInHypixel()) return;
+    if (!query) {
+        ChatLib.chat(`${data.modulePrefix} &cQuery Unrecognised, enter a name!`);
+    };
+
+    ChatLib.command('gl');
+    let onlineMembers = getOnlineMembers(guildMembers);
+    const queryName = query.toLowerCase();
+    const isOnline = onlineMembers.some(member => member.includes(queryName) || stripRank(member.removeFormatting()).toLowerCase() === queryName) ? ' -- &aONLINE' : ' -- &cOFFLINE';
+    ChatLib.chat(`${data.modulePrefix} &r&aSearch Query: &f${JSON.stringify(query)}${isOnline}`);
+}).setName('gsearch', true).setAliases('gs');
+
+
+const guildListTitles = [
+    /Total Members: \d+/,
+    /Online Members: \d+/,
+    /Offline Members: \d+/,
+    /Guild Name: Shrimple/,
+    /\s*-- Guild Master --\s*/,
+    /\s*-- Admin --\s*/,
+    /\s*-- Lobster --\s*/,
+    /\s*-- Shrimp --\s*/,
+    /\s*-- Crayfish --\s*/,
+    /\s*-- Krill --\s*/,
+];
+
+guildListTitles.forEach(element => {
+    register('chat', (event) => {
+        if (!isInHypixel()) return;
+        cancel(event);
+    }).setCriteria(element);
+});
+
+register('chat', (event) => {
+    const message = ChatLib.getChatMessage(event, true);
+    if (message === '&b&m-----------------------------------------------------&r') cancel(event);
+});
+
 
 //! guild best system
 export const bestData = new PogObject("bettershridge", {
     names: [],
-    color: '&4',
+    color: '&6',
     trigger: false,
 }, './data/bestData.json');
 bestData.autosave(1)
@@ -406,15 +498,12 @@ register('command', (arg) => {
     if (!isInHypixel()) return;
     const lowerArg = arg ? arg.toLowerCase() : null;
 
-    if (!arg || lowerArg === 'list') {
+    if (!arg || lowerArg === 'list' || lowerArg === 'online') {
         if (bestData.names.length === 0) {
             ChatLib.chat(`&cGuild Best List is currently empty! Use &b/guildbest (name) &cto add a name!`);
-        } else {
-            ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
-            bestData.names.forEach((name, index) => {
-                ChatLib.chat(` &3${index + 1}.&r &b${name}`);
-            });
+            return;
         }
+        ChatLib.command('gl');
         return;
     };
 

@@ -1,4 +1,4 @@
-    import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripRank } from './functions.js';  
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripRank } from './functions.js';
 import PogObject from '../PogData';
 
 
@@ -37,15 +37,15 @@ const collNameCodes = {
     "the farming islands": "&f",
     "the garden": "&2",
     "spider's den": "&c",
-    "the end": "&d",    
-    "crimson isle": "&c",   
+    "the end": "&d",
+    "crimson isle": "&c",
     "deep caverns": "&b",
     "dwarven mines": "&2",
     "crystal hollows": "&5",
     "the park": "&3",
     "spooky festival": "&6",
     "the catacombs": "&c",
-    "mythological creatures": "&2", 
+    "mythological creatures": "&2",
     "jerry": "&6",
     "kuudra": "&c",
 };
@@ -100,13 +100,13 @@ const mayorPerks = {
         'Chivalrous Carnival': `Schedules a Carnival in the Hub that is active throughout the entire year.`,
         'Extra Event': `Schedules an extra (Fishing Festival/Mining Fiesta/Spooky Festival) event during the year.`,
         'Sweet Benevolence': `Earn +30% more Candy, Gifts and Chocolate from duplicate Rabbits during their respective events.`,
-    }, 
+    },
     'Marina': {
         'Double Trouble': `For every 1 Sea Creature Chance, gain +0.1 Double Hook Chance.`,
         'Fishing XP Buff': `Gain +50 ☯Fishing Wisdom on public islands.`,
         'Fishing Festival': `Start a special fishing event during the first 3 days of each month! Fish and fight dangerous sharks and earn unique Shark loot.`,
         'Luck of the Sea 2.0': `Gain +15 Sea Creature Chance.`,
-    }, 
+    },
     'Paul': {
         'Benediction': `Blessings are 25% stronger.`,
         'Marauder': `Dungeon reward chests are 20% cheaper.`,
@@ -130,24 +130,24 @@ const mayorPerks = {
 };
 
 const tfishColorsDict = {
-    'Blobfish': '&f', 
-    'Gusher': '&f', 
-    'Obfuscated 1': '&f', 
-    'Sulphur Skitter': '&f', 
-    'Steaming-Hot Flounder': '& f', 
-    'Obfuscated 2': '&a', 
-    'Slugfish': '&a', 
-    'Flyfish': '&a', 
-    'Obfuscated 3': '&9', 
+    'Blobfish': '&f',
+    'Gusher': '&f',
+    'Obfuscated 1': '&f',
+    'Sulphur Skitter': '&f',
+    'Steaming-Hot Flounder': '& f',
+    'Obfuscated 2': '&a',
+    'Slugfish': '&a',
+    'Flyfish': '&a',
+    'Obfuscated 3': '&9',
     'Lavahorse': '&9',
-    'Mana Ray': '&9', 
-    'Volcanic Stonefish': '&9', 
-    'Vanille': '&9', 
-    'Skeleton Fish': '&5', 
-    'Moldfin': '&5', 
-    'Soulfish': '&5', 
-    'Karate Fish': '&5', 
-    'Golden Fish': '&6' 
+    'Mana Ray': '&9',
+    'Volcanic Stonefish': '&9',
+    'Vanille': '&9',
+    'Skeleton Fish': '&5',
+    'Moldfin': '&5',
+    'Soulfish': '&5',
+    'Karate Fish': '&5',
+    'Golden Fish': '&6'
 };
 
 const rareMobs = ['Lord Jawbus', 'Thunder', 'Plhlegblast', 'The Sea Emperor', 'Carrot King', 'Water Hydra', 'Yeti', 'Reindrake', 'Great White Shark', 'Grim Reaper', 'Phantom Fisher', 'Abyssal Miner'];
@@ -159,7 +159,7 @@ function generateMessage(prefix, message, regex, formatHandler) {
         return formatHandler(prefix, match);
     } catch(error) {
         ChatLib.chat(`&4[&b!&4]&r &cUnrecognised statement, please contact oBiscuit`)
-        console.error(`not matched -- bettershridge\nError: ${error}\nMessage: '${message}\nregex: ${regex}'`);
+        console.error(`not matched -- bettershridge\nError: ${error}\nMessage: ${message}\nregex: ${regex}`);
     };
 }
 
@@ -175,7 +175,7 @@ export function getGuildResponse(prefix, message, type) {
             format: formatMayor
         },
         pickedMayor: {
-            regex: /(.+) is in (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?)(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?/,       
+            regex: /(.+) is in (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?)(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?(?: and (\d+) (years?|months?|weeks?|days?|hours?|minutes?|seconds?))?/,
             format: formatMayorPicked
         },
         promoted: {
@@ -183,29 +183,29 @@ export function getGuildResponse(prefix, message, type) {
             format: formatPromotion,
         },
         demoted: {
-            regex: /&r(&[a-qs-z0-9])(.+) &r&awas demoted from (.+) to (.+)&r.+/, 
+            regex: /&r(&[a-qs-z0-9])(.+) &r&awas demoted from (.+) to (.+)&r.+/,
             format: formatDemotion,
         },
         updatedMessage: {
             regex: /Role is already up to date! Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
             format: formatUpdatedMessage,
         },
-        noReqUpdate: {  
+        noReqUpdate: {
             regex: /(.+) does not have requirements! But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
             format: formatNoReqUpdateMessage
         },
         skillMaxed: {
-            regex: /(.+) level for (.+) \((.+)\): (\d+) \| Total XP: (.+) \| Overflow XP: (.+)/,
-            format: formatSkillMaxed  
-        }, 
+            regex: /(.+) level for (.+) ((.+)): (\d+) \| Total XP: (.+) \| Overflow XP: (.+)/,
+            format: formatSkillMaxed
+        },
         skillProgress: {
             regex: /(.+) level for (.+) \((.+)\): (.+) \| Total XP: (.+) \| XP for level (\d+): (.+)/,
-            format: formatSkillProgress  
-        }, 
+            format: formatSkillProgress
+        },
         bazaar: {
             regex: /Bazaar data for (.+): insta-buy: (.+), insta-sell: (.+) ?/,
             format: formatBazaar
-        }, 
+        },
         bestiarySpecific: {
             regex: /(.+) data for (.+) \((.+)\) k\/d \(kdr\): (\d+)\/(\d+)(?: \((.+)\))?/,
             format: formatBestiarySpecific
@@ -226,7 +226,7 @@ export function getGuildResponse(prefix, message, type) {
             regex: /AAH! You scared me, (.+)!/,
             format: formatSpook1
         },
-        spooky2: {  
+        spooky2: {
             regex: /Spooked (.+)! \>:\)/,
             format: formatSpook2
         },
@@ -249,18 +249,18 @@ export function getGuildResponse(prefix, message, type) {
         slayer: {
             regex: /(.+) slayer data for (.+)\s\((.+)\):\sTotal XP:\s(.+)\s\|\sTier kills:\s\((\d+)\s\|\s(\d+) \| (\d+) \| (\d+) \| (\d+)\)/,
             format: formatSlayer
-        }, 
+        },
         tfishGeneral: {
-            regex: /(.+) fish for (.+) \((.+)\): Total: (\d+?) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18/,  
+            regex: /(.+) fish for (.+) \((.+)\): Total: (\d+?) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18/,
             format: formatTfishGeneral
         },
-        tfishObf: {     
+        tfishObf: {
             regex: /(.+) for (.+) \((.+)\): Total: (\d+) \(w\/o Obf 1\) \| Bronze: (\d+)\/18 \| Silver: (\d+)\/18 \| Gold: (\d+)\/18 \| Diamond: (\d+)\/18/,
             format: formatTfishObf
         },
-        tfishSpecific: {        
+        tfishSpecific: {
             regex: /(.+) caught for (.+) \((.+)\): Total (.+): (\d+) \| Bronze: (\d+) \| Silver: (\d+) \| Gold: (\d+) \| Diamond: (\d+)/,
-            format: formatTfishSpecific     
+            format: formatTfishSpecific
         },
         contestSpecific: {
             regex: /Next (.+) contest in (.+)\./,
@@ -299,7 +299,7 @@ export function getGuildResponse(prefix, message, type) {
             format: formatMiscDataFor
         },
         getBooperGP: {
-            regex: /(.+?) &3\[.+\]&f: &r_boop (.+?)( .+)?&r/,       
+            regex: /(.+?) &3\[.+\]&f: &r_boop (.+?)( .+)?&r/,
             format: getBotBooperGP
         },
         getBooperDP: {
@@ -334,7 +334,7 @@ function getCurrMayorPerks(nameWithPerkList) {
         .filter(Boolean)
         .map(([name, description]) => ({ name, description }));
     return activePerks;
-}                       
+}
 
 function getMayorColor(mayor) {
     return `${mayorColors[mayor]}${mayor}`
@@ -345,14 +345,14 @@ function formatMayor(prefix, match) {
     // const [_, currMayor, currMinister, nextMayor, nextTime, specialMayor, specialTime] = match;
     // const minister = '';
     return [
-        // `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,    
-        `${prefix}Current mayor: ${getMayorColor(currMayor)}`,   
+        // `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,
+        `${prefix}Current mayor: ${getMayorColor(currMayor)}`,
         `${guildData.spacing}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
         `${guildData.spacing}Next special: ${getMayorColor(specialMayor)} &r[${formatTime(specialTime)}]`
     ];
 };
 
-function formatMayorPicked(prefix, match) { 
+function formatMayorPicked(prefix, match) {
     const [_, mayorName, firstVal, firstUnit, secondVal=null, secondUnit=null, thirdVal=null, thirdUnit=null] = match;
     const [unit1, unit2, unit3] = [firstUnit, secondUnit, thirdUnit].map(formatTime);
     const parts = [
@@ -365,28 +365,36 @@ function formatMayorPicked(prefix, match) {
 
 function formatPromotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
-    const playerFName = `${playerColor}${playerName.removeFormatting()}`;    
-    return `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`;          
+    const playerFName = `${playerColor}${playerName.removeFormatting()}`;
+    return [
+        ChatLib.getChatBreak('&b&m-'),
+        `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`,
+        ChatLib.getChatBreak('&b&m-')
+    ];
 };
 
 function formatDemotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
     const playerFName = `${playerColor}${playerName.removeFormatting()}`;
-    return `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`;      
+    return [
+        ChatLib.getChatBreak('&b&m-'),
+        `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`,
+        ChatLib.getChatBreak('&b&m-')
+    ];
 };
 
-function formatUpdatedMessage(prefix, match) {  
-    const [_, fexp, sblevels, nextRole] = match;   
-    return [    
-        `${prefix}Role is already up to date!`, 
+function formatUpdatedMessage(prefix, match) {
+    const [_, fexp, sblevels, nextRole] = match;
+    return [
+        `${prefix}Role is already up to date!`,
         `${guildData.spacing}Next Role: &6${nextRole}`,
         `${guildData.spacing}Missing &3Fishing XP&a: &r${fexp}`,
         `${guildData.spacing}Missing Skyblock Lvls: &r${sblevels}`,
-    ];      
+    ];
 };
 
 function formatNoReqUpdateMessage(prefix, match) {
-    const [_, your, fexp, sblevels, nextRole] = match;  
+    const [_, your, fexp, sblevels, nextRole] = match;
     return [
         `${prefix}&c${your} does not have requirements!`,
         `${guildData.spacing}Next Role: &6${nextRole}`,
@@ -397,20 +405,20 @@ function formatNoReqUpdateMessage(prefix, match) {
 
 function formatSkillMaxed(prefix, match) {
     const [_, skillName, playerName, playerProfile, skillLevel, totalXP, overflowXP] = match;
-    const skillColor = collNameCodes.includes(skillName.toLowerCase()) ? collNameCodes[skillName.toLowerCase()] : '&a';
+    const skillColor = skillName.toLowerCase() in collNameCodes ? collNameCodes[skillName.toLowerCase()] : '&a';
     return [
-        `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,    
-        `${guildData.spacing}Total XP: &r${totalXP}`, 
+        `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,
+        `${guildData.spacing}Total XP: &r${totalXP}`,
         `${guildData.spacing}Overflow XP: &r${overflowXP}`
-    ];  
+    ];
 };
 
 function formatSkillProgress(prefix, match) {
     const [_, skillName, playerName, playerProfile, skillLevel, totalXP, nextLevel, xpLeft] = match;
-    const skillColor = collNameCodes.includes(skillName.toLowerCase()) ? collNameCodes[skillName.toLowerCase()] : '&a';
+    const skillColor = skillName.toLowerCase() in collNameCodes ? collNameCodes[skillName.toLowerCase()] : '&a';
     return [
-        `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,    
-        `${guildData.spacing}Total XP: &r${totalXP}`, 
+        `${prefix}${skillColor}${skillName} &askill info for &2${playerName}&a (${playerProfile}): &6${skillLevel}`,
+        `${guildData.spacing}Total XP: &r${totalXP}`,
         `${guildData.spacing}XP for next level (&6${nextLevel}&a): &r${xpLeft}`
     ];
 };
@@ -429,7 +437,7 @@ function formatEssence(str) {
     return str.startsWith('Essence ') ? `${str.split(' ')[1]} Essence` : str;
 }
 
-function formatBazaar(prefix, match) {   
+function formatBazaar(prefix, match) {
     const [_, itemName, buyPrice, sellPrice] = match;
     const itemColor = formatItemColorBZ(itemName);
     const formattedName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
@@ -443,13 +451,13 @@ function formatBazaar(prefix, match) {
 };
 
 function formatBestiarySpecific(prefix, match) {
-    const [_, monster, playerName, playerProfile, kills, deaths, ratio] = match;  
+    const [_, monster, playerName, playerProfile, kills, deaths, ratio] = match;
     const stripMonster = monster.replace(/The/g, '').trim();
     const monsterColor = getMonsterColor(stripMonster);
     const isBeMaxed = Number(kills) >= Number(deaths);
     const maxBeColor = isBeMaxed ? '&6' : '&r';
     const beMessage = `${prefix}${monsterColor}${stripMonster}&a k/d for &2${playerName}&a (${playerProfile}): ${maxBeColor}${kills}/${deaths}`;
-    return ratio ? beMessage + ` &6(${ratio})` : beMessage;        
+    return ratio ? beMessage + ` &6(${ratio})` : beMessage;
 };
 
 function formatBestiaryAll(prefix, match) {
@@ -457,15 +465,15 @@ function formatBestiaryAll(prefix, match) {
     let bestiaryList = bestiaryData
         .match(/([A-Za-z\s]+ \d+\/\d+(?: \(\d+\.\d+\))?)/g)
         .map(data => data.trim());
-    
-    
+
+
     const getBestiaryEntry = (name, kd, ratio) => {
         const mobColor = getMonsterColor(name, true);
         const [currBe, maxBe] = kd.split('/');
         const showRatio = ratio ? ` &7${ratio}` : '';
         const kdColor = Number(currBe) >= Number(maxBe) ? `&6` : `&r`;
         if (!ratio && kd === '0/0') return `${guildData.spacing}${mobColor}${name}: &80/0`;
-        return `${guildData.spacing}${mobColor}${name}: ${kdColor}${kd}${showRatio}`;     
+        return `${guildData.spacing}${mobColor}${name}: ${kdColor}${kd}${showRatio}`;
     }
 
     const formatBestiaryDataByLine = (lst) => {
@@ -473,9 +481,9 @@ function formatBestiaryAll(prefix, match) {
         let bestiaryCommon = [];
         lst.forEach(line => {
             const lineRegex = /(.+?)\s(\d+\/\d+)\s?(\(\d+\.\d+\))?/;
-            const lineMatch = line.match(lineRegex);                        
+            const lineMatch = line.match(lineRegex);
             if (lineMatch) {
-                const [_, name, kd, ratio = null] = lineMatch;  
+                const [_, name, kd, ratio = null] = lineMatch;
                 const bestiaryEntry = getBestiaryEntry(name, kd, ratio);
                 if (rareMobs.includes(name)) {
                     bestiaryRare.push(bestiaryEntry);
@@ -488,12 +496,12 @@ function formatBestiaryAll(prefix, match) {
     };
 
     const [beCommon, beRare] = formatBestiaryDataByLine(bestiaryList);
-    const bestiaryColor = collNameCodes[bestiaryType.toLowerCase()] ?? '&2';    
-    const formattedBeType = bestiaryColor + capitalise(bestiaryType);   
+    const bestiaryColor = collNameCodes[bestiaryType.toLowerCase()] ?? '&2';
+    const formattedBeType = bestiaryColor + capitalise(bestiaryType);
     const titleMessage = `${prefix}${formattedBeType} &r&abestiary data for &2${playerName}&a (${playerProfile}): `
     return [
-        titleMessage, ...beCommon, guildData.spacing, ...beRare  
-        ];          
+        titleMessage, ...beCommon, guildData.spacing, ...beRare
+    ];
 };
 
 function formatCommandHelp(prefix, match) {
@@ -503,7 +511,7 @@ function formatCommandHelp(prefix, match) {
     splittedCommands.filter(item => !guildData.commands.includes(item))
         .forEach(item => guildData.commands.push(item));
     guildData.save();
-    const formattedCmdLst = formatItemsToTable(splittedCommands);   
+    const formattedCmdLst = formatItemsToTable(splittedCommands);
     return [
         `${prefix}Available commands (_command):`,
         ...formattedCmdLst
@@ -515,17 +523,17 @@ function formatSyntaxErrors(prefix, match) {
     const con1 = optionsStr.split(' ')[0].trim();
     const con2 = optionsStr.substring(optionsStr.indexOf(' ')).trim();
     const fcon2 = cmdName === 'cata' ? con2.replace(/\[0-7\]/g, '0-7') : con2;
-    return `${prefix}&c⚠ Usage: _${cmdName} ${con1} ${fcon2}`;                     
+    return `${prefix}&c⚠ Usage: _${cmdName} ${con1} ${fcon2}`;
 };
 
 function formatSpook1(prefix, match) {
-    const [_, spooked] = match;       
-    return `${prefix}&cAAH! &8You scared me, &6${spooked}!`; 
+    const [_, spooked] = match;
+    return `${prefix}&cAAH! &8You scared me, &6${spooked}!`;
 };
 
 function formatSpook2(prefix, match) {
     const [_, spooked] = match;
-    return `${prefix}&8Spooked &6${spooked}! &c>:)`;   
+    return `${prefix}&8Spooked &6${spooked}! &c>:)`;
 };
 
 function formatCmdError(prefix, match) {
@@ -535,9 +543,9 @@ function formatCmdError(prefix, match) {
 
 function formatLbin(prefix, match) {
     const [_, itemName, itemLbin] = match;
-    const f_itemName = itemName.includes(' ') 
-        ? itemName.split(' ').map(thing => capitalise(thing.toLowerCase())).join(' ') 
-        : capitalise(itemName.toLowerCase()); 
+    const f_itemName = itemName.includes(' ')
+        ? itemName.split(' ').map(thing => capitalise(thing.toLowerCase())).join(' ')
+        : capitalise(itemName.toLowerCase());
     return `${prefix}&6[LBIN]&a ${f_itemName}: &6${itemLbin.trim()}`;
 };
 
@@ -560,7 +568,7 @@ function formatDungeonRecords(prefix, match) {
         `${guildData.spacing}Fastest Time: &r${fTime}`,
         `${guildData.spacing}Fastest Time (&6S&a): &r${fTimeS}`,
         `${guildData.spacing}Fastest Time (&cS+&a): &r${fTimeSPlus}`,
-    ];      
+    ];
 };
 
 function formatSlayer(prefix, match) {
@@ -568,32 +576,32 @@ function formatSlayer(prefix, match) {
 
     const slayerColors = {
         "Zombie": "&2",
-        "Wolf": "&f",               
+        "Wolf": "&f",
         "Enderman": "&5",
         "Blaze": "&6",
         "Tarantula": "&c",
         "Vampire": "&4",
-    };      
+    };
     const slayerColor = slayerColors[slayerName];
-    return [   
+    return [
         `${prefix}${slayerColor}${slayerName}&r&a Slayer Data for &2${playerName}&a (${playerProfile}):`,
         `${guildData.spacing}Total XP: &r${totalXP}`,
-        `${guildData.spacing}Kills&r: &7T1: &a${t1} &8| &7T2: &e${t2} &8| &7T3: &c${t3} &8| &7T4: &4${t4} &8| &7T5: &5${t5}`,             
+        `${guildData.spacing}Kills&r: &7T1: &a${t1} &8| &7T2: &e${t2} &8| &7T3: &c${t3} &8| &7T4: &4${t4} &8| &7T5: &5${t5}`,
     ];
 };
 
 function formatTfishGeneral(prefix, match) {
     const [_, fishName, playerName, playerProfile, totalFish, bronzeProg, silverProg, goldProg, diamondProg] = match;
-    const title = `${prefix}Trophy Fish for &2${playerName}&a (${playerProfile}):`;  
-    return [    
+    const title = `${prefix}Trophy Fish for &2${playerName}&a (${playerProfile}):`;
+    return [
         title,
         `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
-    ];      
+    ];
 };
 
-function formatTfishObf(prefix, match) {                
+function formatTfishObf(prefix, match) {
     const [_, fishName, playerName, playerProfile, totalFish, bronzeProg, silverProg, goldProg, diamondProg] = match;
-    const title = `${prefix}Trophy fish for &2${playerName}&a (${playerProfile}) &cwithout Obf 1&a: `; 
+    const title = `${prefix}Trophy fish for &2${playerName}&a (${playerProfile}) &cwithout Obf 1&a: `;
     return [
         title,
         `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeProg}/18 &a|&r &7${silverProg}/18 &a|&r &6${goldProg}/18 &a|&r &b${diamondProg}/18 &a]&r`,
@@ -602,10 +610,10 @@ function formatTfishObf(prefix, match) {
 
 function formatTfishSpecific(prefix, match) {
     const [_, fishName, playerName, playerProfile, fishName2, totalFish, bronzeFish, silverFish, goldFish, diamondFish] = match;
-    const fishNameColor = fishName in tfishColorsDict ? tfishColorsDict[fishName] : ''; 
+    const fishNameColor = fishName in tfishColorsDict ? tfishColorsDict[fishName] : '';
     return [
-        `${prefix}${fishNameColor}${fishName} &adata for &2${playerName}&a (${playerProfile}):`,                         
-        `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeFish} &a|&r &7${silverFish} &a|&r &6${goldFish} &a|&r &b${diamondFish} &a]&r`,        
+        `${prefix}${fishNameColor}${fishName} &adata for &2${playerName}&a (${playerProfile}):`,
+        `${guildData.spacing}Total Fish: &r${totalFish} &a[&r &8${bronzeFish} &a|&r &7${silverFish} &a|&r &6${goldFish} &a|&r &b${diamondFish} &a]&r`,
     ];
 };
 
@@ -622,14 +630,14 @@ function formatNextContest(prefix, match) {
     return [
         `${prefix}Next Contest in ${formatColonTime(timeTillNext)}!`,
         `${guildData.spacing}Crops: &6${f_nextCrops}`
-    ];  
+    ];
 };
 
 function formatActiveContest(prefix, match) {
     [_, activeCrops, currContestTimeLeft, nextCrops, nextContestTime] = match;
-    const currCrops = activeCrops.split(', ').map(crop => capitalise(crop)).join(', ');       
+    const currCrops = activeCrops.split(', ').map(crop => capitalise(crop)).join(', ');
     const f_nextCrops = nextCrops.split(', ').map(crop => capitalise(crop)).join(', ');
-    return [        
+    return [
         `${prefix}Contest is Active! [&r${formatColonTime          (currContestTimeLeft)} left&a] &8|&r &7Next in ${formatColonTime(nextContestTime)}`,
         `${guildData.spacing}Current Contest: &6${currCrops}`,
         `${guildData.spacing}Next Contest: &6${f_nextCrops}`
@@ -649,16 +657,16 @@ function formatFarmingWeight(prefix, match) {
     return [
         `${prefix}&eFarming &aweight for &2${playerName}&a (${playerProfile}): &6${weight}`,
         `${guildData.spacing}Collections: &r${collWeight}`,
-        ...otherWeights, 
+        ...otherWeights,
     ];
 };
 
 function formatInstaSell(prefix, match) {
     const [_, itemAmt, itemName, sellCost, aveCost] = match;
     const itemColor = itemName.includes('Ultimate') ? '&d&l' : '&r';
-    const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim(); 
+    const formattedItemName = itemName.replace(/Enchantment/g, '').replace(/Ultimate/g, '').trim();
     return [
-        `${prefix}Insta-sell: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,        
+        `${prefix}Insta-sell: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,
         `${guildData.spacing}Sell Cost: &6${sellCost}`,
         `${guildData.spacing}Ave. Cost/unit: &6${aveCost}`,
     ];
@@ -671,7 +679,7 @@ function formatInstaBuy(prefix, match) {
     return [
         `${prefix}Insta-buy: &r${itemAmt}&ax ${itemColor}${formattedItemName}:`,
         `${guildData.spacing}Buy Cost: &6${sellCost}`,
-        `${guildData.spacing}Ave. Cost/unit: &6${aveCost}`,   
+        `${guildData.spacing}Ave. Cost/unit: &6${aveCost}`,
     ];
 };
 
@@ -680,19 +688,19 @@ function formatCollections(prefix, match) {
     const collColor = collNameCodes[collName.toLowerCase()];
     let itemList = items
         .match(/[\w\s]+ \d+\/\d+ \(\d{1,3}(?:,\d{3})*(?:\/\d{1,3}(?:,\d{3})*)?\)/g)
-        .map(item => {       
+        .map(item => {
             const itemRegex = /(.+) (\d+)\/(\d+) \((.+)\)/;
             const itemMatch = (item.trim()).match(itemRegex);
             if (itemMatch) {
                 const [_, itemName, itemLvl, itemMaxLvl, itemAmount] = itemMatch;
                 const maxColor = itemLvl === itemMaxLvl ? '&6' : '';
-                return `${guildData.spacing}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;    
+                return `${guildData.spacing}&r${itemName}: &a${maxColor}${itemLvl}/${itemMaxLvl} &7(${itemAmount})`;
             };
         });
 
     const collectionMessages = [
         `${prefix}${collColor}${capitalise(collName)} &afor &2${playerName}&a (${playerProfile}): `,
-        ...itemList,                
+        ...itemList,
     ];
     return collectionMessages;
 };
@@ -706,12 +714,12 @@ function formatMiscDataFor(prefix, match) {
     const [_, itemName, playerName, playerProfile, collLevel, collMax, collItems] = match;
     const collectionColor = collLevel === collMax ? '&6' : '&a';
     return `${prefix}${itemName} data for &2${playerName}&a (${playerProfile}): &r${collectionColor}${collLevel}/${collMax} &r(${truncateNumbers(collItems)})`;
-};      
+};
 
 function getBotBooperDP(prefix, match) {
     const [_, boopSender, boopResponse=''] = match;
     guildData.booper = stripRank(boopSender.removeFormatting());
-    guildData.booped = boopResponse.split(' ')[0];  
+    guildData.booped = boopResponse.split(' ')[0];
 };
 
 function getBotBooperGP(prefix, match) {
@@ -737,9 +745,8 @@ function resetBoop(prefix, match) {
 
 function formatGuildmateStatus(prefix, match) {
     const [_, guildmateName, status] = match;
-    const formattedStatus = status === 'is not' 
-        ? '&r&ais &c&lOffline' 
+    const formattedStatus = status === 'is not'
+        ? '&r&ais &c&lOffline'
         : '&r&ais &lOnline';
     return `${prefix}${guildmateName} ${formattedStatus}`;
-};  
-
+};

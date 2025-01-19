@@ -8,11 +8,11 @@ register('command', () => {
     const pollMessage = new Message(
         '&7Polling query for status ',
         wheelStart
-    ).setChatLineID(111);
+    ).setChatLineID(111);   
     startWheel = true;
     ChatLib.chat('&aPoll starting...')
     ChatLib.chat(pollMessage);
-}).setName('pollit', true);     
+}).setName('pollit', true);
 
 registerWhen('step', timeThis('step trigger for poll wheel', () => {
     const message = ChatLib.getChatLineID(111);

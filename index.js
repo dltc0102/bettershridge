@@ -2,17 +2,16 @@ import { isInHypixel } from './functions.js';
 import { data } from './utilities/bots.js';
 import './guild.js';
 
+import './pollTimeWheel.js'
+
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
-        "&a+ for names that appear in replies on bridge, if in the guild best list, will be set to best color",
-        "&a+ wrapper for formatted senders",
-        "&a+ setreplyprefix",
-        "&c- removed usless funcs (stripFormattedName, getInSkyblock)",
-        "&a+ renamed func names",   
-        "&a+ quick fix to func truncateNumbers(...)",
-        "&a+ '[undefined Link]' shouldn't happen again"
-      ];
+        "&a+ feature: /gsearch (query)",
+        "&a+ featire: /gb online",
+        "&a+ highlightTags() will ignore '@_@'",
+        "&a+ improved prettified message from formatItemsToTable() for _help command",
+    ];
 
     const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
     return new TextComponent(`&3&l[&r&aHover for Changelog&3&l]`)
@@ -23,8 +22,10 @@ register('gameLoad', () => {
     if (!isInHypixel()) return;
     ChatLib.chat(`${data.modulePrefix} &3Loaded! &7DM @oBiscuit for any concerns`);
 
+    console.info(`[Bettershridge] Loadded! -- v${moduleVersion}`);
+
     const moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
-    if (moduleVersion === '0.4.0') {
+    if (moduleVersion === '0.5.0') {
         const featureMessage = new Message(
             `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
         )
