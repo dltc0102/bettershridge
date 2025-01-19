@@ -1,4 +1,4 @@
-import { isInHypixel, stripRank, removeAntiSpamID, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage } from './functions';
+import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode } from './functions';
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';
@@ -9,7 +9,7 @@ const continueSymbol = '➩';
 const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
-const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', 'Runecrafting', 'Taming', 'Social'];
+const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];
 
 function sortMessageByType(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -23,7 +23,7 @@ function sortMessageByType(e) {
         const sender = stripRank(formattedName.removeFormatting()).trim();
 
         // &b[MVP&3+&b] Pebbles &3[Shrimp]&f: &rwatching a level 346 macro svens&r&r
-        if (!data.bots.includes(stripRank(sender))) {
+        if (!data.bots.includes(sender)) {
             type = 'guildPlayer';
             resMessage = playerMatch[0];
         }
@@ -57,7 +57,7 @@ function sortMessageByType(e) {
 }
 
 function handleLinkMessages(prefix, sender='', msg) {
-    const preFMessage = processMessage(
+    const preFMessage = highlightTags(
         msg.slice(msg.indexOf(': ')+1).removeFormatting().replace(/\s+/g, ' ')
       ).trim();
 
@@ -72,8 +72,7 @@ function handleLinkMessages(prefix, sender='', msg) {
 };
 
 function botMessageHandler(prefix, message) {
-    const botMessage = removeAntiSpamID(message).removeFormatting().trim();
-
+    const botMessage = removeAntiSpamID(message).removeFormatting().replace(idRegex, '').trim();
     //! _mayor
     if (botMessage.startsWith('Current mayor: ')) {
         return getGuildResponse(prefix, botMessage, 'mayor')
@@ -205,12 +204,11 @@ function botMessageHandler(prefix, message) {
 
     //! responses & 8ball
     } else {
-        return botMessage.startsWith('⚠') && !botMessage.includes('Usage')
+        return (botMessage.startsWith('⚠') && !botMessage.includes('Usage'))
         ? `${prefix}&c${botMessage}`
-        :`${prefix}${botMessage}`;
+        : `${prefix}${botMessage}`;
     }
 };
-
 
 /**
  * Formats the sender by some conditions with either the default &a color or the best color.
@@ -243,14 +241,16 @@ function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeAntiSpamID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
     const [sender, responses] = dpMessage.split(/: (.+)/);
     const formattedSender = updateFormattedSender({name: sender}, bestData);
-        if (responses === '_bettershridge') {
-            ChatLib.chat(`${data.modulePrefix}&r &6Hiya!\n&6Do &r/bs help&6 to be redirected to the Bettershridge Helpline!`)
-            return;
+    if (responses === '_bettershridge') {
+        ChatLib.chat(`${data.modulePrefix}&r &6Hiya!\n&6Do &r/bs help&6 to be redirected to the Bettershridge Helpline!`)
+        return;
+
     } else if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(prefix, formattedSender, dpMessage);
+
     } else {
         if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
-        return `${prefix}${formattedSender}&r: ${processMessage(responses)}`;
+        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
     }
 };
 
@@ -265,7 +265,7 @@ function guildPlayerMessageHandler(prefix, message) {
             return handleLinkMessages(prefix, formattedSender, responses);
         } else {
             if (responses.includes('_boop')) getGuildResponse(prefix, message, 'getBooperGP');
-            return `${prefix}${formattedSender}&r: ${processMessage(responses)}`;
+            return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
         }
     }
 };
@@ -279,10 +279,11 @@ function replyMessageHandler(prefix, message) {
     const formattedSender = `${formatted1} ${prefixData.reply} ${formatted2}`;
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
-        return handleLinkMessages(prefix, formattedSender,  responses);
+        return handleLinkMessages(prefix, formattedSender, responses);
+
     } else {
-        return `${prefix}${formattedSender}&r: ${processMessage(responses)}`;
-    };
+        return `${prefix}${name1} &2[to]&a ${name2}&r: ${highlightTags(responses)}`;
+    }
 };
 
 function messageHandler(message) {
@@ -313,10 +314,9 @@ function messageHandler(message) {
     }
     // console.log(' ');
     // console.log(type, resMessage);
-    const arrow = prefixData.arrow ? ` ${prefixData.arrow}` : '';
-    let prefix = `${prefixData.bot}&r${arrow}&r &a`;
+    let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
     if (type === 'guildPlayer') {
-        prefix = `${prefixData.guild}&r${arrow}&r &a`;
+        prefix = `${prefixData.guild}&r ${prefixData.arrow}&r &a`;
     };
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
@@ -356,7 +356,6 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
         };
 
         const [newType, newMsg] = messageHandler(finalMsg);
-
         if (newType === 'bot' && !isBot) {
             const yesClickable = new TextComponent('&a&l[YES] ')
                 .setClick('run_command', `/addbot ${player}`)
@@ -395,102 +394,10 @@ register('command', (id) => {
 
 
 
-//! glist
-function getOnlineMembers(storedGuildData, givData) {
-    let onlineMembers = [];
-    storedGuildData.forEach(member => {
-        if (member.endsWith('&a ●')) onlineMembers.push(member);
-    })
-    return onlineMembers;
-};
-
-function getOnlineBests(onlineLst, inputData) {
-    let onlineBests = [];
-    onlineLst.map(onlineMember => stripRank(onlineMember.removeFormatting()).toLowerCase()).forEach(onlineMember => {
-        if (inputData.names.includes(onlineMember) || inputData.names.some(bestName => onlineMember.includes(bestName))) {
-            onlineBests.push(onlineMember);
-        };
-    });
-    return onlineBests;
-};
-
-let guildMembers = [];
-let glLoads = 6;
-register('chat', (event) => {
-    if (!isInHypixel()) return;
-    const message = ChatLib.getChatMessage(event, true);
-    const entries = message.split(/\s{2}/).filter(c => c.match(/●/));
-    if (!entries.length > 0) return;
-    if (glLoads > 0) {
-        guildMembers.push(...entries);
-        glLoads -= 1;
-    }
-
-    if (glLoads === 0 && showGBList) {
-        let onlineMembers = getOnlineMembers(guildMembers);
-        let onlineBestMembers = getOnlineBests(onlineMembers, bestData);
-        ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
-        ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
-        bestData.names.forEach(bestName => {
-            const bestNameStatus = onlineBestMembers.includes(bestName) || onlineBestMembers.some(name => name.includes(bestName)) ? '&a' : '&c';
-            ChatLib.chat(`${bestNameStatus}●&r &b${bestName}`)
-        });
-        ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
-        glLoads = 6;
-        showGBList = false;
-    }
-    cancel(event);
-});
-
-let showGBList = false;
-register('command', () => {
-    if (!isInHypixel()) return;
-    showGBList = true;
-}).setName('dontshowgb', true);
-
-register('command', (query) => {
-    if (!isInHypixel()) return;
-    if (!query) {
-        ChatLib.chat(`${data.modulePrefix} &cQuery Unrecognised, enter a name!`);
-    };
-
-    ChatLib.command('gl');
-    let onlineMembers = getOnlineMembers(guildMembers);
-    const queryName = query.toLowerCase();
-    const isOnline = onlineMembers.some(member => member.includes(queryName) || stripRank(member.removeFormatting()).toLowerCase() === queryName) ? ' -- &aONLINE' : ' -- &cOFFLINE';
-    ChatLib.chat(`${data.modulePrefix} &r&aSearch Query: &f${JSON.stringify(query)}${isOnline}`);
-}).setName('gsearch', true).setAliases('gs');
-
-const guildListTitles = [
-    /Total Members: \d+/,
-    /Online Members: \d+/,
-    /Offline Members: \d+/,
-    /Guild Name: Shrimple/,
-    /\s*-- Guild Master --\s*/,
-    /\s*-- Admin --\s*/,
-    /\s*-- Lobster --\s*/,
-    /\s*-- Shrimp --\s*/,
-    /\s*-- Crayfish --\s*/,
-    /\s*-- Krill --\s*/,
-];
-
-guildListTitles.forEach(element => {
-    register('chat', (event) => {
-        if (!isInHypixel()) return;
-        cancel(event);
-    }).setCriteria(element);
-});
-
-// register('chat', (event) => {
-//     const message = ChatLib.getChatMessage(event, true);
-//     if (message === '&b&m-----------------------------------------------------&r') cancel(event);
-// });
-
-
 //! guild best system
 export const bestData = new PogObject("bettershridge", {
     names: [],
-    color: '&6',
+    color: '&4',
     trigger: false,
 }, './data/bestData.json');
 bestData.autosave(1)
@@ -499,13 +406,15 @@ register('command', (arg) => {
     if (!isInHypixel()) return;
     const lowerArg = arg ? arg.toLowerCase() : null;
 
-    if (!arg || lowerArg === 'list' || lowerArg === 'online') {
+    if (!arg || lowerArg === 'list') {
         if (bestData.names.length === 0) {
             ChatLib.chat(`&cGuild Best List is currently empty! Use &b/guildbest (name) &cto add a name!`);
-            return;
+        } else {
+            ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
+            bestData.names.forEach((name, index) => {
+                ChatLib.chat(` &3${index + 1}.&r &b${name}`);
+            });
         }
-        ChatLib.command('gl');
-        showGBList = true;
         return;
     };
 

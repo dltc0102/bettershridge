@@ -1,13 +1,17 @@
 import { isInHypixel } from './functions.js';
-import { prefixData } from './utilities/prefix.js';
-import { bestData } from './guild.js';
 import { data } from './utilities/bots.js';
 import './guild.js';
 
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
-        //? ...
+        "&a+ for names that appear in replies on bridge, if in the guild best list, will be set to best color",
+        "&a+ wrapper for formatted senders",
+        "&a+ setreplyprefix",
+        "&c- removed usless funcs (stripFormattedName, getInSkyblock)",
+        "&a+ renamed func names",   
+        "&a+ quick fix to func truncateNumbers(...)",
+        "&a+ '[undefined Link]' shouldn't happen again"
       ];
 
     const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
@@ -17,20 +21,19 @@ function makeChangelogHoverable(moduleVersion) {
 
 register('gameLoad', () => {
     if (!isInHypixel()) return;
-    const moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
-
     ChatLib.chat(`${data.modulePrefix} &3Loaded! &7DM @oBiscuit for any concerns`);
 
-    console.info(`[Bettershridge] Loadded! -- v${moduleVersion}`);
-
-    if (moduleVersion === '0.1.7') {
+    const moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
+    if (moduleVersion === '0.4.0') {
         const featureMessage = new Message(
             `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
         )
         ChatLib.chat(featureMessage);
     };
 
-    if (!data.firstInstall) data.firstInstall = true;
+    if (!data.firstInstall) {
+        data.firstInstall = true;
+    };
 });
 
 //! helpline
@@ -44,7 +47,7 @@ register('command', () => {
     ChatLib.chat(`${bulletSpace}&f/setguildprefix &3- Sets Guild Prefix &r| &eCurrent: &r['${prefixData.guild}&r']`);
     ChatLib.chat(`${bulletSpace}&f/setarrowprefix &3- Sets Arrow Prefix &r| &eCurrent: &r['${prefixData.arrow}&r']`);
     ChatLib.chat(`${bulletSpace}&f/setreplyprefix &3- Sets Reply Prefix &r| &eCurrent: &r['${prefixData.reply}&r']`);
-    ChatLib.chat(`${bulletSpace}&f/resetprefix (&9bot&r | &9guild&r | &9arrow&r | &9reply&r ) &3- Resets all prefixes`);
+    ChatLib.chat(`${bulletSpace}&f/resetprefix (&9bot&r | &9guild&r | &9arrow&r) &3- Resets all prefixes`);
     ChatLib.chat(' ');
     ChatLib.chat(`      &6<&3Guild Best System&6> &b------ &r(/guildbest | /gb)`);
     ChatLib.chat(`${bulletSpace}&f/guildbest list &3- Shows all the names in the guild best list`);

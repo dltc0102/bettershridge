@@ -119,36 +119,40 @@ WIP: dynamic botName recognition (detects if there seems to be a new bot in town
 + adds formatting for _gonline command
 + changed instabuy command formatting mistake from 'sell cost' to 'buy cost'
 
-# v1.6
-+ fixed prefixes only working for bot commands
-+ fixed player1 booped player2 messages
-+ added formatting for new mayor command's formats (minister and perks in hoverables)
-+ added arrow prefix changer (/setarrowprefix)
-+ added support for directional discord links
-+ make bestiary categories &6 if number is /0
-+ fix undefined names for _be and _coll commands
-+ add a /bettershridge (aliases: /bshelp, /bs) command for command help list
-+ Added commands for the guild best friend system
-WIP: /gb online to see best friends in guild that are online
-WIP: [paste to chat]
+# v0.2.0
+Feature Changes:
++ setarrowprefix
++ added color support for rare sea creatures
++ guild best system and toggle for overriding rank colors
++ _bestiary & _boop prettified
 
-# v1.7.1
-= renamed func name 'getInHypixel' to 'isInHypixel'
-= renamed func name 'removeRandomID' to 'removeAntiSpamID'
-= renamed func name 'separatePlayerAndMessage' to 'sortMessageByType'
-= changed func truncateNumbers(...) to return input if input is a string that contains '/' - in the case when api doesn't recognise a collection/bestiary being maxed
-= names that appear in replies on bridge, if in the guild best list, will be set to best color
-= removed unused/unneccessary comments
-= added /setreplyprefix
-= added Rainbow Colors using '[rb]' or '&z'
-= removed useless functions like 'stripFormattedName'
-= added [empty] for if anyone wants to set their prefix as empty :: Usage: /setarrowprefix [empty]
-= removed double space between bot/guild prefix and message if arrow prefix is empty
+Code Changes:
++ changes to some pog objects
++ reorganised code so that dicts are on top, then functions
++ fixed boop command to show who booped who (changing boop regex)
++ changed how errors are caught and reported in func generateMessage()
 
-TODO:
-+ new helper module: interface for making your own prefix with color picking
-+ new g list
-+ /gb online to see best friends in guild that are online
+# v0.3.0
++ add _bettershridge command in _help command :: will only work clientside :D
++ add /bs help
++ changed default bot/guild prefixes from 'G' to 'Guild', and 'B' to 'Bot'
++ rainbow colors and [empty] for empty arrow prefix
 
+# v0.4.0
++ for names that appear in replies on bridge, if in the guild best list, will be set to best color
++ setreplyprefix
++ wrapper for formatted senders
+- removed usless funcs (stripFormattedName)
++ renamed func names
++ quick fix to func truncateNumbers(...)
++ '[undefined Link]' shouldn't happen again
 
+# v0.5.0
++ highlightTags() will ignore '@_@'
++ /gsearch (query)
++ /gb online
++ thanks for the boop messages
++ /guild online | /go (better formatted guild online)
++ /guild list | /gl (better formatted guild list)
+* see if you can only isolate args 'online' and 'list' while still retaining hypixel's /guild command
 
