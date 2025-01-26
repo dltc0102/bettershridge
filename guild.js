@@ -366,12 +366,9 @@ function replyMessageHandler(prefix, message) {
 };
 
 function messageHandler(message) {
-    console.log(`\nmessagehandler func`)
-    console.log(`input message: ${message}`)
     let type = '';
     let resMessage = '';
     const strippedMessage = message.removeFormatting();
-    console.log(`input strippedMessage: ${strippedMessage}`)
     //* bot
     if (idRegex.test(message) || !message.includes(': ') && !message.includes('l$')) {
         type = 'bot';
@@ -405,7 +402,6 @@ function messageHandler(message) {
 
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
 
-    console.log(type, resMessage);
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
     if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];
     if (type === 'guildPlayer') return [type, guildPlayerMessageHandler(prefix, trimmedMessage)];
@@ -440,7 +436,6 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             finalMsg = multiMessages.pop() + endingMsg;
         };
 
-        console.log(`\nfinalMsg: ${finalMsg}`)
         const [newType, newMsg] = messageHandler(finalMsg);
         if (newType === 'bot' && !isBot) {
             const yesClickable = new TextComponent('&a&l[YES] ')

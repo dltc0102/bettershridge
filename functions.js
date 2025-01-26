@@ -207,7 +207,7 @@ function getLinkSource(link) {
     if (link.includes('regex101')) return 'regex101';
     if (link.includes('chattriggers')) return 'CT';
     const linkRegex = /https?:\/\/(.+)?\.(com|net|org|int|edu|gov|gg)\/.*?/;
-    const linkMatch = link.match(linkRegex);                                
+    const linkMatch = link.match(linkRegex);
     if (linkMatch) {
         const linkSource = linkMatch[1].replace(/\.(com|net|org|int|edu|gov|gg)/g, '').replace(/\w+\./g, '');
         return capitalise(linkSource);
@@ -331,55 +331,6 @@ export function isValidColorCode(arg) {
     const invalidArgs = ['&k', '&l', '&m', '&n', '&o'];
     return !invalidArgs.includes(arg);
 };
-
-
-register('command', () => {
-    ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rDuncan: guys is this a mistake? [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/244419224143111842a/jnbhf^qoh?fy=78a8a91d&jt=78a7579d&in=6f3926e92aaf2cgbb864gcc7b16b284cb9g7c5b2b4cb7d83317edeb97a2gd989&)&r`)
-}).setName('discordlinktest');
-
-    register('command', (args) => {
-        const isAll = args === 'all';
-        const isGC = args === 'general';
-        const isBot = args === 'bot';
-        const isGuild = args === 'guild';
-        const isDiscord = args === 'discord';
-        const isReply = args === 'replies';
-        const isReplySticker = args === 'replies:sticker'
-        const isReplyEmoji = args === 'replies:emoji'
-        const isReplyLink = args === 'replies:link'
-        const isReplyTag = args === 'replies:highlight'
-        const isReplyAll = args === 'replies:all'
-
-        //! generalChat.js
-        if (isAll || isGC) ChatLib.simulateChat(`&dFrom &r&b[MVP&r&2+&r&b] Aidanqt&r&7: &r&7:smile: blah :shrug:`) // from general chat w/ emoji
-        if (isAll || isGC) ChatLib.simulateChat(`&dTo &r&b[MVP&r&2+&r&b] Aidanqt&r&7: &r&7:smile: blah :shrug:`) // to general chat w/ emoji
-        if (isAll || isGC) ChatLib.simulateChat(`&r&9Party &8> &b[MVP&c+&b] oBiscuit&f: &r:smile: blah :shrug:&r`) // party chat w/ emoji
-
-        //! bot messages
-        if (isAll || isBot) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rCurrent mayor: Marina. Next mayor: Unknown, in 1 day and 14 hours. Next special: Jerry, in 1 week and 4 days. <@1zefarqfd3w>&r`) // normal and listed
-        if (isAll || isBot) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rYes - definitely. <@8hi5z2lbg5n>&r`) // with emoji
-        //? formatspooks, syntax errors & errors, _pick messages
-
-        //! guild message
-        if (isAll || isGuild) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &bZatoh: &r<Raw Manta Ray>&r`) // sticker
-        if (isAll || isGuild) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &bZatoh: &r:shrug: blah  :ShrimpRave:&r`) // emoji
-        if (isAll || isGuild) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &bZatoh: &r[LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/244419224143111842a/jnbhf^qoh?fy=78a8a91d&jt=78a7579d&in=6f3926e92aaf2cgbb864gcc7b16b284cb9g7c5b2b4cb7d83317edeb97a2gd989&)&r`) // link
-        if (isAll || isGuild) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &bZatoh: &rgm shrimple @blah @dog @_@&r`) // highlight tags
-
-        //! discord message
-        if (isAll || isDiscord) ChatLib.simulateChat(`&r&2Guild > &6[MVP&4++&6] Mixend &3[Lobter]&f: &r<Raw Manta Ray>&r`) // sticker
-        if (isAll || isDiscord) ChatLib.simulateChat(`&r&2Guild > &6[MVP&4++&6] Mixend &3[Lobter]&f: &r:shrug: blah  :ShrimpRave:&r`) // emoji
-        if (isAll || isDiscord) ChatLib.simulateChat(`&r&2Guild > &6[MVP&4++&6] Mixend &3[Lobter]&f: &r[LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/244419224143111842a/jnbhf^qoh?fy=78a8a91d&jt=78a7579d&in=6f3926e92aaf2cgbb864gcc7b16b284cb9g7c5b2b4cb7d83317edeb97a2gd989&)&r`) // link
-        if (isAll || isDiscord) ChatLib.simulateChat(`&r&2Guild > &6[MVP&4++&6] Mixend &3[Lobter]&f: &rgm shrimple @blah @dog @_@&r`) // highlight tags
-        if (isAll || isDiscord) ChatLib.simulateChat(`&r&2Guild > &6[MVP&4++&6] Mixend &3[Lobter]&f: &r[LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/244419224143111842a/jnbhf^qoh?fy=78a8a91d&jt=78a7579d&in=6f3926e92aaf2cgbb864gcc7b16b284cb9g7c5b2b4cb7d83317edeb97a2gd989&) @car1 @car2 @_@ @car3 <Raw Manta Ray> :ShrimpRave: something :blah:&r`) // all
-
-        //! reply message
-        if (isAll || isReply || isReplySticker) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rNarga :moyai: [to] :shrimp: Shrimply 8_box: <Relaxolotl>`) // sticker
-        if (isAll || isReply || isReplyEmoji) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rNarga :moyai: [to] :shrimp: Shrimply 8_box: :100: haha :inq:`) // emoji
-        if (isAll || isReply || isReplyLink) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rNarga :moyai: [to] :shrimp: Shrimply 8_box: [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/244419224143111842a/jnbhf^qoh?fy=78a8a91d&jt=78a7579d&in=6f3926e92aaf2cgbb864gcc7b16b284cb9g7c5b2b4cb7d83317edeb97a2gd989&)`) // link
-        if (isAll || isReply || isReplyTag) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rNarga :moyai: [to] :shrimp: Shrimply 8_box: @Gnasez @1zez @Mixend @_@ @lol`) // highlight tags
-        if (isAll || isReply || isReplyAll) ChatLib.simulateChat(`&r&2Guild > &b[MVP&8+&b] Shrimple77 &3[Admin]&f: &rNarga :moyai: [to] :shrimp: Shrimply 8_box: [LINK](l$H03|deoejtdpsebqq^dpn/buubdinfout/2178616a237255a1343/244419224143111842a/jnbhf^qoh?fy=78a8a91d&jt=78a7579d&in=6f3926e92aaf2cgbb864gcc7b16b284cb9g7c5b2b4cb7d83317edeb97a2gd989&) some crazy shit <Vaquita> :wrongEmoji: :dog~1: @abc @def @ghi @_@ @jklmnop qrstuv wxyz something normal ples`) // all
-    }).setName('testbs', true);
 
 //! update reply sender funcs
 export function isChineseChar(givChar) {

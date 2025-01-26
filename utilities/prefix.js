@@ -42,12 +42,13 @@ register('command', (...args) => {
 }).setName('setbypassedprefix', true);
 
 function checkPromptForPrefix(type, prefix, givData) {
-    const colorCodeRegex = /&[a-fk-or0-9]/g;
+    const colorCodeRegex = /[&|§][a-fk-orz0-9]/g;
     if (colorCodeRegex.test(prefix)) {
         ChatLib.chat(`&a${capitalise(type)} prefix set: &r${prefix}`);
         givData[type] = prefix;
         givData.save();
         return;
+
     } else {
         const yesCommand = `/setbypassedprefix ${type} ${prefix}`;
         const yesClickable = new TextComponent(' &a&l[YES]')
@@ -60,7 +61,7 @@ function checkPromptForPrefix(type, prefix, givData) {
         const colorCodeURL = 'https://www.digminecraft.com/lists/color_list_pc.php';
         const colorCodeURLClickable = new TextComponent(` &b&l[VIEW COLOR CODES]`)
             .setClick('open_url', colorCodeURL)
-            .setHover('show_text', colorCodeURL.slice(0, 25) + '...')
+            .setHover('show_text', colorCodeURL.slice(0, 25) + '...');
 
         const hasColorCodes = prefix.includes('&') || prefix.includes('§z') ? 'It has invalid color codes.' : "It doesn't have color codes."
         const confirmQ = new Message(
@@ -94,7 +95,7 @@ register('command', (args) => {
         const prefix = fixFormattedPrefix(args);
         return checkPromptForPrefix('bot', prefix, prefixData);
     };
-}).setName('setbotprefix', true).setAliases('setbridgeprefix');
+}).setName('setbotprefix', true);
 
 // set arrow prefix
 register('command', (args) => {
