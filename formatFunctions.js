@@ -1,9 +1,10 @@
-import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripRank } from './functions.js';
+import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripRank, processMessage, hasEmojiPack } from './functions.js';
 import PogObject from '../PogData';
 
 
 //! GLOBALS
 export const guildData = new PogObject("bettershridge", {
+    toggleThanks: false,
     commands: [
         "lbin", "bz", "cata", "8ball", "election", "help", "pick", "ping",
         "skill", "slayer", "tfish", "contest", "fw", "fc", "is", "ib",
@@ -14,6 +15,26 @@ export const guildData = new PogObject("bettershridge", {
     spacing: `&2   |  &a`,
 }, './data/guildData.json');
 guildData.autosave(5);
+
+//! thanks for the boop
+register('chat', (rankedName, event) => {
+    if (!guildData.toggleThanks) return;
+    ChatLib.command(`gc Thanks for the boop, ${stripRank(rankedName).removeFormatting()}!`)
+}).setCriteria('From ${rankedName}: Boop!');
+
+//! toggle boop message
+register('command', () => {
+    if (guildData.toggleThanks === true) {
+        guildData.toggleThanks = false;
+        guildData.save();
+        ChatLib.chat(`Toggle 'Thank you for boop' Message: &c&lOFF`);
+
+    } else {
+        guildData.toggleThanks = true;
+        guildData.save();
+        ChatLib.chat(`Toggle 'Thank you for boop' Message: &a&lON`);
+    }
+}).setName('togglethanks', true);
 
 const collNameCodes = {
     // categories
@@ -164,6 +185,7 @@ function generateMessage(prefix, message, regex, formatHandler) {
 }
 
 export function getGuildResponse(prefix, message, type) {
+
     const patterns = {
         // template: {
         //     regex: /./,
@@ -179,11 +201,11 @@ export function getGuildResponse(prefix, message, type) {
             format: formatMayorPicked
         },
         promoted: {
-            regex: /&r(&[a-qs-z0-9])(.+) &r&awas promoted from (.+) to (.+)&r.+/,
+            regex:  /(&[a-qs-z0-9])(.+)? &r&awas promoted from (\w+) to (\w+)&r/,
             format: formatPromotion,
         },
         demoted: {
-            regex: /&r(&[a-qs-z0-9])(.+) &r&awas demoted from (.+) to (.+)&r.+/,
+            regex: /(&[a-qs-z0-9])(.+)? &r&awas demoted from (\w+) to (\w+)&r/,
             format: formatDemotion,
         },
         updatedMessage: {
@@ -191,11 +213,11 @@ export function getGuildResponse(prefix, message, type) {
             format: formatUpdatedMessage,
         },
         noReqUpdate: {
-            regex: /(.+) does not have requirements! But you are Missing (.+) Fishing XP and (.+) Skyblock Levels for (.+)\./,
+            regex: /(.+ )?does not have requirements! But you are missing (\d+\.?\d+\w) Fishing XP and (\d+) Skyblock Levels for (\w+)\./,
             format: formatNoReqUpdateMessage
         },
         skillMaxed: {
-            regex: /(.+) level for (.+) ((.+)): (\d+) \| Total XP: (.+) \| Overflow XP: (.+)/,
+            regex: /(.+) level for (.+) \((.+)\): (\d+) \| Total XP: (.+) \| Overflow XP: (.+)/,
             format: formatSkillMaxed
         },
         skillProgress: {
@@ -310,10 +332,6 @@ export function getGuildResponse(prefix, message, type) {
             regex: /Booped (.+)!/,
             format: formatGetBooped
         },
-        resetBoop: {
-            regex: /reset the boop/,
-            format: resetBoop,
-        },
         guildmateStatus: {
             regex: /Guildmate (.+?) (is|is not) online\./,
             format: formatGuildmateStatus
@@ -342,10 +360,7 @@ function getMayorColor(mayor) {
 
 function formatMayor(prefix, match) {
     const [_, currMayor, nextMayor, nextTime, specialMayor, specialTime] = match;
-    // const [_, currMayor, currMinister, nextMayor, nextTime, specialMayor, specialTime] = match;
-    // const minister = '';
     return [
-        // `${prefix}Current mayor: ${getMayorColor(currMayor)} &8|&r &aMinister: ${getMayorColor(minister)}`,
         `${prefix}Current mayor: ${getMayorColor(currMayor)}`,
         `${guildData.spacing}Next mayor: ${getMayorColor(nextMayor)} &r[${formatTime(nextTime)}]`,
         `${guildData.spacing}Next special: ${getMayorColor(specialMayor)} &r[${formatTime(specialTime)}]`
@@ -366,21 +381,13 @@ function formatMayorPicked(prefix, match) {
 function formatPromotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
     const playerFName = `${playerColor}${playerName.removeFormatting()}`;
-    return [
-        ChatLib.getChatBreak('&b&m-'),
-        `${prefix}${playerFName}&a was &a&lpromoted&r &afrom &c${from} to &6${to}`,
-        ChatLib.getChatBreak('&b&m-')
-    ];
+    return `${prefix}${playerFName}&a was &apromoted&r &afrom &c${from} to &6${to}`;
 };
 
 function formatDemotion(prefix, match) {
     const [_, playerColor, playerName, from, to] = match;
     const playerFName = `${playerColor}${playerName.removeFormatting()}`;
-    return [
-        ChatLib.getChatBreak('&b&m-'),
-        `${prefix}${playerFName}&a was &c&ldemoted&r &afrom &6${from} to &c${to}`,
-        ChatLib.getChatBreak('&b&m-')
-    ];
+    return `${prefix}${playerFName}&a was &cdemoted&r &afrom &6${from} to &c${to}`;
 };
 
 function formatUpdatedMessage(prefix, match) {
@@ -499,9 +506,9 @@ function formatBestiaryAll(prefix, match) {
     const bestiaryColor = collNameCodes[bestiaryType.toLowerCase()] ?? '&2';
     const formattedBeType = bestiaryColor + capitalise(bestiaryType);
     const titleMessage = `${prefix}${formattedBeType} &r&abestiary data for &2${playerName}&a (${playerProfile}): `
-    return [
-        titleMessage, ...beCommon, guildData.spacing, ...beRare
-    ];
+    return beRare.length === 0
+        ? [ titleMessage, ...beCommon, guildData.spacing, ...beRare ]
+        : [ titleMessage, ...beCommon ];
 };
 
 function formatCommandHelp(prefix, match) {
@@ -523,17 +530,23 @@ function formatSyntaxErrors(prefix, match) {
     const con1 = optionsStr.split(' ')[0].trim();
     const con2 = optionsStr.substring(optionsStr.indexOf(' ')).trim();
     const fcon2 = cmdName === 'cata' ? con2.replace(/\[0-7\]/g, '0-7') : con2;
-    return `${prefix}&c⚠ Usage: _${cmdName} ${con1} ${fcon2}`;
+    return hasEmojiPack()
+        ? `${prefix}:warning: &cUsage: _${cmdName} ${con1} ${fcon2}`
+        : `${prefix}&c⚠ Usage: _${cmdName} ${con1} ${fcon2}`;
 };
 
 function formatSpook1(prefix, match) {
     const [_, spooked] = match;
-    return `${prefix}&cAAH! &8You scared me, &6${spooked}!`;
+    const hasEmoji = hasEmojiPack();
+    const showStartEmoji = hasEmoji ? ' :jack_o_lantern: ' : '';
+    const showEndEmoji = hasEmoji ? ' :man_vampire: :bat:' : '';
+    return `${prefix}${showStartEmoji}&cAAH! &8You scared me, &6${spooked}!${showEndEmoji}`;
 };
 
 function formatSpook2(prefix, match) {
     const [_, spooked] = match;
-    return `${prefix}&8Spooked &6${spooked}! &c>:)`;
+    const spookEmoji = hasEmojiPack() ? ' :KirbySpooked:' : '';
+    return `${prefix}&8Spooked &6${spooked}! &c>:)${spookEmoji}`;
 };
 
 function formatCmdError(prefix, match) {
@@ -707,7 +720,8 @@ function formatCollections(prefix, match) {
 
 function formatPickMesage(prefix, match) {
     const [_, option] = match;
-    return `${prefix}I choose &e${capitalise(option).trim()}`;
+    const pinchEmoji = hasEmojiPack() ? ' &r㘟' : ' '
+    return `${prefix}I choose${pinchEmoji} &e${capitalise(option).trim()}`;
 };
 
 function formatMiscDataFor(prefix, match) {
@@ -720,28 +734,22 @@ function getBotBooperDP(prefix, match) {
     const [_, boopSender, boopResponse=''] = match;
     guildData.booper = stripRank(boopSender.removeFormatting());
     guildData.booped = boopResponse.split(' ')[0];
+    guildData.save();
 };
 
 function getBotBooperGP(prefix, match) {
     const [_, boopSender, boopTarget='', otherText=null] = match;
     guildData.booper = stripRank(boopSender.removeFormatting());
     guildData.booped = boopTarget;
+    guildData.save();
 };
 
 function formatGetBooped(prefix, match) {
     const [_, name] = match;
     const isSelfBeingBooped = name.toLowerCase() === Player.getName().toLowerCase();
-    if (isSelfBeingBooped) {
-        return `${prefix}&d&l${guildData.booper} Booped You!`;
-    } else {
-        return `${prefix}&d&l${guildData.booper} Booped ${name}!`;
-    }
-}
-
-function resetBoop(prefix, match) {
-    guildData.booper = '';
-    guildData.booped = '';
-}
+    const boopName = isSelfBeingBooped ? 'You' : name;
+    return `${prefix}&d&l${guildData.booper} Booped ${boopName}!`;
+};
 
 function formatGuildmateStatus(prefix, match) {
     const [_, guildmateName, status] = match;

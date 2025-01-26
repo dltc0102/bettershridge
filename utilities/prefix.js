@@ -1,5 +1,6 @@
 import PogObject from '../../PogData';
-import { isInHypixel } from '../functions';
+import { data } from './bots'
+import { isInHypixel, emojis, capitalise } from '../functions';
 
 export const prefixData = new PogObject("bettershridge", {
     guild: '&2Guild&r',
@@ -7,7 +8,7 @@ export const prefixData = new PogObject("bettershridge", {
     arrow: '&2>&r',
     reply: '&2[to]&r',
 }, './data/prefixData.json');
-prefixData.autosave(1);
+prefixData.autosave(3);
 
 function resetPrefixes() {
     prefixData.guild = '&2Guild&r';
@@ -15,26 +16,73 @@ function resetPrefixes() {
     prefixData.arrow = '&2>&r';
     prefixData.reply = '&2[to]&r';
     prefixData.save();
-}
+};
 
-function fixFormattedPrefix(text) {
+export function fixFormattedPrefix(text) {
     if (text === '[empty]') return '';
-    return text.includes('[rb]') || text.includes('&z')
-        ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').trim()
-        : text.trim();
-}
+
+    const rainbowed = text.includes('[rb]') || text.includes('&z')
+        ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').replace(/\s{2,}/g, ' ').trim()
+        : text.replace(/\s{2,}/g, ' ').trim();
+
+    return emojis(rainbowed);
+};
+
+// confirm prompt if prefix does not have any color codes
+register('command', (...args) => {
+    if (!isInHypixel()) return;
+    const [givType, givPrefix] = args;
+    Object.keys(prefixData).forEach(key => {
+        if (key === givType) {
+            prefixData[key] = givPrefix;
+            prefixData.save();
+            ChatLib.chat(`&a${capitalise(givType)} prefix set: &r${givPrefix}`);
+        };
+    });
+}).setName('setbypassedprefix', true);
+
+function checkPromptForPrefix(type, prefix, givData) {
+    const colorCodeRegex = /&[a-fk-or0-9]/g;
+    if (colorCodeRegex.test(prefix)) {
+        ChatLib.chat(`&a${capitalise(type)} prefix set: &r${prefix}`);
+        givData[type] = prefix;
+        givData.save();
+        return;
+    } else {
+        const yesCommand = `/setbypassedprefix ${type} ${prefix}`;
+        const yesClickable = new TextComponent(' &a&l[YES]')
+            .setClick('run_command', yesCommand)
+            .setHover('show_text', yesCommand);
+
+        const noClickable = new TextComponent(` &c&l[NO]`)
+            .setClick('run_command', '/clearchatbyid 999');
+
+        const colorCodeURL = 'https://www.digminecraft.com/lists/color_list_pc.php';
+        const colorCodeURLClickable = new TextComponent(` &b&l[VIEW COLOR CODES]`)
+            .setClick('open_url', colorCodeURL)
+            .setHover('show_text', colorCodeURL.slice(0, 25) + '...')
+
+        const hasColorCodes = prefix.includes('&') || prefix.includes('§z') ? 'It has invalid color codes.' : "It doesn't have color codes."
+        const confirmQ = new Message(
+            `${data.modulePrefix} &cAre you sure about this prefix &r"${prefix}&r"&c?\n&c${hasColorCodes}`,
+            yesClickable,
+            noClickable,
+            colorCodeURLClickable,
+        ).setChatLineId(999);
+        ChatLib.chat(confirmQ);
+    };
+};
 
 // set guild prefix
 register('command', (args) => {
     if (!isInHypixel()) return;
     if (!args) {
-        ChatLib.chat('&cCorrect Usage: &b/setguildprefix (prefix name)')
+        ChatLib.chat('&cCorrect Usage: &b/setguildprefix (prefix name)');
+
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
-        ChatLib.chat(`&aGuild prefix set: &r${prefix}`);
-        prefixData.guild = prefix;
-        prefixData.save();
-    }
+        return checkPromptForPrefix('guild', prefix, prefixData);
+    };
 }).setName('setguildprefix', true);
 
 // set bot prefix
@@ -44,10 +92,8 @@ register('command', (args) => {
         ChatLib.chat('&cCorrect Usage: &b/setbotprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
-        ChatLib.chat(`&aBot prefix set: &r${prefix}`);
-        prefixData.bot = prefix;
-        prefixData.save();
-    }
+        return checkPromptForPrefix('bot', prefix, prefixData);
+    };
 }).setName('setbotprefix', true).setAliases('setbridgeprefix');
 
 // set arrow prefix
@@ -57,10 +103,8 @@ register('command', (args) => {
         ChatLib.chat('&cCorrect Usage: &b/setarrowprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
-        ChatLib.chat(`&aArrow prefix set: &r${prefix}`);
-        prefixData.arrow = prefix;
-        prefixData.save();
-    }
+        return checkPromptForPrefix('arrow', prefix, prefixData);
+    };
 }).setName('setarrowprefix', true);
 
 // set reply prefix
@@ -70,10 +114,8 @@ register('command', (args) => {
         ChatLib.chat('&cCorrect Usage: &b/setreplyprefix (prefix name)')
     } else if (args) {
         const prefix = fixFormattedPrefix(args);
-        ChatLib.chat(`&aReply prefix set: &r${prefix}`);
-        prefixData.reply = prefix;
-        prefixData.save();
-    }
+        return checkPromptForPrefix('reply', prefix, prefixData);
+    };
 }).setName('setreplyprefix', true);
 
 // reset prefix

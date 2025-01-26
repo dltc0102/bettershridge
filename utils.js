@@ -43,11 +43,4 @@ function nsToS(ns) {
 register('command', () => {
     let currTime = new Date();
     let formattedDate = `${(currTime.getMonth() + 1).toString().padStart(2, '0')}/${currTime.getDate().toString().padStart(2, '0')}/${currTime.getFullYear()} ${currTime.getHours().toString().padStart(2, '0')}:${currTime.getMinutes().toString().padStart(2, '0')}`;
-    console.log(formattedDate);
-
-    Object.entries(timeStore).forEach(([key, value]) => {
-        console.log(`${key}: ${value} (${nsToMs(value)}ms || ${nsToS(value)}s)`);
-
-    });
-    console.log(' ');
-}).setName('logtimestore', true);
+    }).setName('logtimestore', true);

@@ -1,9 +1,16 @@
-import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode } from './functions';
+import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage, hasEmojiPack, stickers, emojis, formatSender } from './functions';
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';
 import { getGuildResponse } from './formatFunctions';
 import PogObject from '../PogData';
+
+export const bestData = new PogObject("bettershridge", {
+    names: [],
+    color: '&6',
+    trigger: false,
+}, './data/bestData.json');
+bestData.autosave(1)
 
 const continueSymbol = '➩';
 const idRegex = /<@.+>/;
@@ -71,8 +78,62 @@ function handleLinkMessages(prefix, sender='', msg) {
     );
 };
 
+//! promoted from reg chat
+register('chat', (name, oldRole, newRole, event) => {
+    if (!isInHypixel()) return;
+    const message = ChatLib.getChatMessage(event, true);
+    if (message.includes('Guild >')) return;
+
+    const promoted = getGuildResponse('', message, 'promoted');
+    const newMessages = [
+        ChatLib.getChatBreak('&b&m-'),
+        promoted,
+        ChatLib.getChatBreak('&b&m-'),
+    ];
+    replaceMessage(event, newMessages);
+}).setCriteria('${name} was promoted from ${oldRole} to ${newRole}').setContains();
+
+//! demoted from reg chat
+register('chat', (name, oldRole, newRole, event) => {
+    if (!isInHypixel()) return;
+    const message = ChatLib.getChatMessage(event, true);
+    if (message.includes('Guild >')) return;
+
+    const demoted = getGuildResponse('', message, 'demoted');
+    const newMessages = [
+        ChatLib.getChatBreak('&b&m-'),
+        demoted,
+        ChatLib.getChatBreak('&b&m-'),
+    ];
+    replaceMessage(event, newMessages);
+}).setCriteria('${name} was demoted from ${oldRole} to ${newRole}').setContains();
+
 function botMessageHandler(prefix, message) {
     const botMessage = removeAntiSpamID(message).removeFormatting().replace(idRegex, '').trim();
+
+    const eightBallAnswers = [
+        "It is certain.",
+        "It is decidedly so.",
+        "Without a doubt.",
+        "Yes - definitely.",
+        "You may rely on it.",
+        "As I see it, yes.",
+        "Most likely.",
+        "Outlook good.",
+        "Yes.",
+        "Signs point to yes.",
+        // "Reply hazy, try again.",
+        // "Ask again later.",
+        // "Better not tell you now.",
+        // "Cannot predict now.",
+        // "Concentrate and ask again.",
+        "Don't count on it.",
+        "My reply is no.",
+        "My sources say no.",
+        "Outlook not so good.",
+        "Very doubtful."
+    ];
+
     //! _mayor
     if (botMessage.startsWith('Current mayor: ')) {
         return getGuildResponse(prefix, botMessage, 'mayor')
@@ -81,20 +142,11 @@ function botMessageHandler(prefix, message) {
     } else if (MAYOR_NAMES.includes(botMessage.split(' ')[0])) {
         return getGuildResponse(prefix, botMessage, 'pickedMayor');
 
-    //! promoted from
-    } else if (botMessage.includes('promoted from')) {
-        return getGuildResponse(prefix, message, 'promoted');
-
-    //! demoted from
-    } else if (botMessage.includes('demoted from')) {
-        return getGuildResponse(prefix, message, 'demoted');
-
     //! role up to date
     } else if (botMessage.includes('Role is already up to date!')) {
         return getGuildResponse(prefix, botMessage, 'updatedMessage');
 
-    //! your role does not have the requirements
-    //! Role does not have requirements
+    //! your role does not have the requirements || Role does not have requirements
     } else if (botMessage.includes('Your role does not have requirements!') || botMessage.includes('Role does not have requirements!')) {
         return getGuildResponse(prefix, botMessage, 'noReqUpdate');
 
@@ -202,11 +254,21 @@ function botMessageHandler(prefix, message) {
     } else if (botMessage.startsWith('Guildmate')) {
         return getGuildResponse(prefix, botMessage, 'guildmateStatus');
 
-    //! responses & 8ball
+    //! error responses
+    } else if (botMessage.startsWith('⚠') && !botMessage.includes('Usage')) {
+        const errorReturn = hasEmojiPack()
+            ? `${prefix}&c${botMessage.replace('⚠', ':warning:')}`
+            : `${prefix}&c${botMessage}`;
+        return processMessage(errorReturn);
+
+    //! 8 ball responses
+    } else if (eightBallAnswers.includes(botMessage)) {
+        const show8ball = hasEmojiPack() ? ' &r:8ball:&a' : '';
+        const eightBallMessage = `${prefix}${show8ball} &a&o${botMessage}`;
+        return processMessage(eightBallMessage);
+
     } else {
-        return (botMessage.startsWith('⚠') && !botMessage.includes('Usage'))
-        ? `${prefix}&c${botMessage}`
-        : `${prefix}${botMessage}`;
+        return processMessage(`${prefix}${botMessage}`);
     }
 };
 
@@ -233,24 +295,29 @@ function updateFormattedSender(userObj, givData) {
             : `${givData.color}${userObj.name}${addRole}`;
 
     } else {
-        return `&a${userObj.name}${addRole}`;
+        return `${userObj.name}${addRole}`;
     }
 }
 
 function discordPlayerMessageHandler(prefix, message) {
     const dpMessage = removeAntiSpamID(message).removeFormatting().replace(/➩/g, '').replace(/  /g, '');
-    const [sender, responses] = dpMessage.split(/: (.+)/);
-    const formattedSender = updateFormattedSender({name: sender}, bestData);
+    const emojiedDPMessage = emojis(dpMessage);
+    const [sender, responses] = emojiedDPMessage.split(/: (.+)/);
+    const formattedSender = updateSender(sender, bestData);
     if (responses === '_bettershridge') {
         ChatLib.chat(`${data.modulePrefix}&r &6Hiya!\n&6Do &r/bs help&6 to be redirected to the Bettershridge Helpline!`)
         return;
 
     } else if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
-        return handleLinkMessages(prefix, formattedSender, dpMessage);
+        return handleLinkMessages(processMessage(prefix), formattedSender, emojiedDPMessage);
 
     } else {
-        if (responses.includes('_boop')) getGuildResponse(prefix, dpMessage, 'getBooperDP');
-        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
+        if (responses.includes('_boop')) {
+            getGuildResponse(prefix, emojiedDPMessage, 'getBooperDP');
+            return;
+        }
+        const newPrefix = `${prefix}${formattedSender}`;
+        return processMessage(stickers(newPrefix, responses));
     }
 };
 
@@ -262,34 +329,49 @@ function guildPlayerMessageHandler(prefix, message) {
         const [_, sender, role, responses] = match;
         const formattedSender = updateFormattedSender({name: sender, role: role}, bestData);
         if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
-            return handleLinkMessages(prefix, formattedSender, responses);
+            return handleLinkMessages(processMessage(prefix), processMessage(formattedSender), processMessage(responses));
+
         } else {
-            if (responses.includes('_boop')) getGuildResponse(prefix, message, 'getBooperGP');
-            return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
+            if (responses.includes('_boop')) {
+                getGuildResponse(prefix, message, 'getBooperGP');
+            };
+            const newPrefix = `${prefix}${formattedSender}`;
+            return processMessage(stickers(newPrefix, responses));
         }
     }
+};
+
+function updateSender(name, givData) {
+    const formattedName = formatSender(name);
+    const updatedName = updateFormattedSender({name: formattedName}, givData)
+    return updatedName;
 };
 
 function replyMessageHandler(prefix, message) {
     const replyMessage = removeAntiSpamID(message.removeFormatting().replace(/  /g, ''));
     const [sender, responses] = replyMessage.split(/: (.+)/);
     const [name1, name2] = sender.split(' [to] ');
-    const formatted1 = updateFormattedSender({name: name1}, bestData);
-    const formatted2 = updateFormattedSender({name: name2}, bestData);
-    const formattedSender = `${formatted1} ${prefixData.reply} ${formatted2}`;
+    const formatted1 = updateSender(name1, bestData);
+    const formatted2 = updateSender(name2, bestData);
+    const formattedSender = `${formatted1}&r ${prefixData.reply} &r${formatted2}`;
+
     if (!responses) return null;
     if (responses.includes('[LINK]') || responses.includes('http') || responses.includes('viewauction')) {
-        return handleLinkMessages(prefix, formattedSender, responses);
+        return handleLinkMessages(processMessage(prefix), formattedSender, processMessage(responses));
 
     } else {
-        return `${prefix}${formattedSender}&r: ${highlightTags(responses)}`;
+        const newPrefix = `${prefix}${formattedSender}`;
+        return processMessage(stickers(newPrefix, responses));
     }
 };
 
 function messageHandler(message) {
+    console.log(`\nmessagehandler func`)
+    console.log(`input message: ${message}`)
     let type = '';
     let resMessage = '';
     const strippedMessage = message.removeFormatting();
+    console.log(`input strippedMessage: ${strippedMessage}`)
     //* bot
     if (idRegex.test(message) || !message.includes(': ') && !message.includes('l$')) {
         type = 'bot';
@@ -302,23 +384,28 @@ function messageHandler(message) {
 
     //* discordPlayer & reply
     } else if (strippedMessage.includes(': ') && !idRegex.test(message)) {
-        const [sender, responses] = strippedMessage.split(/: (.+)/);
-        if (sender.includes(' [to] ')) {
+        const emojiedMessage = emojis(strippedMessage);
+        const [sender, responses] = emojiedMessage.split(/: (.+)/);
+        if (sender.includes(' [to] ') || sender.includes(prefixData.reply)) {
             type = 'reply';
-            resMessage = strippedMessage;
+            resMessage = emojiedMessage;
 
         } else {
             type = 'discordPlayer';
-            resMessage = strippedMessage;
+            resMessage = emojiedMessage;
         }
     }
-    // console.log(' ');
-    // console.log(type, resMessage);
-    let prefix = `${prefixData.bot}&r ${prefixData.arrow}&r &a`;
+
+
+    const showArrow = prefixData.arrow === '' ? ' ' : ` ${prefixData.arrow}`;
+    let prefix = `${prefixData.bot}&r${showArrow}&r&a`;
     if (type === 'guildPlayer') {
-        prefix = `${prefixData.guild}&r ${prefixData.arrow}&r &a`;
+        prefix = `${prefixData.guild}&r${showArrow}&r&a`;
     };
+
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
+
+    console.log(type, resMessage);
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
     if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];
     if (type === 'guildPlayer') return [type, guildPlayerMessageHandler(prefix, trimmedMessage)];
@@ -329,12 +416,10 @@ function replaceMessage(event, message) {
     cancel(event);
     if (Array.isArray(message)) {
         message.forEach(msg => {
-            const editedMsg = msg;
-            ChatLib.chat(editedMsg);
+            ChatLib.chat(msg);
         })
     } else {
-        const editedMsg = message;
-        ChatLib.chat(editedMsg);
+        ChatLib.chat(message);
     }
 };
 
@@ -355,6 +440,7 @@ registerWhen('chat', timeThis("regChat guild messages", (playerInfo, playerRole,
             finalMsg = multiMessages.pop() + endingMsg;
         };
 
+        console.log(`\nfinalMsg: ${finalMsg}`)
         const [newType, newMsg] = messageHandler(finalMsg);
         if (newType === 'bot' && !isBot) {
             const yesClickable = new TextComponent('&a&l[YES] ')
@@ -392,7 +478,6 @@ register('command', (id) => {
     ChatLib.deleteChat(id)
 }).setName('clearchatbyid', true);
 
-
 //! glist
 function getOnlineMembers(storedGuildData, givData) {
     let onlineMembers = [];
@@ -417,6 +502,7 @@ let glLoads = 6;
 register('chat', (event) => {
     if (!isInHypixel()) return;
     const message = ChatLib.getChatMessage(event, true);
+    if (message.includes('Party')) return;
     const entries = message.split(/\s{2}/).filter(c => c.match(/●/));
     if (!entries.length > 0) return;
     if (glLoads > 0) {
@@ -424,27 +510,21 @@ register('chat', (event) => {
         glLoads -= 1;
     }
 
-    if (glLoads === 0 && showGBList) {
+    if (glLoads === 0) {
         let onlineMembers = getOnlineMembers(guildMembers);
         let onlineBestMembers = getOnlineBests(onlineMembers, bestData);
         ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
         ChatLib.chat(`&6<&3Guild Best List&6> &b---- Current: ${bestData.color}color`);
         bestData.names.forEach(bestName => {
-            const bestNameStatus = onlineBestMembers.includes(bestName) || onlineBestMembers.some(name => name.includes(bestName)) ? '&a' : '&c';
-            ChatLib.chat(`${bestNameStatus}●&r &b${bestName}`)
+            const bestNameStatus = onlineBestMembers.includes(bestName) || onlineBestMembers.some(name => name.includes(bestName))
+                ? '&a' : '&c';
+            ChatLib.chat(`${bestNameStatus}●&r &b${bestName}`);
         });
         ChatLib.chat(ChatLib.getChatBreak('&b&m-'));
         glLoads = 6;
-        showGBList = false;
     }
     cancel(event);
 });
-
-let showGBList = false;
-register('command', () => {
-    if (!isInHypixel()) return;
-    showGBList = true;
-}).setName('dontshowgb', true);
 
 register('command', (query) => {
     if (!isInHypixel()) return;
@@ -487,13 +567,6 @@ register('chat', (event) => {
 
 
 //! guild best system
-export const bestData = new PogObject("bettershridge", {
-    names: [],
-    color: '&6',
-    trigger: false,
-}, './data/bestData.json');
-bestData.autosave(1)
-
 register('command', (arg) => {
     if (!isInHypixel()) return;
     const lowerArg = arg ? arg.toLowerCase() : null;

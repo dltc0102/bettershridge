@@ -1,158 +1,339 @@
-# v0.1
-Formats Bot & Guild chat messages, including _bz, _mayor, _skill, _be, _lbin, _tfish, stickers in discord, @ tags, replies
+# Changelog
 
-WIP: _cata, _slayer, _contest, _fw, _fc, _is, _ib, _collection, _raw
+All notable changes to this project will be documented in this file.
+Link to the github for this project. [Github](https://github.com/dltc0102/bettershridge)
 
-# v0.2
-- added viewauction link messages
-- added in _cata, _slayer, _contest, _fw (farming weight), _is (insta-sell), _ib (insta-buy), _collection for items, and removed _raw (cuz no need)
-- improved consistency of messages
-- allowed multiple tags to be higlighted:
-    e.g: '@name1 @name2 blah blah blah'
-    before: only @name1 was highlighted
-    after: all that start with @ are highlighted.
+## [Unreleased]
 
-WIP: _collection for skills, view website links
+? see if I can isolate args like 'online' and 'list' from hypixel's '/guild' command while retaining it's original use
+- any new stickers/emotes from shrimple or from suggestions
+- slow animations of gifs if possible
+- soundmoji from discord beta
+- remove kerning between unicode-used characters to make the 'sticker' look better without grids
 
-# v0.3
-- made the project a bit more efficient and easier to add new things
 
-# v0.4
-- put highlight tags at post-processing of message formatting
-- added support for viewing links with a [CLICK] thing
-- fixed slayer names for format color codes
 
-# v0.5
-+ added support for _collection (fishing/mining/combat/foraging/farming) commands
-+ added support for _boop commands
-+ added support to render images using patcher's renderer for images using discord/imgur links if passed in from bot
-+ tried to structure imports and code better
-+ removed 'Ult' suffix from _bz formatted messages
-+ refactored auction links
-+ refactored website clickables, will show '<link expired>' if link is expired.
+## [0.6.0]
 
-WIP: add support to render :(blah): custom discord emotes for shrimple
-WIP: make gui and customizable settings (not sure if needed)
+### Added
 
-# v0.6
-+ added support for viewauction links for more message cases
-+ added support for patcher image links for more message cases
+- Added support for emojis and stickers
+- Implemented emojis in some bot messages (only if user has texturepack installed)
+- Added prompts for if player sets prefix with invalid color code or without color codes
 
-# v0.7 + v0.8 = v1.0
-+ fixed some miscorrect matches
-+ added support for _mayor (certain mayor) command
-+ made bot answer for _pick clearer
-+ added fix for _boop edge cases
-+ added support for _command
-+ added load message
-+ updated colors for skills and collections from bot messages
-+ added support for newly implemented stuf_links! (embedded links and normal links)
-+ added support for 'reply' guild messages for discord names with special characters in them
-+ added support for general 'tfish' command messages
-+ updated _mayor (certain mayor) regex
-+ fixed _help list
-+ allowed messages before and after links to be included in formatted message too
+### Changed
 
-WIP: gifs
+- Added '.gg' as a website domain option for getLinkSource()
+- Updated regex for getGuildResponse types: promoted, demoted, noReqUpdate
+- Made 'thanks for the boop' messages go to 'gc' instead of 'cc'
+- Made party list visible even with guild-best list cancelling out members from /guild list command
+- If the prefixes (bot/guild/arrow/reply) contain a rainbow prefix, replace it with '&6' (gold) if player is not in skyblock.
+  (Currently the rainbow-ed area when player is not in skyblock will show a default WHITE)
+- Made the output of \_help command neater
 
-# v1.1
-+ added support for any bot name for shridge/pridge
-+ added support for _tfish noobf command
-+ added formatting to syntax errors (hover details for instabuy/instasell commands)
-+ fixed greedy regex for 'player talking response'
-+ updated formatLbin() func to format words nicer
-+ updated createMessage() func
-+ fix highlighting with encoded link messages
-+ added formatting for promotion/demotion messages
-+ Added source to links
-+ added formatting to october special ('bo      o') command messages
-+ added formatting for tfishi (w/o obf 1) messages
+### Fixed
 
-TEST: commented out patcher/discord images/websites related code (works without)
+- Fixed double spaces between prefix and message when arrow prefix is [empty]
+- Fixed moduleversion being undefined because of usage before naming
+- Fixed \_be command having a extra line of spacing when there are any rare mobs for separation
 
-# v1.2
-+ made formatting error messages more flexible
-+ role updated missing conditions are formatted now
-+ tenor gifs are now their own nam  e ex. [Tenor Gif]
-+ hover text for images and gifs and videos alike have the 'imagename.suffix' format
-+ changed command player names to have yellow color for clarity
-+ fixed _help command having a 24th 'undefined' command
-+ fixed mayor colors for _mayor command
-+ removed all traces of 'stripColors' function xd
+### Removed
 
-# v1.3
-Main Changes:
-+ added bot commands for if theres a new name for the bot
-+ restructured code to be more flexible (structure was hindering the management of multi-continuous chat messages and multi-link messages)
-+ updated error messages with new warning prefix
-+ changed regchats to work outside of skyblock as long as you're on hypixel
-+ reformatted a lot of code (most notably role updates, contest messages, collection messages)
-+ stopped constant addons of a bot that is already in bot list
+- resetBoop
+- /dontshowgb command
+  Reason: It was too niche to be used frequently, and most people rather leave it on.
 
-Minor Changes:
-+ updated formatTime() func to have flexibility for mayor picked cmd
-+ updated link names for discord gifs to work like previews
-+ changed bestiary color for Abyssal Miner to dark green
-+ changed taming color for _skill bridge command to 'pink'
-+ changed gameload message
-+ changed formatting for _be command to include 'k/d'
-+ added formatting to 'Your role does not have requirements!'
-+ fixed _tfish command for noobf and general
 
-WIP: dynamic botName recognition (detects if there seems to be a new bot in town for bridge)
 
-# v1.4
-+ added format for miscellaneous data for responses
-+ added color for 'Vanquisher' in _be command responses
-+ reformatted functions to be even more flexible for edge cases
-+ readded formatting for normal non-stuf links
+## [0.5.0] - 2025-01-19
 
-# v1.5
-+ hides messages if they are forwarded (where the message is blank)
-+ completely refactored multi link messages for variety and changes (credits to gleb)
-+ removed unused functions
-+ added /setguildprefix commands
-+ added /setbotprefix and /setbridgeprefix commands
-+ added /resetprefix (bot/bridge/guild/none) command
-    Note: /resetprefix without any arguments resets both guild & bridge prefixes with a confirmation message.
-+ dynamic bot updater
-+ adds formatting for _gonline command
-+ changed instabuy command formatting mistake from 'sell cost' to 'buy cost'
+### Added
 
-# v0.2.0
-Feature Changes:
-+ setarrowprefix
-+ added color support for rare sea creatures
-+ guild best system and toggle for overriding rank colors
-+ _bestiary & _boop prettified
+- Feature: /gsearch (queryName) -- to search for names specifically in the guild
+- Feature: /gb online
+- Feature: When player is booped, you will send a 'Thanks for the Boop, player\_who\_booped\_you!' message.
+(There's also a toggle for this if you don't want this - do /togglethanks)
 
-Code Changes:
-+ changes to some pog objects
-+ reorganised code so that dicts are on top, then functions
-+ fixed boop command to show who booped who (changing boop regex)
-+ changed how errors are caught and reported in func generateMessage()
+### Changed
 
-# v0.3.0
-+ add _bettershridge command in _help command :: will only work clientside :D
-+ add /bs help
-+ changed default bot/guild prefixes from 'G' to 'Guild', and 'B' to 'Bot'
-+ rainbow colors and [empty] for empty arrow prefix
+- highlightTags function will now ignore '@\_@' text emojis
+- changed the default best color from '&4' (dark red) to '&6' (gold)
 
-# v0.4.0
-+ for names that appear in replies on bridge, if in the guild best list, will be set to best color
-+ setreplyprefix
-+ wrapper for formatted senders
-- removed usless funcs (stripFormattedName)
-+ renamed func names
-+ quick fix to func truncateNumbers(...)
-+ '[undefined Link]' shouldn't happen again
 
-# v0.5.0
-+ highlightTags() will ignore '@_@'
-+ /gsearch (query)
-+ /gb online
-+ thanks for the boop messages
-+ /guild online | /go (better formatted guild online)
-+ /guild list | /gl (better formatted guild list)
-* see if you can only isolate args 'online' and 'list' while still retaining hypixel's /guild command
 
+## [0.4.0]
+
+### Added
+
+- Feature: /setreplyprefix (prefix) -- to set prefix for the default '[to]' when a discord user replies to a message, shown in chat.
+
+### Changed
+
+- for names that appear in replies on bridge, if they are in your guild best friends list, best color will be set to their name too
+- made a wrapper for formatted senders in messages
+- functions were renamed to avoid misinterpretation
+- function truncateNumbers() was changed to support inputs if they had a '/' in them
+- function getLinkSource() was changed to avoid returning an undefined source
+
+### Removed
+
+- useless functions like stripFormattedNames and getInSkyblock were removed
+
+
+
+## [0.3.0]
+
+### Added
+
+- \_bettershridge command to \_help command's output (only works for bettershridge users client-side)
+- added a /bs help or /bettershridge command
+- allowed players to use rainbow colors in their prefixes using '[rb]' or '&z'
+- allowed players to set their prefixes empty using '[empty]'
+
+### Changed
+
+- changed the default bot prefix from 'B' to 'Bot'
+- changed the default guild prefix from 'G' to 'Guild'
+
+
+
+## [0.2.0]
+
+### Added
+
+- /setarrowprefix (prefix) -- allows user to set the arrow in 'Guild >' and 'Bot >'
+- added color support for rare sea creatures when a player used the \_bestiary command
+- introduced the guild best-friends system
+- /overriderankcolors | /orc -- allows the user to toggle the option for in-game players to be set to how best-friends look when they are offline and talking on shridge.
+
+### Changed
+
+- prettified \_bestiary command with separation between common and rare sea creatures
+- prettified \_boop command to show who booped who, or who booped you
+- some pogObjects were changed
+- reorganised some code
+- changed how errors are caught and reported in-game or in-console through function generateMessage()
+
+
+
+## [0.1.5]
+
+### Added
+
+- Refactored how multi-link messages are handled (credits to gleb)
+- Dynamic bot updater
+- Hides messages if they are forwarded
+- /setguildprefix (prefix) -- you can set the default 'Guild' in 'Guild > name: message' to whatever you'd like (including colors)
+- /setbotprefix (prefix) -- you can set the default 'Guild > bot name:' in 'Guild > bot name: user: message' to whatever you'd like (including colors)
+- /resetprefix (bot/guild/none) -- you can either reset an explicit prefix, or leave the argument empty and reset all prefixes
+
+### Changed
+
+- added formatting to \_gonline command
+- \_ib command output mistake: 'sell cost' to 'buy cost'
+
+### Removed
+
+- unused functions
+
+
+
+## [0.1.4]
+
+### Added
+
+- color for 'Vanquisher' in \_be command outputs
+
+### Changed
+
+- reformatted functions to be more flexible for edge cases
+- formatting for normal non-stuf links
+- format for miscellaneous data responses
+
+
+
+## [0.1.3]
+
+### Added
+
+- bot commands /addbot, /botlist, /rmbot
+- added formatting to 'Your role does not have requirements!'
+
+### Changed
+
+- restructed code to be more flexible
+  Reasoning: code structure was hindering the management of multi-continuous chat messages as well as multi-link messages
+- changed regchat triggers to work outside of hypixel as long as player is in hypixel
+- reformatted a lot of code (most notably role updates, contest messages and collection messages)
+- changed bestiary color for 'Abyssal Miner' to '&2' (dark green)
+- changed gameload message
+- changed taming color for \_skill bridge command to '&d' (pink)
+
+### Fixed
+
+- \_tfish command for noobf and general args
+- updated formatTime() for mayor picked command
+- updated link name for discord gifs to work like previews
+- updated error messages with a new warning prefix
+
+
+
+## [0.1.2]
+
+### Changed
+
+- formatting error messages
+- 'role updated' missing conditions are formatted now
+- tenor gifs have their own name
+- hover text for images/gifs/videos have the 'imagename.suffix' format
+- player names in a guild command's output are now &e (yellow) for clarity
+
+### Fixed
+
+- \_help command having a 24th 'undefined' command
+- mayor colors in the \_mayor command
+
+### Removed
+
+- stripColors()
+
+
+
+## [0.1.1]
+
+### Added
+
+- support for bot names in shridge/pridge
+- support for \_tfish noobf command
+- formatting to syntax errors (hover details for instabuy/instasell commands)
+- formatting to promotion/demotion messages
+- added source to links
+- formatting to october special 'boo' command outputs
+- formatting to tfish 'w/o obf 1' command outputs
+
+### Changed
+
+- formatted formatLbin() returns
+- createMessage()
+
+### Fixed
+
+- greedy regex for 'player talking responses'
+- highlighting with encoded link messages
+
+
+
+## [0.1.0]
+
+### Added
+
+- support for \_mayor (certain mayor) command
+- support for \_help command
+- /ct load message
+- support for newly implemented stuf\_links
+- support for 'reply' guild messages
+- support for general 'tfish' command messages
+
+### Changed
+
+- made bot's answer for \_pick command clearer
+- updated colors for skills and collections from bot messages
+- updated \_mayor (certain mayor) regex
+- allowed messages before and after links to be included in the formatted message too
+
+### Fixed
+
+- fixed incorrect matches
+- fixed \_boop edge cases
+- fixed \_help list
+
+
+
+## [0.0.6]
+
+### Added
+
+- support for viewauction links
+- support for patcher image links
+
+
+
+## [0.0.5]
+
+### Added
+
+- support for \_collection (skillName) commands
+- support for \_boop commands
+- support to render images using patcher's renderer
+
+### Changes
+
+- restructured code for readability
+- auction links
+- website clickables will show '<link expired>' if link is expired
+
+### Removed
+
+- 'ult' suffix from \_bz command output
+
+
+
+## [0.0.4]
+
+### Added
+
+- support for viewing links with a [CLICK] button
+- added highlight tags (ex. @User)
+
+### Fixed
+
+- slayer names for format color codes
+
+
+
+## [0.0.3]
+
+### Changed
+
+- made the project a bit more efficient and easier to add new features
+
+
+
+## [0.0.2]
+
+### Added
+
+- support for viewauction links
+- support for \_cata command
+- support for \_slayer command
+- support for \_contest command
+- support for \_fw (farming weight) command
+- support for \_is (insta-sell) command
+- support for \_ib (insta-buy) command
+- support for \_collection command
+- support for multi tags in a message
+
+### Changed
+
+- consistency of messages
+
+### Removed
+
+- support for \_raw command
+
+
+
+## [0.0.1] - pilot
+
+### Added
+
+- formats for bot and guild chat messages
+- support for \_bz command
+- support for \_mayor command
+- support for \_skill command
+- support for \_be command
+- support for \_lbin command
+- support for \_tfish command
+- support for stickers in discord (ex. <Raw Manta Ray>)
+- support for @ tags
+- support for reply messages from bridge
