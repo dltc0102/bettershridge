@@ -9,7 +9,7 @@ import './generalChat.js';
 function makeChangelogHoverable(moduleVersion) {
     const version = `&aVersion: &r${moduleVersion}`;
     const changelog = [
-        //... something
+
     ];
 
     const formattedChangelog = [version, '&r------------------------', ...changelog].join('\n');
@@ -19,16 +19,23 @@ function makeChangelogHoverable(moduleVersion) {
 
 register('gameLoad', () => {
     if (!isInHypixel()) return;
-    ChatLib.chat(`${data.modulePrefix} &3Loaded! &7DM @oBiscuit for any concerns`);
+    ChatLib.chat(`\n${data.modulePrefix} &3Loaded! &7DM @oBiscuit for any concerns`);
 
     const moduleVersion = JSON.parse(FileLib.read("bettershridge", "metadata.json")).version;
 
     console.info(`[Bettershridge] Loaded! -- v${moduleVersion}`);
     if (moduleVersion === '0.6.0') {
         const featureMessage = new Message(
-            `  &3> &r&e&lNEW Features: (v${moduleVersion}) `, makeChangelogHoverable(moduleVersion)
+            `  &3> &r&e&lNEW Features (v${moduleVersion}): &d&lADDED EMOJIS AND STICKERS!!!`,
         )
         ChatLib.chat(featureMessage);
+
+        if (!data.showChangelog) {
+            ChatLib.chat('&3  || &bInstructions for texture pack: ')
+            ChatLib.chat(`&3  || &rDo &b/ct files&r > &bmodules&r > &bbettershridge&r > &bassets&r`)
+            ChatLib.chat('&3  || &cNote: Texture pack is needed to render emojis & stickers!\n');
+            data.showChangelog = true;
+        };
     };
 
     if (!data.firstInstall) {
