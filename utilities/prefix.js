@@ -1,6 +1,6 @@
 import PogObject from '../../PogData';
 import { data } from './bots'
-import { isInHypixel, emojis, capitalise } from '../functions';
+import { isInHypixel, fixFormattedPrefix, capitalise } from '../functions';
 
 export const prefixData = new PogObject("bettershridge", {
     guild: '&2Guild&r',
@@ -16,16 +16,6 @@ function resetPrefixes() {
     prefixData.arrow = '&2>&r';
     prefixData.reply = '&2[to]&r';
     prefixData.save();
-};
-
-export function fixFormattedPrefix(text) {
-    if (text === '[empty]') return '';
-
-    const rainbowed = text.includes('[rb]') || text.includes('&z')
-        ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').replace(/\s{2,}/g, ' ').trim()
-        : text.replace(/\s{2,}/g, ' ').trim();
-
-    return emojis(rainbowed);
 };
 
 // confirm prompt if prefix does not have any color codes
@@ -97,7 +87,7 @@ register('command', (args) => {
     };
 }).setName('setbotprefix', true);
 
-// set arrow prefix
+// set arrow prefix     
 register('command', (args) => {
     if (!isInHypixel()) return;
     if (!args) {

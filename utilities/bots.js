@@ -5,6 +5,7 @@ export const data = new PogObject("bettershridge", {
     modulePrefix: '&9[&bBetterShridge&9]',
     bots: ['Baltics', 'NqekMyBeloved', 'Shrimple77'],
     firstInstall: false,
+    shownChangelog: false,
 }, './data/data.json');
 data.autosave(5);
 

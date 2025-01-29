@@ -1,5 +1,6 @@
 import { capitalise, formatTime, formatColonTime, getMonsterColor, formatItemsToTable, truncateNumbers, stripRank, processMessage, hasEmojiPack } from './functions.js';
 import PogObject from '../PogData';
+import { data } from './utilities/bots.js'
 
 
 //! GLOBALS
@@ -19,7 +20,10 @@ guildData.autosave(5);
 //! thanks for the boop
 register('chat', (rankedName, event) => {
     if (!guildData.toggleThanks) return;
-    ChatLib.command(`gc Thanks for the boop, ${stripRank(rankedName).removeFormatting()}!`)
+    const rawName = stripRank(rankedName).removeFormatting();
+    let currentBooper = rawName;
+    if (data.bots.includes(rawName)) currentBooper = guildData.booper;
+    ChatLib.command(`gc Thanks for the boop, ${currentBooper}!`)
 }).setCriteria('From ${rankedName}: Boop!');
 
 //! toggle boop message
@@ -321,11 +325,11 @@ export function getGuildResponse(prefix, message, type) {
             format: formatMiscDataFor
         },
         getBooperGP: {
-            regex: /(.+?) &3\[.+\]&f: &r_boop (.+?)( .+)?&r/,
+            regex: /(.+?) &3\[.+\]&f: &r_boop( .+)?(&r)/,
             format: getBotBooperGP
         },
         getBooperDP: {
-            regex: /(.+?): _boop (.+)/,
+            regex: /(.+?): _boop( .+?)/,
             format: getBotBooperDP
         },
         getBooped: {
@@ -592,7 +596,7 @@ function formatSlayer(prefix, match) {
         "Wolf": "&f",
         "Enderman": "&5",
         "Blaze": "&6",
-        "Tarantula": "&c",
+        "Spider": "&c",
         "Vampire": "&4",
     };
     const slayerColor = slayerColors[slayerName];
@@ -738,9 +742,9 @@ function getBotBooperDP(prefix, match) {
 };
 
 function getBotBooperGP(prefix, match) {
-    const [_, boopSender, boopTarget='', otherText=null] = match;
+    const [_, boopSender, boopTarget=''] = match;
     guildData.booper = stripRank(boopSender.removeFormatting());
-    guildData.booped = boopTarget;
+    guildData.booped = boopTarget.removeFormatting().trim();
     guildData.save();
 };
 

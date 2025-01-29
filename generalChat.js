@@ -1,4 +1,4 @@
-import { isInHypixel, emojis, hasEmojiPack } from './functions.js'
+import { isInHypixel, emojis, hasEmojiPack, stripRank } from './functions.js'
 
 // &r&9Party &8> &b[MVP&c+&b] oBiscuit&f: &rbot&r
 register('chat', (stuff, event) => {
@@ -47,14 +47,26 @@ register('chat', (name, response, event) => {
     }
 }).setCriteria('To ${name}: ${response}');
 
-
-
 // All chat
 register('chat', (sblvl, name, response, event) => {
     if (!isInHypixel()) return;
-    const sender = ChatLib.getChatMessage(event, true).split(': ')[0];
-    const formattedResponse = hasEmojiPack() ? emojis(response) : response;
-    const formattedMessage = `${sender}&f: &r${formattedResponse}`;
-    cancel(event);
-    ChatLib.chat(formattedMessage);
+    const chatMessage = ChatLib.getChatMessage(event, true);
+    const regex = /(&r&8\[&r&\d+&r&8\] &r&[a-z0-9&]+\S+ )(&r&[a-z0-9&]+\[.+?\] .+?): (.+)/;
+    const match = chatMessage.match(regex);
+    if (!match) return;
+    if (match) {
+        const [_, playerLevelAndEmblem, rankedName, matchRes] = match;
+        const emojifiedResponse = hasEmojiPack() ? emojis(matchRes) : matchRes;
+        const strippedName = stripRank(rankedName.removeFormatting().trim());
+        const pvClickable = new TextComponent(rankedName)
+            .setClick('run_command', `/pv ${strippedName}`)
+        const formattedMessage = new Message(
+            playerLevelAndEmblem,       
+            pvClickable,
+            ': ',
+            emojifiedResponse
+        );
+        cancel(event)
+        ChatLib.chat(formattedMessage);
+    }
 }).setCriteria('[${sblvl}] ${name}: ${response}');

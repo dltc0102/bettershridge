@@ -1,5 +1,8 @@
 import STuFLib from "../STuFLib";
 
+const parsedEmojis = parseJSON('emojis.json');
+const stickersData = parseJSON('stickers.json');
+
 export function stripRank(name) {
     const rankNameRegex = /\[(?:MVP\+\+|MVP\+|MVP|VIP\+|VIP)\] (\S+)/;
     return name.match(rankNameRegex)?.[1] || name.trim();
@@ -81,31 +84,40 @@ export function highlightTags(msg) {
 }
 
 export function getLastColorCode(message) {
+    if (!message) return '';
+
     const firstEmojiIndex = message.search(/:(\w+):/);
-    if (firstEmojiIndex === -1) return null;
+    if (firstEmojiIndex === -1) return '';
+
     const colorCodeRegex = /(&[a-z0-9])/g;
-    let lastMatch = '', match;
+    let lastMatch = '';
+    let match;
+
     while ((match = colorCodeRegex.exec(message.slice(0, firstEmojiIndex))) !== null) {
         lastMatch = match[0];
     }
+
     return lastMatch;
-}
+};
 
 function parseJSON(filename) {
     return JSON.parse(FileLib.read('bettershridge', `/utilities/${filename}`));
+};
+
+function emojiLookUp(match, givenEmojiData) {
+    return givenEmojiData[match] || givenEmojiData[match.toLowerCase()];
 };
 
 export function emojis(msg) {
     if (!msg) return msg;
 
     try {
-        const parsedEmojis = parseJSON('emojis.json');
-        const emojiRegex = /:\w+:/g;
+        const emojiRegex = /:[\w~-]+:/g;
 
         const replaceEmojis = (text) => {
             const lastColor = getLastColorCode(text);
             return text.replace(emojiRegex, match => {
-                const emoji = parsedEmojis[match];
+                const emoji = emojiLookUp(match, parsedEmojis);
                 return emoji ? `&r${emoji}&r${lastColor}` : match;
             });
         };
@@ -116,33 +128,41 @@ export function emojis(msg) {
             return replaceEmojis(msg);
         } else {
             return msg;
-        }
+        };
+
     } catch (error) {
-        console.error("Error processing emojis:", error);
+        console.error(`\nemojis func()\nerror: ${error}`);
+        console.log(`message error:\ninput message: ${msg}`);
         return msg;
-    }
-}
+    };
+};
 
 export function stickers(prefix, message) {
-    const regex = /<[^>]+>/g; // Updated regex to match tags with spaces
+    const regex = /<[^>]+>/g;
     const matches = message.match(regex);
     if (!matches) return `${prefix}: &r${message}`;
-    const stickersData = parseJSON('stickers.json');
 
     try {
-        let replacement = [];
-        if (matches) {
-            matches.forEach(match => {
-                replacement = stickersData[match] || stickersData[match.toLowerCase()] || replacement;
-                message = message.replace(match, '');
-            });
-        }
+        const outputParts = [`${prefix}: &r`];
+        let lastIndex = 0;
 
-        let output = `${prefix}: &r${message}`;
-        if (replacement.length > 0) replacement.forEach(item => output += `\n     &r${item}`);
-        return output;
+        matches.forEach((match) => {
+            outputParts.push(message.slice(lastIndex, message.indexOf(match, lastIndex)));
+            const replacement = stickersData[match] ?? stickersData[match.toLowerCase()];
+            replacement
+                ? replacement.forEach((item) => outputParts.push(`\n     &r${item}`))
+                : outputParts.push(match);
+
+            lastIndex = message.indexOf(match, lastIndex) + match.length;
+        });
+
+        outputParts.push(message.slice(lastIndex));
+        return outputParts.join('');
+
     } catch (error) {
-        console.error(`stickers func()\nerror: ${error}`)
+        console.error(`\nstickers func()\nerror: ${error}`);
+        console.log(`message error:\ninput prefix: ${prefix}\ninput message: ${message}`);
+        return `${prefix}: &r${message}`;
     }
 }
 
@@ -335,10 +355,17 @@ export function isValidColorCode(arg) {
 //! update reply sender funcs
 export function isChineseChar(givChar) {
     const code = givChar.charCodeAt(0);
-    if (code >= 0x4E00 && code <= 0x9FFF) return true;                                                  // CJK Unified Ideographs range
-    if (code >= 0x3400 && code <= 0x4DBF) return true;                                                  // CJK Unified Ideographs Extension A range
-    if (code >= 0x20000 && code <= 0x2A6DF) return true;                                                // CJK Unified Ideographs Extension B range
-    if ((code >= 0x2A700 && code <= 0x2B73F) || (code >= 0x2B740 && code <= 0x2B81F)) return true;      // CJK Unified Ideographs Extension C-E range
+    // CJK Unified Ideographs range
+    if (code >= 0x4E00 && code <= 0x9FFF) return true;
+
+    // CJK Unified Ideographs Extension A range
+    if (code >= 0x3400 && code <= 0x4DBF) return true;
+
+    // CJK Unified Ideographs Extension B range
+    if (code >= 0x20000 && code <= 0x2A6DF) return true;
+
+    // CJK Unified Ideographs Extension C-E range
+    if ((code >= 0x2A700 && code <= 0x2B73F) || (code >= 0x2B740 && code <= 0x2B81F)) return true;
     return false;
 };
 
@@ -349,4 +376,14 @@ export function formatSender(name) {
         parts = parts.map(part => isChineseChar(part) ? `&r${part}&a` : `&a${part}`)
         return parts.join(' ');
     };
+};
+
+export function fixFormattedPrefix(text) {
+    if (text === '[empty]') return '';
+
+    const rainbowed = text.includes('[rb]') || text.includes('&z')
+        ? text.replace(/\[rb\]/g, '§z').replace(/&z/g, '§z').replace(/\s{2,}/g, ' ').trim()
+        : text.replace(/\s{2,}/g, ' ').trim();
+
+    return emojis(rainbowed);
 };

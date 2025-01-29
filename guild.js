@@ -1,4 +1,4 @@
-import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage, hasEmojiPack, stickers, emojis, formatSender } from './functions';
+import { isInHypixel, stripRank, removeAntiSpamID, highlightTags, hoverableAhLink, hoverableStufLink, hoverableWebLink, splitMapN, isValidColorCode, processMessage, hasEmojiPack, stickers, emojis, formatSender, fixFormattedPrefix } from './functions';
 import { data } from './utilities/bots';
 import { prefixData } from './utilities/prefix';
 import { registerWhen, timeThis } from './utils';
@@ -17,6 +17,29 @@ const idRegex = /<@.+>/;
 
 const MAYOR_NAMES = ['Aatrox', 'Cole', 'Diana', 'Diaz', 'Finnegan', 'Foxy', 'Marina', 'Paul', 'Derpy', 'Jerry', 'Scorpius'];
 const SKILL_NAMES = ['Combat', 'Fishing', 'Mining', 'Farming', 'Foraging', 'Enchanting', 'Alchemy', 'Carpentry', '  Runecrafting', 'Taming', 'Social'];
+
+const eightBallAnswers = [
+    "It is certain.",
+    "It is decidedly so.",
+    "Without a doubt.",
+    "Yes - definitely.",
+    "You may rely on it.",
+    "As I see it, yes.",
+    "Most likely.",
+    "Outlook good.",
+    "Yes.",
+    "Signs point to yes.",
+    "Reply hazy, try again.",
+    "Ask again later.",
+    "Better not tell you now.",
+    "Cannot predict now.",
+    "Concentrate and ask again.",
+    "Don't count on it.",
+    "My reply is no.",
+    "My sources say no.",
+    "Outlook not so good.",
+    "Very doubtful."
+];
 
 function sortMessageByType(e) {
     const message = ChatLib.getChatMessage(e, true);
@@ -110,29 +133,6 @@ register('chat', (name, oldRole, newRole, event) => {
 
 function botMessageHandler(prefix, message) {
     const botMessage = removeAntiSpamID(message).removeFormatting().replace(idRegex, '').trim();
-
-    const eightBallAnswers = [
-        "It is certain.",
-        "It is decidedly so.",
-        "Without a doubt.",
-        "Yes - definitely.",
-        "You may rely on it.",
-        "As I see it, yes.",
-        "Most likely.",
-        "Outlook good.",
-        "Yes.",
-        "Signs point to yes.",
-        // "Reply hazy, try again.",
-        // "Ask again later.",
-        // "Better not tell you now.",
-        // "Cannot predict now.",
-        // "Concentrate and ask again.",
-        "Don't count on it.",
-        "My reply is no.",
-        "My sources say no.",
-        "Outlook not so good.",
-        "Very doubtful."
-    ];
 
     //! _mayor
     if (botMessage.startsWith('Current mayor: ')) {
@@ -311,11 +311,12 @@ function discordPlayerMessageHandler(prefix, message) {
     } else if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
         return handleLinkMessages(processMessage(prefix), formattedSender, emojiedDPMessage);
 
+    } else if (responses.includes('_boop')) {
+        getGuildResponse(prefix, emojiedDPMessage, 'getBooperDP');
+        ChatLib.chat(`${prefix}${formattedSender}&f: &r${emojiedDPMessage.split(': ')[1]}`);
+        return;
+
     } else {
-        if (responses.includes('_boop')) {
-            getGuildResponse(prefix, emojiedDPMessage, 'getBooperDP');
-            return;
-        }
         const newPrefix = `${prefix}${formattedSender}`;
         return processMessage(stickers(newPrefix, responses));
     }
@@ -331,11 +332,17 @@ function guildPlayerMessageHandler(prefix, message) {
         if (responses.includes('[LINK]') || responses.includes('viewauction') || responses.includes('http')) {
             return handleLinkMessages(processMessage(prefix), processMessage(formattedSender), processMessage(responses));
 
+        } else if (responses.includes('_boop')) {
+            getGuildResponse(prefix, message, 'getBooperGP');
+            ChatLib.chat(`${prefix}${formattedSender}&f: &r${rawMessage.split(': ')[1]}`);
+            return;
+
         } else {
-            if (responses.includes('_boop')) {
-                getGuildResponse(prefix, message, 'getBooperGP');
-            };
             const newPrefix = `${prefix}${formattedSender}`;
+            const idRemovedRes = responses.replace(/@.+/g, '').trim();
+            if (eightBallAnswers.includes(idRemovedRes)) {
+                return processMessage(stickers(newPrefix, idRemovedRes));
+            }
             return processMessage(stickers(newPrefix, responses));
         }
     }
@@ -395,13 +402,14 @@ function messageHandler(message) {
 
 
     const showArrow = prefixData.arrow === '' ? ' ' : ` ${prefixData.arrow}`;
-    let prefix = `${prefixData.bot}&r${showArrow}&r&a`;
+    let prefix = `${prefixData.bot}&r${showArrow} &r&a`;
     if (type === 'guildPlayer') {
-        prefix = `${prefixData.guild}&r${showArrow}&r&a`;
+        prefix = `${prefixData.guild}&r${showArrow} &r&a`;
     };
 
     const trimmedMessage = resMessage.replace(/\s+/g, ' ').trim();
 
+    // console.log(type, resMessage);
     if (type === 'bot') return [type, botMessageHandler(prefix, trimmedMessage)];
     if (type === 'discordPlayer') return [type, discordPlayerMessageHandler(prefix, trimmedMessage)];
     if (type === 'guildPlayer') return [type, guildPlayerMessageHandler(prefix, trimmedMessage)];
@@ -606,7 +614,7 @@ register('command', (arg) => {
         ChatLib.chat(`&cPlease input a color code for the Guild Best Color.`);
 
     } else {
-        bestData.color = arg;
+        bestData.color = fixFormattedPrefix(arg);
         bestData.save();
         ChatLib.chat(`&aGuild Best Color set: &r${bestData.color}test name`)
     };
